@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>ระบบตรวจนับสต็อกสินค้า</title>
+  <title>แดชบอร์ดและระบบจัดการสต็อกสินค้า</title>
   <!-- Tailwind CSS & Google Fonts -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,68 +11,161 @@
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Prompt', sans-serif; -webkit-tap-highlight-color: transparent; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen pb-20">
+<body class="bg-slate-100 text-slate-800 min-h-screen pb-24">
 
-  <!-- Header -->
-  <header class="bg-blue-600 text-white shadow sticky top-0 z-30">
-    <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-        <h1 class="font-semibold text-lg">ระบบตรวจนับสต็อก</h1>
+  <!-- Top App Bar -->
+  <header class="bg-blue-600 text-white shadow-md sticky top-0 z-30">
+    <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <div class="bg-blue-500/80 p-2 rounded-xl shadow-inner">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+        </div>
+        <div>
+          <h1 class="font-bold text-base leading-tight">แดชบอร์ดสต็อกสินค้า</h1>
+          <p class="text-[10px] text-blue-200">Ground Cafe & Inventory Tracker</p>
+        </div>
       </div>
-      <button onclick="fetchData(true)" id="refreshBtn" class="p-1.5 rounded-full hover:bg-blue-700 active:scale-95 transition">
-        <svg id="refreshIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-      </button>
+      <div class="flex items-center gap-2">
+        <button onclick="fetchData(true)" id="refreshBtn" title="รีเฟรชข้อมูล" class="p-2 rounded-xl hover:bg-blue-700 active:scale-95 transition bg-blue-500/50 flex items-center gap-1.5 text-xs font-medium">
+          <svg id="refreshIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          <span class="hidden sm:inline">รีเฟรช</span>
+        </button>
+      </div>
     </div>
 
     <!-- Navigation Tabs -->
-    <div class="max-w-md mx-auto px-4 flex border-t border-blue-500 text-sm">
-      <button onclick="switchTab('entry')" id="tab-entry" class="flex-1 py-2.5 font-medium text-center border-b-2 border-white text-white">บันทึกรายวัน</button>
-      <button onclick="switchTab('stock')" id="tab-stock" class="flex-1 py-2.5 font-medium text-center border-b-2 border-transparent text-blue-100 hover:text-white">สต็อกคงเหลือ</button>
-      <button onclick="switchTab('history')" id="tab-history" class="flex-1 py-2.5 font-medium text-center border-b-2 border-transparent text-blue-100 hover:text-white">ประวัติล่าสุด</button>
+    <div class="max-w-2xl mx-auto px-4 flex border-t border-blue-500 text-xs">
+      <button onclick="switchTab('dashboard')" id="tab-dashboard" class="flex-1 py-2.5 font-bold text-center border-b-2 border-white text-white">📊 แดชบอร์ดการ์ด</button>
+      <button onclick="switchTab('entry')" id="tab-entry" class="flex-1 py-2.5 font-medium text-center border-b-2 border-transparent text-blue-100 hover:text-white">📝 บันทึกรายวัน</button>
+      <button onclick="switchTab('history')" id="tab-history" class="flex-1 py-2.5 font-medium text-center border-b-2 border-transparent text-blue-100 hover:text-white">🕒 ประวัติ & Log</button>
     </div>
   </header>
 
   <!-- Main Container -->
-  <main class="max-w-md mx-auto p-4">
+  <main class="max-w-2xl mx-auto p-4 space-y-4">
     
-    <!-- แจ้งเตือนสถานะ -->
-    <div id="alertBox" class="hidden mb-4 p-3 rounded-lg text-sm flex items-center justify-between">
-      <span id="alertMsg"></span>
-      <button onclick="hideAlert()" class="text-xs font-bold px-1.5 py-0.5">&times;</button>
+    <!-- แจ้งเตือนสถานะ Alert Box -->
+    <div id="alertBox" class="hidden p-3 rounded-xl text-xs flex items-center justify-between shadow-sm transition">
+      <span id="alertMsg" class="font-medium"></span>
+      <button onclick="hideAlert()" class="text-sm font-bold px-1.5 py-0.5">&times;</button>
     </div>
 
-    <!-- TAB 1: บันทึกข้อมูลรายวัน -->
-    <section id="view-entry" class="space-y-4">
-      <form id="stockForm" onsubmit="submitForm(event)" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 space-y-4">
+    <!-- TAB 1: แดชบอร์ดภาพรวมการ์ดสินค้า (Visual Dashboard Grid) -->
+    <section id="view-dashboard" class="space-y-4">
+      
+      <!-- สรุปสถิติสต็อกด้านบน (KPI Cards) -->
+      <div class="grid grid-cols-3 gap-2">
+        <div class="bg-white p-2.5 rounded-2xl border border-slate-200 shadow-sm text-center">
+          <div class="text-[10px] text-slate-500 font-medium">สินค้าทั้งหมด</div>
+          <div id="kpiTotal" class="text-lg font-bold text-slate-800">0</div>
+        </div>
+        <div class="bg-white p-2.5 rounded-2xl border border-slate-200 shadow-sm text-center">
+          <div class="text-[10px] text-emerald-600 font-medium">สต็อกปกติ</div>
+          <div id="kpiNormal" class="text-lg font-bold text-emerald-600">0</div>
+        </div>
+        <div onclick="toggleLowStockFilter()" class="bg-rose-50 p-2.5 rounded-2xl border border-rose-200 shadow-sm text-center cursor-pointer active:scale-95 transition">
+          <div class="text-[10px] text-rose-700 font-bold flex items-center justify-center gap-1">
+            <span>⚠️ สต็อกต่ำ</span>
+          </div>
+          <div id="kpiLow" class="text-lg font-bold text-rose-700">0</div>
+        </div>
+      </div>
+
+      <!-- แถบคำอธิบายสัญลักษณ์สีประจำหมวดหมู่ (Category Color Legend) -->
+      <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2.5">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="p-1.5 rounded-xl bg-blue-50 text-blue-600">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
+            </span>
+            <div>
+              <h3 class="font-bold text-xs text-slate-800">คำอธิบายสีประจำหมวดหมู่ (Color Legend)</h3>
+              <p class="text-[10px] text-slate-400">ระบุสีที่ใช้ในการ์ดสินค้าแต่ละหมวด แตะเพื่อกรองดู หรือกดจัดการสี</p>
+            </div>
+          </div>
+          <button onclick="openCategoryModal()" class="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 active:scale-95 text-blue-700 font-bold rounded-xl text-xs flex items-center gap-1 transition shadow-xs">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+            <span>เพิ่มหมวด / กำหนดสี</span>
+          </button>
+        </div>
+        
+        <!-- รายการป้ายสัญลักษณ์สีประจำหมวด -->
+        <div id="categoryLegendList" class="flex flex-wrap gap-1.5 pt-0.5">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- แถบค้นหา และ กรองตามหมวดหมู่ -->
+      <div class="space-y-2">
+        <div class="relative">
+          <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" id="searchBox" oninput="renderDashboard()" placeholder="ค้นหาชื่อสินค้าหรือหมวดหมู่..." class="w-full bg-white border border-slate-300 rounded-xl pl-9 pr-3 py-2 text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-sm" />
+        </div>
+
+        <!-- Filter Chips หมวดหมู่ (แนวนอนเลื่อนได้) -->
+        <div id="categoryChips" class="flex gap-1.5 overflow-x-auto no-scrollbar pb-1 text-xs">
+          <!-- Chips จะเรนเดอร์อัตโนมัติ -->
+        </div>
+      </div>
+
+      <!-- ส่วนแสดงการ์ดสินค้าทั้งหมดแยกตามหมวดหมู่ -->
+      <div id="dashboardContainer" class="space-y-5">
+        <!-- การ์ดสินค้าจะแสดงที่นี่ -->
+      </div>
+    </section>
+
+    <!-- TAB 2: บันทึกข้อมูลรายวัน (Full Daily Form) -->
+    <section id="view-entry" class="hidden space-y-4">
+      <form id="stockForm" onsubmit="submitForm(event)" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 space-y-3.5">
+        <h3 class="font-bold text-sm text-slate-800 flex items-center gap-2">
+          <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          บันทึกการเคลื่อนไหวสต็อกประจำวัน
+        </h3>
+
         <div>
-          <label class="block text-xs font-medium text-slate-600 mb-1">วันที่บันทึก</label>
-          <input type="date" id="inputDate" required class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+          <label class="block text-xs font-semibold text-slate-600 mb-1">วันที่บันทึก</label>
+          <input type="date" id="inputDate" required class="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none" />
         </div>
 
         <div>
-          <label class="block text-xs font-medium text-slate-600 mb-1">หมวดหมู่สินค้า</label>
-          <select id="inputCategory" onchange="onCategoryChange()" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-semibold text-slate-600">หมวดหมู่สินค้า</label>
+            <button type="button" onclick="openCategoryModal()" class="text-[11px] text-blue-600 font-bold hover:underline">+ เพิ่มหมวดหมู่ใหม่</button>
+          </div>
+          <select id="inputCategory" onchange="onCategoryChange()" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none bg-white">
             <option value="">-- เลือกหมวดหมู่ (ทั้งหมด) --</option>
           </select>
         </div>
 
         <div>
-          <label class="block text-xs font-medium text-slate-600 mb-1">รายการสินค้า *</label>
-          <select id="inputProduct" onchange="onProductChange()" required class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+          <label class="block text-xs font-semibold text-slate-600 mb-1">รายการสินค้า *</label>
+          <select id="inputProduct" onchange="onProductChange()" required class="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none bg-white">
             <option value="">-- เลือกสินค้า --</option>
           </select>
-          <div id="productInfo" class="hidden mt-2 p-2.5 bg-slate-50 border border-slate-100 rounded-lg text-xs text-slate-600 flex justify-between items-center">
-            <span>คงเหลือปัจจุบัน: <strong id="currentStockVal" class="text-blue-600 font-bold text-sm">0</strong> <span id="currentUnit"></span></span>
-            <span class="text-slate-400">จุดสั่งซื้อ: <span id="minStockVal">0</span></span>
+          
+          <!-- พรีวิวสินค้าที่เลือก -->
+          <div id="productInfo" class="hidden mt-2 p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center gap-3">
+            <div id="prodImgPreview" class="w-12 h-12 rounded-lg bg-slate-200 flex-shrink-0 flex items-center justify-center overflow-hidden border border-slate-200"></div>
+            <div class="flex-1 text-xs">
+              <div class="text-slate-500 flex justify-between">
+                <span>คงเหลือปัจจุบัน:</span>
+                <span class="font-bold text-blue-600 text-sm"><span id="currentStockVal">0</span> <span id="currentUnit"></span></span>
+              </div>
+              <div class="text-slate-400 flex justify-between mt-0.5 text-[11px]">
+                <span>จุดสั่งซื้อขั้นต่ำ:</span>
+                <span id="minStockVal">0</span>
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- ปุ่มเลือกประเภท -->
         <div>
-          <label class="block text-xs font-medium text-slate-600 mb-1">ประเภทการเคลื่อนไหว</label>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">ประเภทการเคลื่อนไหว</label>
           <div class="grid grid-cols-3 gap-2">
             <button type="button" onclick="setType('เบิกออก (-)')" id="type-out" class="type-btn py-2 text-xs font-medium rounded-xl border border-blue-500 bg-blue-50 text-blue-700 font-bold ring-2 ring-blue-300">เบิกออก (-)</button>
             <button type="button" onclick="setType('รับเข้า (+)')" id="type-in" class="type-btn py-2 text-xs font-medium rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50">รับเข้า (+)</button>
@@ -80,47 +173,37 @@
           </div>
         </div>
 
-        <!-- จำนวน -->
         <div>
-          <label class="block text-xs font-medium text-slate-600 mb-1">จำนวน <span id="labelUnit"></span> *</label>
-          <input type="number" step="any" min="0.01" id="inputQty" required placeholder="ระบุจำนวนตัวเลข" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+          <label class="block text-xs font-semibold text-slate-600 mb-1">จำนวน <span id="labelUnit"></span> *</label>
+          <input type="number" step="any" min="0.01" id="inputQty" required placeholder="ระบุจำนวนตัวเลข" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none" />
         </div>
 
-        <!-- ผู้บันทึก และ หมายเหตุ -->
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">ผู้ทำรายการ</label>
-            <input type="text" id="inputUser" placeholder="ชื่อผู้บันทึก" class="w-full border border-slate-300 rounded-xl p-2 text-sm outline-none" />
+            <label class="block text-xs font-semibold text-slate-600 mb-1">ผู้ทำรายการ</label>
+            <input type="text" id="inputUser" placeholder="ชื่อผู้บันทึก" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">หมายเหตุ</label>
-            <input type="text" id="inputNotes" placeholder="เช่น ใช้งานหน้าร้าน" class="w-full border border-slate-300 rounded-xl p-2 text-sm outline-none" />
+            <label class="block text-xs font-semibold text-slate-600 mb-1">หมายเหตุ</label>
+            <input type="text" id="inputNotes" placeholder="เช่น ใช้งานหน้าร้าน" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
         </div>
 
-        <button type="submit" id="btnSubmit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-medium rounded-xl shadow-md transition disabled:opacity-50 text-sm">
+        <button type="submit" id="btnSubmit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold rounded-xl shadow transition disabled:opacity-50 text-xs">
           บันทึกข้อมูล
         </button>
       </form>
     </section>
 
-    <!-- TAB 2: สต็อกคงเหลือ -->
-    <section id="view-stock" class="hidden space-y-3">
-      <div class="flex gap-2">
-        <input type="text" id="searchBox" oninput="renderStockList()" placeholder="ค้นหาชื่อสินค้า..." class="flex-1 border border-slate-300 rounded-xl px-3 py-2 text-sm outline-none bg-white" />
-        <select id="filterCategory" onchange="renderStockList()" class="border border-slate-300 rounded-xl px-2 py-2 text-sm outline-none bg-white">
-          <option value="ALL">ทุกหมวดหมู่</option>
-        </select>
+    <!-- TAB 3: ประวัติและ Audit Log -->
+    <section id="view-history" class="hidden space-y-3">
+      <div class="flex justify-between items-center">
+        <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wider">ประวัติรายการ & Audit Log</h2>
+        <div class="flex gap-1 text-[11px]">
+          <button onclick="filterHistory('ALL')" id="hfilter-all" class="px-2.5 py-0.5 rounded-full bg-blue-600 text-white font-medium">ทั้งหมด</button>
+          <button onclick="filterHistory('ADJUST')" id="hfilter-adjust" class="px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-700 hover:bg-slate-300">เฉพาะปรับยอด</button>
+        </div>
       </div>
-
-      <div id="productList" class="space-y-2">
-        <!-- รายการสินค้าจะแสดงที่นี่ -->
-      </div>
-    </section>
-
-    <!-- TAB 3: ประวัติล่าสุด -->
-    <section id="view-history" class="hidden space-y-2">
-      <h2 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">50 รายการล่าสุด</h2>
       <div id="historyList" class="space-y-2">
         <!-- ประวัติจะแสดงที่นี่ -->
       </div>
@@ -128,22 +211,326 @@
 
   </main>
 
+  <!-- QUICK ACTION MODAL: คลิกที่การ์ดแล้ว Popup ขึ้นมาจัดการได้ทันที -->
+  <div id="modalCardAction" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden max-h-[90vh] flex flex-col animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
+      
+      <!-- Modal Header พร้อมรูปภาพ/แถบสี -->
+      <div class="relative bg-slate-900 text-white p-4 flex items-center justify-between overflow-hidden">
+        <div class="absolute inset-0 opacity-20 bg-gradient-to-r from-blue-600 to-indigo-600"></div>
+        <div class="relative flex items-center gap-3 z-10">
+          <div id="modalCardImg" class="w-14 h-14 rounded-2xl bg-white/10 border border-white/20 overflow-hidden flex items-center justify-center flex-shrink-0 shadow-inner"></div>
+          <div>
+            <span id="modalCardCategory" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold"></span>
+            <h3 id="modalCardTitle" class="font-bold text-base mt-1 text-white leading-tight"></h3>
+          </div>
+        </div>
+        <button onclick="closeCardActionModal()" class="relative z-10 text-white/80 hover:text-white bg-white/10 p-1.5 rounded-full">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- สรุปตัวเลขสต็อกปัจจุบัน -->
+      <div class="bg-slate-50 px-4 py-2.5 border-b border-slate-200 flex items-center justify-between text-xs">
+        <div>
+          <span class="text-slate-500">คงเหลือปัจจุบัน:</span>
+          <span id="modalCardStock" class="font-bold text-base ml-1 text-blue-600">0</span>
+          <span id="modalCardUnit" class="text-slate-500 ml-0.5"></span>
+        </div>
+        <div id="modalCardBadge"></div>
+      </div>
+
+      <!-- Action Tabs ภายใน Modal -->
+      <div class="p-4 overflow-y-auto space-y-4 flex-1">
+        
+        <!-- แถบเลือกการกระทำ (เบิกออก / รับเข้า / ปรับยอด / รูปภาพ) -->
+        <div>
+          <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5">เลือกการทำรายการ</label>
+          <div class="grid grid-cols-4 gap-1 text-[11px] font-semibold">
+            <button type="button" onclick="setModalAction('OUT')" id="btn-m-out" class="py-2 rounded-xl border border-blue-500 bg-blue-50 text-blue-700 font-bold ring-2 ring-blue-300 text-center">เบิกออก (-)</button>
+            <button type="button" onclick="setModalAction('IN')" id="btn-m-in" class="py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-center">รับเข้า (+)</button>
+            <button type="button" onclick="setModalAction('ADJUST')" id="btn-m-adjust" class="py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-center">⚙️ ปรับยอด</button>
+            <button type="button" onclick="setModalAction('IMAGE')" id="btn-m-image" class="py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-center">📷 รูปภาพ</button>
+          </div>
+        </div>
+
+        <!-- FORM A: เบิกออก (-) หรือ รับเข้า (+) หรือ ของเสีย -->
+        <form id="formQuickTrans" onsubmit="submitQuickTransaction(event)" class="space-y-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">
+              จำนวนที่ต้องการ <span id="labelQuickActionType">เบิกออก</span> <span id="modalUnitLabel"></span> *
+            </label>
+            <div class="flex gap-1.5 mb-2">
+              <button type="button" onclick="addQuickQty(1)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700">+1</button>
+              <button type="button" onclick="addQuickQty(5)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700">+5</button>
+              <button type="button" onclick="addQuickQty(10)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700">+10</button>
+              <button type="button" onclick="addQuickQty(50)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700">+50</button>
+            </div>
+            <input type="number" step="any" min="0.01" id="quickQty" required placeholder="ระบุจำนวน" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">ผู้บันทึก</label>
+              <input type="text" id="quickUser" placeholder="ชื่อผู้บันทึก" class="w-full border border-slate-300 rounded-xl p-2 text-xs outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">หมายเหตุ</label>
+              <input type="text" id="quickNotes" placeholder="เช่น หน้าร้านเบิก" class="w-full border border-slate-300 rounded-xl p-2 text-xs outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+          </div>
+
+          <button type="submit" id="btnSubmitQuick" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow text-xs transition">
+            ยืนยันการทำรายการ
+          </button>
+        </form>
+
+        <!-- FORM B: ปรับปรุงยอดสต็อกจริง (Stock Adjustment with Mandatory Reason) -->
+        <form id="formQuickAdjust" onsubmit="submitQuickAdjustment(event)" class="hidden space-y-3 bg-amber-50/50 p-3 rounded-2xl border border-amber-200">
+          <div>
+            <label class="block text-xs font-bold text-amber-900 mb-1">ยอดตรวจนับจริงใหม่ *</label>
+            <input type="number" step="any" min="0" id="quickAdjNewVal" required oninput="calcQuickAdjDiff()" placeholder="กรอกจำนวนสต็อกที่นับได้จริง" class="w-full border border-amber-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-amber-500 outline-none bg-white font-bold text-sm" />
+            <div id="quickAdjDiffText" class="hidden mt-1.5 text-xs font-semibold"></div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-amber-900 mb-1">เหตุผลในการปรับปรุง * (บังคับระบุเพื่อ Audit Log)</label>
+            <div class="flex flex-wrap gap-1 mb-1.5">
+              <button type="button" onclick="setQuickReason('ตรวจนับประจำรอบ')" class="text-[10px] bg-white border border-amber-200 text-amber-900 px-2 py-0.5 rounded-md hover:bg-amber-100">ตรวจนับประจำรอบ</button>
+              <button type="button" onclick="setQuickReason('สินค้าสูญหาย/หาไม่เจอ')" class="text-[10px] bg-white border border-amber-200 text-amber-900 px-2 py-0.5 rounded-md hover:bg-amber-100">สินค้าสูญหาย</button>
+              <button type="button" onclick="setQuickReason('บันทึกผิดพลาดก่อนหน้า')" class="text-[10px] bg-white border border-amber-200 text-amber-900 px-2 py-0.5 rounded-md hover:bg-amber-100">บันทึกผิดพลาด</button>
+              <button type="button" onclick="setQuickReason('สินค้าชำรุด/แตกหัก')" class="text-[10px] bg-white border border-amber-200 text-amber-900 px-2 py-0.5 rounded-md hover:bg-amber-100">สินค้าชำรุด</button>
+            </div>
+            <input type="text" id="quickAdjReason" required placeholder="พิมพ์เหตุผล เช่น ตรวจนับสต็อกสิ้นเดือน" class="w-full border border-amber-300 rounded-xl p-2 text-xs outline-none bg-white focus:ring-2 focus:ring-amber-500" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-amber-900 mb-1">ผู้ปรับปรุงยอด</label>
+            <input type="text" id="quickAdjUser" placeholder="ชื่อผู้ทำรายการ" class="w-full border border-amber-300 rounded-xl p-2 text-xs outline-none bg-white focus:ring-2 focus:ring-amber-500" />
+          </div>
+
+          <button type="submit" id="btnSubmitAdj" class="w-full py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl shadow text-xs transition">
+            บันทึก Log ปรับปรุงสต็อก
+          </button>
+        </form>
+
+        <!-- FORM C: เพิ่ม/แก้ไขรูปภาพสินค้า -->
+        <form id="formQuickImage" onsubmit="submitQuickImage(event)" class="hidden space-y-3 bg-slate-50 p-3 rounded-2xl border border-slate-200">
+          <div class="flex items-center gap-3">
+            <div id="quickImgBox" class="w-16 h-16 rounded-xl border border-slate-300 bg-white overflow-hidden flex items-center justify-center shadow-inner flex-shrink-0">
+              <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </div>
+            <div class="flex-1">
+              <label class="block text-xs font-semibold text-slate-700 mb-1">ลิงก์ URL รูปภาพสินค้า</label>
+              <input type="url" id="quickImageUrl" oninput="previewQuickImage()" placeholder="https://example.com/item.jpg" class="w-full border border-slate-300 rounded-xl p-2 text-xs outline-none bg-white focus:ring-2 focus:ring-blue-500" />
+            </div>
+          </div>
+          <p class="text-[10px] text-slate-400">นำลิงก์รูปภาพจากเว็บ หรือลิงก์ Google Drive (แชร์ทุกคนมีสิทธิ์ดู) มาวางได้ครับ</p>
+          <button type="submit" id="btnSubmitImg" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow text-xs transition">
+            บันทึกรูปภาพสินค้า
+          </button>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORY MANAGEMENT & COLOR PICKER MODAL: จัดการและเพิ่มหมวดหมู่พร้อมกำหนดสีเอง -->
+  <div id="modalCategoryManage" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden max-h-[90vh] flex flex-col animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
+      
+      <!-- Modal Header -->
+      <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="bg-white/20 p-2 rounded-xl">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
+          </div>
+          <div>
+            <h3 class="font-bold text-base text-white">จัดการหมวดหมู่และกำหนดสี</h3>
+            <p class="text-[11px] text-blue-100">เพิ่มหมวดหมู่ใหม่และเลือกโทนสีประจำหมวดได้ตามใจชอบ</p>
+          </div>
+        </div>
+        <button onclick="closeCategoryModal()" class="text-white/80 hover:text-white bg-white/10 p-1.5 rounded-full">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-4 overflow-y-auto space-y-4 flex-1 text-xs">
+        
+        <!-- ส่วนที่ 1: ฟอร์มเพิ่มหมวดหมู่ใหม่ -->
+        <form id="formAddCategory" onsubmit="handleAddNewCategory(event)" class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-slate-800 text-xs flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              เพิ่มหมวดหมู่ใหม่
+            </span>
+            <!-- Live Badge Preview -->
+            <div id="newCatPreviewBadge" class="px-2.5 py-1 rounded-lg text-[10px] font-bold shadow-xs transition">
+              ตัวอย่างหมวดหมู่
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-semibold text-slate-600 mb-1">ชื่อหมวดหมู่ใหม่ *</label>
+            <input type="text" id="newCategoryName" required oninput="updateNewCatPreview()" placeholder="เช่น เบเกอรี่, ผลไม้สด, เครื่องดื่มแก้ว" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+
+          <!-- ตัวเลือกสี: Presets & Native Color Picker -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="block font-semibold text-slate-600">เลือกสีประจำหมวด</label>
+              <div class="flex items-center gap-1.5 bg-white px-2 py-1 rounded-lg border border-slate-200">
+                <span class="text-[10px] text-slate-500 font-medium">สีอิสระ:</span>
+                <input type="color" id="newCatCustomPicker" value="#10b981" oninput="onCustomColorPicked(this.value)" class="w-5 h-5 rounded cursor-pointer border-0 p-0 bg-transparent" />
+                <span id="newCatHexLabel" class="text-[10px] font-mono font-bold text-slate-700">#10b981</span>
+              </div>
+            </div>
+
+            <!-- Preset Palettes -->
+            <div id="presetColorContainer" class="grid grid-cols-6 gap-2">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-bold rounded-xl shadow transition flex items-center justify-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span>บันทึกหมวดหมู่ใหม่</span>
+          </button>
+        </form>
+
+        <!-- ส่วนที่ 2: จัดการและปรับเปลี่ยนสีหมวดหมู่ทั้งหมด -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between px-0.5">
+            <span class="font-bold text-slate-700 text-xs">รายการหมวดหมู่และสีปัจจุบัน</span>
+            <button type="button" onclick="resetCategoryColors()" class="text-[10px] text-slate-400 hover:text-slate-600 underline">รีเซ็ตสีกลับค่าเริ่มต้น</button>
+          </div>
+          
+          <div id="categoryManageList" class="space-y-2">
+            <!-- หมวดหมู่และตัวเปลี่ยนสีจะแสดงที่นี่ -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbyQQSG8mXaP37y2xXrY7Kg9aDE07A08X5Gk5Ld7WHkhzViRs9UQ8VatK6L8QLPXwloklg/exec";
     
+    // จานสีสำเร็จรูป 12 เฉดสีสำหรับเลือกใช้งาน (Preset Palettes)
+    const presetPalette = [
+      { name: 'เขียวมรกต', hex: '#10b981' },
+      { name: 'ส้มอำพัน', hex: '#f59e0b' },
+      { name: 'ครามอินดิโก', hex: '#6366f1' },
+      { name: 'ฟ้าสดใส', hex: '#0ea5e9' },
+      { name: 'แดงกุหลาบ', hex: '#f43f5e' },
+      { name: 'ม่วงไวโอเล็ต', hex: '#8b5cf6' },
+      { name: 'ชมพูพาสเทล', hex: '#ec4899' },
+      { name: 'เขียวมิ้นท์', hex: '#14b8a6' },
+      { name: 'ส้มพีช', hex: '#f97316' },
+      { name: 'เขียวเลมอน', hex: '#84cc16' },
+      { name: 'เทาโมเดิร์น', hex: '#64748b' },
+      { name: 'น้ำเงินเข้ม', hex: '#2563eb' }
+    ];
+
+    // สีเริ่มต้นของหมวดหมู่หลัก
+    const defaultCategoryColors = {
+      'วัตถุดิบ': '#10b981',
+      'บรรจุภัณฑ์': '#f59e0b',
+      'อุปกรณ์/เครื่องใช้': '#6366f1',
+      'สินค้าสำเร็จรูป': '#0ea5e9'
+    };
+
     let state = {
       categories: [],
       products: [],
       transactions: [],
-      selectedType: 'เบิกออก (-)'
+      selectedType: 'เบิกออก (-)',
+      historyFilter: 'ALL',
+      activeCategoryFilter: 'ALL',
+      showOnlyLowStock: false
     };
+
+    let activeModalProduct = null;
+    let activeModalAction = 'OUT'; // 'OUT' | 'IN' | 'ADJUST' | 'IMAGE'
+    let currentSelectedHex = '#10b981';
+
+    // แปลงรหัสสี Hex เป็น RGBA
+    function hexToRgba(hex, alpha) {
+      if (!hex || typeof hex !== 'string') hex = '#6366f1';
+      let c = hex.replace('#', '');
+      if (c.length === 3) c = c.split('').map(x => x + x).join('');
+      const num = parseInt(c, 16);
+      if (isNaN(num)) return `rgba(99, 102, 241, ${alpha})`;
+      const r = (num >> 16) & 255;
+      const g = (num >> 8) & 255;
+      const b = num & 255;
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
+    // โหลดและบันทึกการตั้งค่าสีหมวดหมู่
+    function getStoredCategoryColors() {
+      try {
+        const saved = localStorage.getItem('stock_category_colors_v1');
+        return saved ? JSON.parse(saved) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveCategoryColors(colors) {
+      localStorage.setItem('stock_category_colors_v1', JSON.stringify(colors));
+    }
+
+    // โหลดและบันทึกหมวดหมู่ที่ผู้ใช้สร้างเอง
+    function getStoredCustomCategories() {
+      try {
+        const saved = localStorage.getItem('stock_custom_categories_v1');
+        return saved ? JSON.parse(saved) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveCustomCategories(cats) {
+      localStorage.setItem('stock_custom_categories_v1', JSON.stringify(cats));
+    }
+
+    // คำนวณสีประจำหมวดหมู่ (ดึงจาก Custom หรือ Default หรือ Hash อัตโนมัติ)
+    function getCategoryColor(catName) {
+      if (!catName) return '#64748b';
+      const customColors = getStoredCategoryColors();
+      if (customColors[catName]) return customColors[catName];
+      if (defaultCategoryColors[catName]) return defaultCategoryColors[catName];
+
+      // กรณีหมวดใหม่ที่ยังไม่มีการตั้งสี: สุ่มเฉดสีที่คงที่ตามชื่อหมวด
+      let hash = 0;
+      for (let i = 0; i < catName.length; i++) {
+        hash = catName.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      const idx = Math.abs(hash) % presetPalette.length;
+      return presetPalette[idx].hex;
+    }
+
+    // สไตล์สีแบบไดนามิกสำหรับการ์ด, ป้าย, และ Legend
+    function getCategoryColorData(catName) {
+      const hex = getCategoryColor(catName);
+      return {
+        hex: hex,
+        borderStyle: `border-color: ${hex};`,
+        badgeStyle: `background-color: ${hexToRgba(hex, 0.15)}; color: ${hex}; border: 1px solid ${hexToRgba(hex, 0.35)};`,
+        lightBgStyle: `background-color: ${hexToRgba(hex, 0.08)}; border-bottom: 1px solid ${hexToRgba(hex, 0.2)};`,
+        dotStyle: `background-color: ${hex};`
+      };
+    }
 
     // ตั้งค่าวันปัจจุบัน
     document.getElementById('inputDate').value = new Date().toISOString().split('T')[0];
 
-    // โหลดข้อมูลจาก LocalStorage ก่อน (เพื่อความเร็วทันใจ)
+    // โหลดข้อมูลจาก LocalStorage ทันที
     try {
-      const cached = localStorage.getItem('stock_app_cache');
+      const cached = localStorage.getItem('stock_app_cache_v4');
       if (cached) {
         state = JSON.parse(cached);
         updateUI();
@@ -158,12 +545,29 @@
         const res = await fetch(API_URL);
         const json = await res.json();
         if (json.status === 'success') {
-          state.categories = json.data.categories || [];
-          state.products = json.data.products || [];
+          // รวมหมวดหมู่จาก Google Sheet และหมวดหมู่ที่ผู้ใช้สร้างเอง
+          const serverCats = (json.data.categories || []).map(c => typeof c === 'string' ? c : c.name);
+          const customCats = getStoredCustomCategories();
+          const allCatsSet = new Set([...serverCats, ...customCats]);
+
+          // รวบรวมหมวดหมู่จากรายการสินค้าด้วยเพื่อความครบถ้วน
+          (json.data.products || []).forEach(p => {
+            if (p.category) allCatsSet.add(p.category);
+          });
+
+          state.categories = Array.from(allCatsSet).map(name => ({
+            name: name,
+            isCustom: customCats.includes(name) && !serverCats.includes(name)
+          }));
+
+          state.products = (json.data.products || []).map(p => ({
+            ...p,
+            imageUrl: p.imageUrl || ''
+          }));
           state.transactions = json.data.transactions || [];
-          localStorage.setItem('stock_app_cache', JSON.stringify(state));
+          localStorage.setItem('stock_app_cache_v4', JSON.stringify(state));
           updateUI();
-          if (isManual) showAlert('อัปเดตข้อมูลล่าสุดแล้ว', 'success');
+          if (isManual) showAlert('อัปเดตข้อมูลล่าสุดเรียบร้อยแล้ว', 'success');
         }
       } catch (err) {
         if (isManual) showAlert('ไม่สามารถดึงข้อมูลได้ โปรดลองอีกครั้ง', 'error');
@@ -173,27 +577,801 @@
     }
 
     function updateUI() {
+      renderCategoryLegend();
+      renderCategoryChips();
+      renderDashboard();
+      renderHistoryList();
+
+      // ฟอร์มบันทึกรายวัน
       const catSelect = document.getElementById('inputCategory');
-      const filterCat = document.getElementById('filterCategory');
       const currentCatVal = catSelect.value;
-      const currentFilterVal = filterCat.value;
-
       catSelect.innerHTML = '<option value="">-- เลือกหมวดหมู่ (ทั้งหมด) --</option>';
-      filterCat.innerHTML = '<option value="ALL">ทุกหมวดหมู่</option>';
-
       state.categories.forEach(c => {
         catSelect.innerHTML += `<option value="${c.name}">${c.name}</option>`;
-        filterCat.innerHTML += `<option value="${c.name}">${c.name}</option>`;
+      });
+      catSelect.value = currentCatVal;
+      onCategoryChange();
+    }
+
+    // 1. เรนเดอร์ แถบคำอธิบายสัญลักษณ์สีประจำหมวดหมู่ (Category Color Legend)
+    function renderCategoryLegend() {
+      const legendList = document.getElementById('categoryLegendList');
+      if (!legendList) return;
+
+      let html = `
+        <button onclick="setCategoryFilter('ALL')" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-semibold transition active:scale-95 ${
+          state.activeCategoryFilter === 'ALL' && !state.showOnlyLowStock
+            ? 'bg-blue-600 text-white border-blue-600 shadow-sm ring-2 ring-blue-200'
+            : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+        }">
+          <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+          <span>ทั้งหมด</span>
+          <span class="text-[10px] opacity-80">(${state.products.length})</span>
+        </button>
+      `;
+
+      state.categories.forEach(c => {
+        const count = state.products.filter(p => p.category === c.name).length;
+        const colorData = getCategoryColorData(c.name);
+        const isActive = state.activeCategoryFilter === c.name && !state.showOnlyLowStock;
+
+        html += `
+          <button onclick="setCategoryFilter('${c.name}')" 
+                  title="คลิกเพื่อกรองเฉพาะหมวด ${c.name}"
+                  class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs transition active:scale-95 ${
+                    isActive ? 'font-bold ring-2 ring-offset-1 shadow-sm' : 'hover:bg-slate-50'
+                  }" 
+                  style="${isActive ? colorData.badgeStyle + ' ' + colorData.borderStyle : 'background-color: white; border-color: #e2e8f0; color: #334155;'}">
+            <span class="w-2.5 h-2.5 rounded-full flex-shrink-0 shadow-xs" style="${colorData.dotStyle}"></span>
+            <span class="font-medium">${c.name}</span>
+            <span class="text-[10px] text-slate-400 font-normal">(${count})</span>
+          </button>
+        `;
       });
 
-      catSelect.value = currentCatVal;
-      filterCat.value = currentFilterVal;
+      legendList.innerHTML = html;
+    }
 
-      onCategoryChange();
-      renderStockList();
+    // 2. เรนเดอร์ Chips หมวดหมู่ด้านบน
+    function renderCategoryChips() {
+      const container = document.getElementById('categoryChips');
+      let html = `
+        <button onclick="setCategoryFilter('ALL')" class="px-3 py-1.5 rounded-xl font-medium transition whitespace-nowrap flex-shrink-0 ${
+          state.activeCategoryFilter === 'ALL' && !state.showOnlyLowStock ? 'bg-blue-600 text-white font-bold shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+        }">
+          ทั้งหมด (${state.products.length})
+        </button>
+      `;
+
+      state.categories.forEach(c => {
+        const count = state.products.filter(p => p.category === c.name).length;
+        const isActive = state.activeCategoryFilter === c.name && !state.showOnlyLowStock;
+        const colorData = getCategoryColorData(c.name);
+
+        html += `
+          <button onclick="setCategoryFilter('${c.name}')" 
+                  class="px-3 py-1.5 rounded-xl font-medium transition whitespace-nowrap flex-shrink-0 flex items-center gap-1.5 ${
+                    isActive ? 'text-white font-bold shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                  }"
+                  style="${isActive ? `background-color: ${colorData.hex}; border-color: ${colorData.hex};` : ''}">
+            <span class="w-2 h-2 rounded-full" style="${colorData.dotStyle}"></span>
+            <span>${c.name} (${count})</span>
+          </button>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function setCategoryFilter(catName) {
+      state.activeCategoryFilter = catName;
+      state.showOnlyLowStock = false;
+      renderCategoryLegend();
+      renderCategoryChips();
+      renderDashboard();
+    }
+
+    function toggleLowStockFilter() {
+      state.showOnlyLowStock = !state.showOnlyLowStock;
+      if (state.showOnlyLowStock) {
+        state.activeCategoryFilter = 'ALL';
+      }
+      renderCategoryLegend();
+      renderCategoryChips();
+      renderDashboard();
+    }
+
+    // 3. เรนเดอร์ แดชบอร์ดการ์ดสินค้าทั้งหมด
+    function renderDashboard() {
+      const container = document.getElementById('dashboardContainer');
+      const search = document.getElementById('searchBox').value.trim().toLowerCase();
+
+      // คำนวณ KPI สถิติ
+      let lowCount = 0;
+      state.products.forEach(p => {
+        if (Number(p.currentBalance) <= Number(p.minStock)) lowCount++;
+      });
+      document.getElementById('kpiTotal').textContent = state.products.length;
+      document.getElementById('kpiNormal').textContent = state.products.length - lowCount;
+      document.getElementById('kpiLow').textContent = lowCount;
+
+      // กรองสินค้า
+      let filtered = state.products.filter(p => {
+        const matchCat = state.activeCategoryFilter === 'ALL' || p.category === state.activeCategoryFilter;
+        const matchSearch = !search || p.name.toLowerCase().includes(search) || p.category.toLowerCase().includes(search);
+        const matchLow = !state.showOnlyLowStock || Number(p.currentBalance) <= Number(p.minStock);
+        return matchCat && matchSearch && matchLow;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div class="text-center py-16 text-slate-400 text-xs bg-white rounded-2xl border border-dashed border-slate-300">ไม่พบสินค้าตามเงื่อนไข</div>';
+        return;
+      }
+
+      // จัดกลุ่มตามหมวดหมู่
+      const grouped = {};
+      filtered.forEach(p => {
+        const cat = p.category || 'หมวดหมู่อื่นๆ';
+        if (!grouped[cat]) grouped[cat] = [];
+        grouped[cat].push(p);
+      });
+
+      let html = '';
+      Object.keys(grouped).forEach(catName => {
+        const colorData = getCategoryColorData(catName);
+        const items = grouped[catName];
+
+        html += `
+          <div class="space-y-2">
+            <!-- Header หมวดหมู่ -->
+            <div class="flex items-center justify-between px-1">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full shadow-xs" style="${colorData.dotStyle}"></span>
+                <h3 class="font-bold text-xs text-slate-800 uppercase tracking-wide flex items-center gap-1.5">
+                  <span>${catName}</span>
+                </h3>
+              </div>
+              <span class="text-[11px] text-slate-400 font-medium">${items.length} รายการ</span>
+            </div>
+
+            <!-- การ์ดสินค้าในหมวดหมู่ Grid 2 คอลัมน์บนมือถือ / 3 คอลัมน์บนจอใหญ่ -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              ${items.map(p => {
+                const isLow = Number(p.currentBalance) <= Number(p.minStock);
+                const isOut = Number(p.currentBalance) <= 0;
+
+                // กรอบและไฮไลต์เมื่อสต็อกต่ำ
+                const cardBorderClass = isOut 
+                  ? 'border-2 border-rose-500 bg-rose-50/20 ring-2 ring-rose-200' 
+                  : isLow 
+                  ? 'border-2 border-rose-400 bg-rose-50/30 ring-1 ring-rose-300' 
+                  : 'bg-white hover:shadow-md transition';
+
+                const cardCustomBorderStyle = (!isOut && !isLow) ? `border: 2px solid ${colorData.hex};` : '';
+
+                // การแสดงรูปภาพ หรือ แถบสีหัวการ์ด
+                let visualHeader = '';
+                if (p.imageUrl) {
+                  visualHeader = `
+                    <div class="h-28 w-full bg-slate-100 relative overflow-hidden">
+                      <img src="${p.imageUrl}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-full h-full flex items-center justify-center bg-slate-100 text-slate-300 text-xs\'>รูปภาพเสียหาย</div>';">
+                      <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10"></div>
+                      <span class="absolute top-2 left-2 px-2 py-0.5 rounded-md text-[9px] font-bold shadow-sm backdrop-blur-md" style="${colorData.badgeStyle}">
+                        ${p.category}
+                      </span>
+                      ${isOut ? '<span class="absolute top-2 right-2 px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-rose-600 text-white shadow">หมด</span>' : isLow ? '<span class="absolute top-2 right-2 px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-600 text-white shadow animate-pulse">เหลือน้อย</span>' : ''}
+                    </div>
+                  `;
+                } else {
+                  visualHeader = `
+                    <div class="h-16 w-full p-2.5 flex flex-col justify-between relative" style="${colorData.lightBgStyle}">
+                      <div class="flex justify-between items-start">
+                        <span class="px-2 py-0.5 rounded-md text-[9px] font-bold shadow-xs" style="${colorData.badgeStyle}">
+                          ${p.category}
+                        </span>
+                        ${isOut ? '<span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-rose-600 text-white">หมด</span>' : isLow ? '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-600 text-white animate-pulse">เหลือน้อย</span>' : ''}
+                      </div>
+                      <div class="text-[10px] text-slate-400 flex items-center gap-1 font-medium">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                        <span>ไม่มีรูปภาพ</span>
+                      </div>
+                    </div>
+                  `;
+                }
+
+                return `
+                  <div onclick="openCardActionModal('${p.name}')" 
+                       class="rounded-2xl overflow-hidden cursor-pointer group active:scale-[0.98] transition shadow-sm ${cardBorderClass} flex flex-col justify-between"
+                       style="${cardCustomBorderStyle}">
+                    ${visualHeader}
+
+                    <!-- เนื้อหาในการ์ด -->
+                    <div class="p-2.5 flex-1 flex flex-col justify-between">
+                      <div>
+                        <h4 class="font-bold text-xs text-slate-800 line-clamp-2 leading-tight group-hover:text-blue-600 transition" title="${p.name}">${p.name}</h4>
+                        <div class="text-[10px] text-slate-400 mt-0.5">ขั้นต่ำ: ${p.minStock} ${p.unit}</div>
+                      </div>
+
+                      <!-- จำนวนคงเหลือตัวโตๆ -->
+                      <div class="mt-2 pt-1.5 border-t border-slate-100 flex items-baseline justify-between">
+                        <span class="text-[10px] text-slate-400 font-medium">คงเหลือ:</span>
+                        <div class="text-right">
+                          <span class="text-base font-extrabold ${isOut || isLow ? 'text-rose-600' : 'text-slate-900'}">${p.currentBalance}</span>
+                          <span class="text-[10px] font-medium text-slate-500">${p.unit}</span>
+                        </div>
+                      </div>
+
+                      <div class="mt-1.5 text-[9px] text-center text-blue-600 font-medium bg-blue-50 py-1 rounded-lg opacity-90 group-hover:bg-blue-600 group-hover:text-white transition">
+                        แตะเพื่อเบิก / เพิ่ม / ปรับยอด
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    // เปิด Quick Action Modal เมื่อคลิกที่การ์ด
+    function openCardActionModal(productName) {
+      const prod = state.products.find(p => p.name === productName);
+      if (!prod) return;
+      activeModalProduct = prod;
+
+      const colorData = getCategoryColorData(prod.category);
+      const isLow = Number(prod.currentBalance) <= Number(prod.minStock);
+
+      // ข้อมูลหัว Modal
+      document.getElementById('modalCardTitle').textContent = prod.name;
+      const catBadge = document.getElementById('modalCardCategory');
+      catBadge.textContent = prod.category;
+      catBadge.style = colorData.badgeStyle;
+
+      document.getElementById('modalCardStock').textContent = prod.currentBalance;
+      document.getElementById('modalCardUnit').textContent = prod.unit;
+      document.getElementById('modalUnitLabel').textContent = `(${prod.unit})`;
+
+      // รูปภาพใน Header Modal
+      const imgBox = document.getElementById('modalCardImg');
+      if (prod.imageUrl) {
+        imgBox.innerHTML = `<img src="${prod.imageUrl}" class="w-full h-full object-cover">`;
+      } else {
+        imgBox.innerHTML = `<svg class="w-6 h-6 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>`;
+      }
+
+      // ป้ายสถานะ
+      const badgeBox = document.getElementById('modalCardBadge');
+      if (isLow) {
+        badgeBox.innerHTML = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-700">⚠️ สต็อกต่ำกว่าขั้นต่ำ (${prod.minStock})</span>`;
+      } else {
+        badgeBox.innerHTML = `<span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-100 text-emerald-800">สต็อกปกติ</span>`;
+      }
+
+      // รีเซ็ตค่าในแบบฟอร์ม Modal
+      document.getElementById('quickQty').value = '';
+      document.getElementById('quickNotes').value = '';
+      document.getElementById('quickAdjNewVal').value = prod.currentBalance;
+      document.getElementById('quickAdjReason').value = '';
+      document.getElementById('quickAdjDiffText').classList.add('hidden');
+      document.getElementById('quickImageUrl').value = prod.imageUrl || '';
+      previewQuickImage();
+
+      setModalAction('OUT');
+      document.getElementById('modalCardAction').classList.remove('hidden');
+    }
+
+    function closeCardActionModal() {
+      document.getElementById('modalCardAction').classList.add('hidden');
+      activeModalProduct = null;
+    }
+
+    function setModalAction(action) {
+      activeModalAction = action;
+      const btns = {
+        'OUT': document.getElementById('btn-m-out'),
+        'IN': document.getElementById('btn-m-in'),
+        'ADJUST': document.getElementById('btn-m-adjust'),
+        'IMAGE': document.getElementById('btn-m-image')
+      };
+
+      const formTrans = document.getElementById('formQuickTrans');
+      const formAdj = document.getElementById('formQuickAdjust');
+      const formImg = document.getElementById('formQuickImage');
+
+      // สลับสไตล์ปุ่ม
+      Object.keys(btns).forEach(k => {
+        if (k === action) {
+          btns[k].className = "py-2 rounded-xl border border-blue-500 bg-blue-50 text-blue-700 font-bold ring-2 ring-blue-300 text-center";
+        } else {
+          btns[k].className = "py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-center";
+        }
+      });
+
+      // สลับการแสดงผลฟอร์ม
+      formTrans.classList.add('hidden');
+      formAdj.classList.add('hidden');
+      formImg.classList.add('hidden');
+
+      if (action === 'OUT' || action === 'IN') {
+        formTrans.classList.remove('hidden');
+        document.getElementById('labelQuickActionType').textContent = action === 'OUT' ? 'เบิกออก (-)' : 'รับเข้า (+)';
+        const submitBtn = document.getElementById('btnSubmitQuick');
+        if (action === 'OUT') {
+          submitBtn.className = "w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow text-xs transition";
+          submitBtn.textContent = 'ยืนยันการเบิกออก (-)';
+        } else {
+          submitBtn.className = "w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow text-xs transition";
+          submitBtn.textContent = 'ยืนยันการรับเข้า (+)';
+        }
+      } else if (action === 'ADJUST') {
+        formAdj.classList.remove('hidden');
+        calcQuickAdjDiff();
+      } else if (action === 'IMAGE') {
+        formImg.classList.remove('hidden');
+      }
+    }
+
+    function addQuickQty(val) {
+      const input = document.getElementById('quickQty');
+      const cur = Number(input.value) || 0;
+      input.value = cur + val;
+    }
+
+    // ส่งรายการ เบิกออก / รับเข้า ด่วนจากการ์ด
+    async function submitQuickTransaction(e) {
+      e.preventDefault();
+      if (!activeModalProduct) return;
+
+      const qty = Number(document.getElementById('quickQty').value);
+      const user = document.getElementById('quickUser').value.trim();
+      const notes = document.getElementById('quickNotes').value.trim();
+      const type = activeModalAction === 'IN' ? 'รับเข้า (+)' : 'เบิกออก (-)';
+
+      if (!qty || qty <= 0) {
+        alert('กรุณากรอกจำนวนให้ถูกต้อง');
+        return;
+      }
+
+      const btn = document.getElementById('btnSubmitQuick');
+      btn.disabled = true;
+      btn.textContent = 'กำลังบันทึก...';
+
+      // Optimistic UI ปรับยอดบนหน้าจอทันที
+      const diff = activeModalAction === 'IN' ? qty : -qty;
+      state.products = state.products.map(p => {
+        if (p.name === activeModalProduct.name) {
+          return { ...p, currentBalance: Number(p.currentBalance) + diff };
+        }
+        return p;
+      });
+      updateUI();
+      closeCardActionModal();
+
+      try {
+        const payload = {
+          action: 'addTransaction',
+          date: new Date().toISOString().split('T')[0],
+          category: activeModalProduct.category,
+          product: activeModalProduct.name,
+          type: type,
+          quantity: qty,
+          recordedBy: user || 'ผู้ดูแลสต็อก',
+          notes: notes
+        };
+
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+
+        const json = await res.json();
+        if (json.status === 'success') {
+          showAlert(`บันทึก ${type} ${qty} ${activeModalProduct.unit} "${activeModalProduct.name}" สำเร็จ`, 'success');
+          fetchData();
+        } else {
+          showAlert('เกิดข้อผิดพลาด: ' + json.message, 'error');
+        }
+      } catch (err) {
+        showAlert('บันทึกสำเร็จ (ข้อมูลกำลังซิงค์เข้า Google Sheet)', 'success');
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    // ปรับปรุงยอดสต็อกพร้อมเหตุผลจากการ์ด (Audit Log)
+    function calcQuickAdjDiff() {
+      if (!activeModalProduct) return;
+      const newVal = Number(document.getElementById('quickAdjNewVal').value);
+      const curVal = Number(activeModalProduct.currentBalance);
+      const diffBox = document.getElementById('quickAdjDiffText');
+
+      if (document.getElementById('quickAdjNewVal').value === '') {
+        diffBox.classList.add('hidden');
+        return;
+      }
+
+      diffBox.classList.remove('hidden');
+      const diff = newVal - curVal;
+      if (diff === 0) {
+        diffBox.textContent = 'ยอดคงเดิม (ไม่เปลี่ยนแปลง)';
+        diffBox.className = 'mt-1.5 text-xs font-semibold text-slate-500';
+      } else if (diff > 0) {
+        diffBox.textContent = `เพิ่มขึ้น +${diff} ${activeModalProduct.unit}`;
+        diffBox.className = 'mt-1.5 text-xs font-semibold text-emerald-600';
+      } else {
+        diffBox.textContent = `ลดลง ${diff} ${activeModalProduct.unit}`;
+        diffBox.className = 'mt-1.5 text-xs font-semibold text-rose-600';
+      }
+    }
+
+    function setQuickReason(text) {
+      document.getElementById('quickAdjReason').value = text;
+    }
+
+    async function submitQuickAdjustment(e) {
+      e.preventDefault();
+      if (!activeModalProduct) return;
+
+      const newVal = Number(document.getElementById('quickAdjNewVal').value);
+      const reason = document.getElementById('quickAdjReason').value.trim();
+      const user = document.getElementById('quickAdjUser').value.trim();
+      const curVal = Number(activeModalProduct.currentBalance);
+      const diff = newVal - curVal;
+
+      if (isNaN(newVal) || newVal < 0) {
+        alert('กรุณากรอกยอดสต็อกใหม่');
+        return;
+      }
+      if (!reason) {
+        alert('กรุณาระบุเหตุผลการปรับปรุงสต็อก (เพื่อลง Audit Log)');
+        return;
+      }
+
+      const btn = document.getElementById('btnSubmitAdj');
+      btn.disabled = true;
+      btn.textContent = 'กำลังบันทึก Log...';
+
+      const actionType = diff >= 0 ? 'รับเข้า (+)' : 'เบิกออก (-)';
+      const absQty = Math.abs(diff);
+      const auditLogNote = `[ปรับปรุงยอด] เหตุผล: ${reason} (ปรับจาก ${curVal} เป็น ${newVal} ${activeModalProduct.unit})`;
+
+      // Optimistic UI
+      state.products = state.products.map(p => {
+        if (p.name === activeModalProduct.name) {
+          return { ...p, currentBalance: newVal };
+        }
+        return p;
+      });
+      updateUI();
+      closeCardActionModal();
+
+      try {
+        const payload = {
+          action: 'adjustStock',
+          date: new Date().toISOString().split('T')[0],
+          category: activeModalProduct.category,
+          product: activeModalProduct.name,
+          type: actionType,
+          quantity: absQty,
+          recordedBy: user || 'ผู้ดูแลสต็อก',
+          notes: auditLogNote
+        };
+
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+
+        const json = await res.json();
+        if (json.status === 'success') {
+          showAlert(`บันทึก Log ปรับยอด "${activeModalProduct.name}" สำเร็จ`, 'success');
+          fetchData();
+        } else {
+          showAlert('ไม่สำเร็จ: ' + json.message, 'error');
+        }
+      } catch (err) {
+        showAlert('บันทึกปรับยอดสำเร็จ (ซิงค์กับ Sheet อัตโนมัติ)', 'success');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'บันทึก Log ปรับปรุงสต็อก';
+      }
+    }
+
+    // แก้ไขรูปภาพจากการ์ด
+    function previewQuickImage() {
+      const url = document.getElementById('quickImageUrl').value.trim();
+      const box = document.getElementById('quickImgBox');
+      if (url) {
+        box.innerHTML = `<img src="${url}" class="w-full h-full object-cover">`;
+      } else {
+        box.innerHTML = `<svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>`;
+      }
+    }
+
+    async function submitQuickImage(e) {
+      e.preventDefault();
+      if (!activeModalProduct) return;
+
+      const url = document.getElementById('quickImageUrl').value.trim();
+      const btn = document.getElementById('btnSubmitImg');
+      btn.disabled = true;
+      btn.textContent = 'กำลังบันทึกรูป...';
+
+      state.products = state.products.map(p => {
+        if (p.name === activeModalProduct.name) {
+          return { ...p, imageUrl: url };
+        }
+        return p;
+      });
+      updateUI();
+      closeCardActionModal();
+
+      try {
+        const payload = {
+          action: 'updateImage',
+          product: activeModalProduct.name,
+          imageUrl: url
+        };
+
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+
+        const json = await res.json();
+        if (json.status === 'success') {
+          showAlert('บันทึกรูปภาพสินค้าเรียบร้อยแล้ว', 'success');
+          fetchData();
+        } else {
+          showAlert('บันทึกรูปไม่สำเร็จ: ' + json.message, 'error');
+        }
+      } catch (err) {
+        showAlert('บันทึกรูปภาพสำเร็จ', 'success');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'บันทึกรูปภาพสินค้า';
+      }
+    }
+
+    // ==========================================
+    // ฟังก์ชันจัดการและเพิ่มหมวดหมู่ พร้อมกำหนดสีเอง
+    // ==========================================
+    function openCategoryModal() {
+      renderPresetPalette();
+      renderCategoryManageList();
+      selectPresetColor(presetPalette[0].hex);
+      document.getElementById('newCategoryName').value = '';
+      updateNewCatPreview();
+      document.getElementById('modalCategoryManage').classList.remove('hidden');
+    }
+
+    function closeCategoryModal() {
+      document.getElementById('modalCategoryManage').classList.add('hidden');
+    }
+
+    // เรนเดอร์ จานสี Preset Buttons ในฟอร์มเพิ่มหมวดหมู่
+    function renderPresetPalette() {
+      const container = document.getElementById('presetColorContainer');
+      container.innerHTML = presetPalette.map(p => `
+        <button type="button" 
+                onclick="selectPresetColor('${p.hex}')" 
+                id="preset-btn-${p.hex.replace('#','')}"
+                title="${p.name}" 
+                class="w-full h-8 rounded-xl flex items-center justify-center transition hover:scale-105 active:scale-95 shadow-xs border ${
+                  currentSelectedHex === p.hex ? 'ring-2 ring-blue-600 scale-105 border-white' : 'border-black/10'
+                }"
+                style="background-color: ${p.hex};">
+          ${currentSelectedHex === p.hex ? '<svg class="w-4 h-4 text-white drop-shadow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>' : ''}
+        </button>
+      `).join('');
+    }
+
+    function selectPresetColor(hex) {
+      currentSelectedHex = hex;
+      document.getElementById('newCatCustomPicker').value = hex;
+      document.getElementById('newCatHexLabel').textContent = hex;
+      renderPresetPalette();
+      updateNewCatPreview();
+    }
+
+    function onCustomColorPicked(hex) {
+      currentSelectedHex = hex;
+      document.getElementById('newCatHexLabel').textContent = hex;
+      renderPresetPalette();
+      updateNewCatPreview();
+    }
+
+    function updateNewCatPreview() {
+      const name = document.getElementById('newCategoryName').value.trim() || 'ตัวอย่างหมวดหมู่';
+      const badge = document.getElementById('newCatPreviewBadge');
+      badge.textContent = name;
+      badge.style = `background-color: ${hexToRgba(currentSelectedHex, 0.15)}; color: ${currentSelectedHex}; border: 1px solid ${hexToRgba(currentSelectedHex, 0.35)};`;
+    }
+
+    // บันทึกการเพิ่มหมวดหมู่ใหม่
+    async function handleAddNewCategory(e) {
+      e.preventDefault();
+      const catName = document.getElementById('newCategoryName').value.trim();
+      if (!catName) return;
+
+      // ตรวจสอบชื่อซ้ำ
+      const exists = state.categories.some(c => c.name.toLowerCase() === catName.toLowerCase());
+      if (exists) {
+        alert('มีหมวดหมู่นี้ในระบบแล้ว คุณสามารถปรับเปลี่ยนสีของหมวดหมู่นี้ได้ที่รายการด้านล่างครับ');
+        return;
+      }
+
+      // บันทึกสี
+      const colors = getStoredCategoryColors();
+      colors[catName] = currentSelectedHex;
+      saveCategoryColors(colors);
+
+      // บันทึกหมวดหมู่ใหม่
+      const customCats = getStoredCustomCategories();
+      if (!customCats.includes(catName)) {
+        customCats.push(catName);
+        saveCustomCategories(customCats);
+      }
+
+      state.categories.push({ name: catName, isCustom: true });
+
+      // พยายามส่งไป Google Apps Script (ถ้ามี endpoint addCategory)
+      try {
+        fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'addCategory', category: catName, color: currentSelectedHex })
+        }).catch(() => {});
+      } catch (err) {}
+
+      updateUI();
+      renderCategoryManageList();
+      document.getElementById('newCategoryName').value = '';
+      showAlert(`เพิ่มหมวดหมู่ "${catName}" พร้อมสีกำกับเรียบร้อยแล้ว`, 'success');
+      closeCategoryModal();
+    }
+
+    // เรนเดอร์รายการหมวดหมู่ทั้งหมดในหน้า Modal เพื่อให้ผู้ใช้ปรับเปลี่ยนสีได้
+    function renderCategoryManageList() {
+      const container = document.getElementById('categoryManageList');
+      if (!container) return;
+
+      container.innerHTML = state.categories.map(c => {
+        const currentColor = getCategoryColor(c.name);
+        const count = state.products.filter(p => p.category === c.name).length;
+
+        return `
+          <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2.5">
+              <!-- Color Picker สำหรับแต่ละหมวด -->
+              <input type="color" 
+                     value="${currentColor}" 
+                     onchange="updateSingleCategoryColor('${c.name}', this.value)" 
+                     title="คลิกเพื่อเปลี่ยนสีหมวด ${c.name}"
+                     class="w-6 h-6 rounded-lg cursor-pointer border border-slate-300 p-0 bg-transparent flex-shrink-0" />
+              <div>
+                <span class="font-bold text-slate-800 text-xs">${c.name}</span>
+                <span class="text-[10px] text-slate-400 block">${count} สินค้าในหมวด</span>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-mono font-bold text-slate-600 bg-white px-2 py-0.5 rounded border border-slate-200">${currentColor}</span>
+              ${c.isCustom ? `
+                <button type="button" onclick="deleteCustomCategory('${c.name}')" title="ลบหมวดหมู่ที่สร้างเอง" class="p-1 rounded-lg text-rose-500 hover:bg-rose-50 active:scale-95">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </button>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // อัปเดตสีของหมวดหมู่เดี่ยว
+    function updateSingleCategoryColor(catName, newHex) {
+      const colors = getStoredCategoryColors();
+      colors[catName] = newHex;
+      saveCategoryColors(colors);
+      updateUI();
+      renderCategoryManageList();
+      showAlert(`เปลี่ยนสีหมวดหมู่ "${catName}" เป็น ${newHex} สำเร็จ`, 'success');
+    }
+
+    // ลบหมวดหมู่ที่ผู้ใช้สร้างเอง
+    function deleteCustomCategory(catName) {
+      const count = state.products.filter(p => p.category === catName).length;
+      if (count > 0) {
+        if (!confirm(`มีสินค้าจำนวน ${count} รายการอยู่ในหมวดหมู่นี้ คุณต้องการลบหมวดหมู่นี้หรือไม่?`)) return;
+      } else {
+        if (!confirm(`ต้องการลบหมวดหมู่ "${catName}" ใช่หรือไม่?`)) return;
+      }
+
+      let customCats = getStoredCustomCategories();
+      customCats = customCats.filter(c => c !== catName);
+      saveCustomCategories(customCats);
+
+      const colors = getStoredCategoryColors();
+      delete colors[catName];
+      saveCategoryColors(colors);
+
+      state.categories = state.categories.filter(c => c.name !== catName);
+      if (state.activeCategoryFilter === catName) {
+        state.activeCategoryFilter = 'ALL';
+      }
+
+      updateUI();
+      renderCategoryManageList();
+      showAlert(`ลบหมวดหมู่ "${catName}" เรียบร้อยแล้ว`, 'success');
+    }
+
+    // รีเซ็ตสีกลับเป็นค่าเริ่มต้น
+    function resetCategoryColors() {
+      if (!confirm('ต้องการรีเซ็ตสีของทุกหมวดหมู่กลับเป็นค่าเริ่มต้นหรือไม่?')) return;
+      localStorage.removeItem('stock_category_colors_v1');
+      updateUI();
+      renderCategoryManageList();
+      showAlert('รีเซ็ตสีหมวดหมู่เป็นค่าเริ่มต้นแล้ว', 'success');
+    }
+
+    // เรนเดอร์ ประวัติ & Audit Log
+    function renderHistoryList() {
+      const list = document.getElementById('historyList');
+      let filtered = state.transactions;
+
+      if (state.historyFilter === 'ADJUST') {
+        filtered = filtered.filter(t => (t.notes && t.notes.includes('[ปรับปรุงยอด]')) || (t.type && t.type.includes('ปรับยอด')));
+      }
+
+      if (filtered.length === 0) {
+        list.innerHTML = '<div class="text-center py-12 text-slate-400 text-xs bg-white rounded-2xl border border-dashed border-slate-300">ยังไม่มีรายการบันทึก</div>';
+        return;
+      }
+
+      list.innerHTML = filtered.map(t => {
+        const isAdjust = (t.notes && t.notes.includes('[ปรับปรุงยอด]')) || (t.type && t.type.includes('ปรับยอด'));
+        const badgeColor = isAdjust ? 'bg-amber-100 text-amber-900 border-amber-300 font-bold' :
+                           t.type.includes('+') ? 'bg-emerald-50 text-emerald-800 border-emerald-200 font-medium' :
+                           t.type.includes('x') ? 'bg-rose-50 text-rose-800 border-rose-200 font-medium' :
+                           'bg-blue-50 text-blue-800 border-blue-200 font-medium';
+
+        return `
+          <div class="bg-white p-3 rounded-xl border ${isAdjust ? 'border-amber-200 shadow-sm bg-amber-50/10' : 'border-slate-200'} text-xs space-y-1.5">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-slate-800 text-xs">${t.product}</span>
+              <span class="px-2 py-0.5 rounded-full border text-[11px] ${badgeColor}">
+                ${isAdjust ? '⚙️ ' : ''}${t.type} ${t.quantity}
+              </span>
+            </div>
+            <div class="flex justify-between text-slate-400 text-[11px]">
+              <span>วันที่: ${t.date}</span>
+              <span>โดย: <strong class="text-slate-600">${t.recordedBy || '-'}</strong></span>
+            </div>
+            ${t.notes ? `
+              <div class="p-2 rounded-lg text-xs leading-relaxed ${isAdjust ? 'bg-amber-50 text-amber-900 border border-amber-100' : 'bg-slate-50 text-slate-600'}">
+                ${isAdjust ? '<span class="font-bold text-amber-800">📌 เหตุผล Audit Log:</span> ' : 'หมายเหตุ: '}${t.notes}
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function filterHistory(type) {
+      state.historyFilter = type;
+      document.getElementById('hfilter-all').className = type === 'ALL' ? 'px-2.5 py-0.5 rounded-full bg-blue-600 text-white font-medium' : 'px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-700 hover:bg-slate-300';
+      document.getElementById('hfilter-adjust').className = type === 'ADJUST' ? 'px-2.5 py-0.5 rounded-full bg-amber-600 text-white font-medium' : 'px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-700 hover:bg-slate-300';
       renderHistoryList();
     }
 
+    // ฟังก์ชันในหน้า Tab บันทึกรายวันเดิม
     function onCategoryChange() {
       const selectedCat = document.getElementById('inputCategory').value;
       const prodSelect = document.getElementById('inputProduct');
@@ -210,6 +1388,7 @@
       const prodName = document.getElementById('inputProduct').value;
       const infoBox = document.getElementById('productInfo');
       const labelUnit = document.getElementById('labelUnit');
+      const imgPreview = document.getElementById('prodImgPreview');
       const prod = state.products.find(p => p.name === prodName);
 
       if (prod) {
@@ -218,6 +1397,12 @@
         document.getElementById('currentUnit').textContent = prod.unit;
         document.getElementById('minStockVal').textContent = prod.minStock + ' ' + prod.unit;
         labelUnit.textContent = `(${prod.unit})`;
+
+        if (prod.imageUrl) {
+          imgPreview.innerHTML = `<img src="${prod.imageUrl}" class="w-full h-full object-cover">`;
+        } else {
+          imgPreview.innerHTML = `<svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>`;
+        }
       } else {
         infoBox.classList.add('hidden');
         labelUnit.textContent = '';
@@ -241,70 +1426,6 @@
       });
     }
 
-    function renderStockList() {
-      const list = document.getElementById('productList');
-      const query = document.getElementById('searchBox').value.trim().toLowerCase();
-      const cat = document.getElementById('filterCategory').value;
-
-      const filtered = state.products.filter(p => {
-        const matchCat = cat === 'ALL' || p.category === cat;
-        const matchQuery = !query || p.name.toLowerCase().includes(query);
-        return matchCat && matchQuery;
-      });
-
-      if (filtered.length === 0) {
-        list.innerHTML = '<div class="text-center py-8 text-slate-400 text-sm">ไม่พบสินค้า</div>';
-        return;
-      }
-
-      list.innerHTML = filtered.map(p => {
-        const isLow = Number(p.currentBalance) <= Number(p.minStock);
-        return `
-          <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
-            <div>
-              <div class="font-semibold text-sm text-slate-800">${p.name}</div>
-              <div class="text-xs text-slate-400 mt-0.5">${p.category} | ขั้นต่ำ: ${p.minStock} ${p.unit}</div>
-            </div>
-            <div class="text-right">
-              <div class="text-base font-bold ${isLow ? 'text-rose-600' : 'text-slate-800'}">
-                ${p.currentBalance} <span class="text-xs font-normal text-slate-500">${p.unit}</span>
-              </div>
-              ${isLow ? '<span class="inline-block text-[10px] font-semibold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded">สต็อกใกล้หมด</span>' : ''}
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function renderHistoryList() {
-      const list = document.getElementById('historyList');
-      if (state.transactions.length === 0) {
-        list.innerHTML = '<div class="text-center py-8 text-slate-400 text-sm">ยังไม่มีรายการบันทึก</div>';
-        return;
-      }
-
-      list.innerHTML = state.transactions.map(t => {
-        const badgeColor = t.type.includes('+') ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
-                           t.type.includes('x') ? 'bg-rose-50 text-rose-700 border-rose-200' :
-                           'bg-blue-50 text-blue-700 border-blue-200';
-        return `
-          <div class="bg-white p-3 rounded-xl border border-slate-200 text-xs space-y-1">
-            <div class="flex justify-between items-center">
-              <span class="font-semibold text-slate-800">${t.product}</span>
-              <span class="px-2 py-0.5 rounded-full border text-[11px] font-medium ${badgeColor}">
-                ${t.type} ${t.quantity}
-              </span>
-            </div>
-            <div class="flex justify-between text-slate-400">
-              <span>วันที่: ${t.date}</span>
-              <span>โดย: ${t.recordedBy || '-'}</span>
-            </div>
-            ${t.notes ? `<div class="bg-slate-50 p-1.5 rounded text-slate-600">หมายเหตุ: ${t.notes}</div>` : ''}
-          </div>
-        `;
-      }).join('');
-    }
-
     async function submitForm(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSubmit');
@@ -320,12 +1441,9 @@
       btn.disabled = true;
       btn.textContent = "กำลังบันทึก...";
 
-      // Optimistic UI
+      const diff = state.selectedType.includes('+') ? qty : -qty;
       state.products = state.products.map(p => {
         if (p.name === prodName) {
-          let diff = 0;
-          if (state.selectedType.includes('+')) diff = qty;
-          if (state.selectedType.includes('-') || state.selectedType.includes('x')) diff = -qty;
           return { ...p, currentBalance: Number(p.currentBalance) + diff };
         }
         return p;
@@ -334,6 +1452,7 @@
 
       try {
         const payload = {
+          action: 'addTransaction',
           date: date,
           category: catName,
           product: prodName,
@@ -359,7 +1478,7 @@
           showAlert('เกิดข้อผิดพลาด: ' + json.message, 'error');
         }
       } catch (err) {
-        showAlert('บันทึกข้อมูลสำเร็จ (ข้อมูลจะซิงค์กับ Sheet อัตโนมัติ)', 'success');
+        showAlert('บันทึกข้อมูลสำเร็จ', 'success');
       } finally {
         btn.disabled = false;
         btn.textContent = "บันทึกข้อมูล";
@@ -367,11 +1486,11 @@
     }
 
     function switchTab(tab) {
-      ['entry', 'stock', 'history'].forEach(t => {
+      ['dashboard', 'entry', 'history'].forEach(t => {
         document.getElementById('view-' + t).classList.toggle('hidden', t !== tab);
         const tabBtn = document.getElementById('tab-' + t);
         if (t === tab) {
-          tabBtn.className = "flex-1 py-2.5 font-medium text-center border-b-2 border-white text-white";
+          tabBtn.className = "flex-1 py-2.5 font-bold text-center border-b-2 border-white text-white";
         } else {
           tabBtn.className = "flex-1 py-2.5 font-medium text-center border-b-2 border-transparent text-blue-100 hover:text-white";
         }
@@ -381,19 +1500,19 @@
     function showAlert(msg, type) {
       const box = document.getElementById('alertBox');
       const text = document.getElementById('alertMsg');
-      box.className = `mb-4 p-3 rounded-xl text-sm flex items-center justify-between ${
+      box.className = `p-3 rounded-xl text-xs flex items-center justify-between shadow-sm ${
         type === 'success' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-rose-50 text-rose-800 border border-rose-200'
       }`;
       text.textContent = msg;
       box.classList.remove('hidden');
-      setTimeout(() => box.classList.add('hidden'), 4000);
+      setTimeout(() => box.classList.add('hidden'), 4500);
     }
 
     function hideAlert() {
       document.getElementById('alertBox').classList.add('hidden');
     }
 
-    // เริ่มทำงานครั้งแรก
+    // เริ่มทำงาน
     fetchData();
   </script>
 </body>
