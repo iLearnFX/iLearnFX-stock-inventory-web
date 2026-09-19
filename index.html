@@ -1,409 +1,400 @@
-{\rtf1\ansi\ansicpg874\cocoartf2870
-\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
-{\colortbl;\red255\green255\blue255;}
-{\*\expandedcolortbl;;}
-\paperw11900\paperh16840\margl1440\margr1440\vieww28600\viewh14860\viewkind0
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>ระบบตรวจนับสต็อกสินค้า</title>
+  <!-- Tailwind CSS & Google Fonts -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Prompt', sans-serif; -webkit-tap-highlight-color: transparent; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen pb-20">
 
-\f0\fs24 \cf0 <!DOCTYPE html>\
-<html lang="th">\
-<head>\
-  <meta charset="UTF-8" />\
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />\
-  <title>\uc0\u3619 \u3632 \u3610 \u3610 \u3605 \u3619 \u3623 \u3592 \u3609 \u3633 \u3610 \u3626 \u3605 \u3655 \u3629 \u3585 \u3626 \u3636 \u3609 \u3588 \u3657 \u3634 </title>\
-  <!-- Tailwind CSS & Google Fonts -->\
-  <script src="https://cdn.tailwindcss.com"></script>\
-  <link rel="preconnect" href="https://fonts.googleapis.com">\
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\
-  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">\
-  <style>\
-    body \{ font-family: 'Prompt', sans-serif; -webkit-tap-highlight-color: transparent; \}\
-  </style>\
-</head>\
-<body class="bg-slate-100 text-slate-800 min-h-screen pb-20">\
-\
-  <!-- Header -->\
-  <header class="bg-blue-600 text-white shadow sticky top-0 z-30">\
-    <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">\
-      <div class="flex items-center gap-2">\
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>\
-        <h1 class="font-semibold text-lg">\uc0\u3619 \u3632 \u3610 \u3610 \u3605 \u3619 \u3623 \u3592 \u3609 \u3633 \u3610 \u3626 \u3605 \u3655 \u3629 \u3585 </h1>\
-      </div>\
-      <button onclick="fetchData(true)" id="refreshBtn" class="p-1.5 rounded-full hover:bg-blue-700 active:scale-95 transition">\
-        <svg id="refreshIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>\
-      </button>\
-    </div>\
-\
-    <!-- Navigation Tabs -->\
-    <div class="max-w-md mx-auto px-4 flex border-t border-blue-500 text-sm">\
-      <button onclick="switchTab('entry')" id="tab-entry" class="flex-1 py-2.5 font-medium text-center border-b-2 border-white text-white">\uc0\u3610 \u3633 \u3609 \u3607 \u3638 \u3585 \u3619 \u3634 \u3618 \u3623 \u3633 \u3609 </button>\
-      <button onclick="switchTab('stock')" id="tab-stock" class="flex-1 py-2.5 font-medium text-center border-b-2 border-transparent text-blue-100 hover:text-white">\uc0\u3626 \u3605 \u3655 \u3629 \u3585 \u3588 \u3591 \u3648 \u3627 \u3621 \u3639 \u3629 </button>\
-      <button onclick="switchTab('history')" id="tab-history" class="flex-1 py-2.5 font-medium text-center border-b-2 border-transparent text-blue-100 hover:text-white">\uc0\u3611 \u3619 \u3632 \u3623 \u3633 \u3605 \u3636 \u3621 \u3656 \u3634 \u3626 \u3640 \u3604 </button>\
-    </div>\
-  </header>\
-\
-  <!-- Main Container -->\
-  <main class="max-w-md mx-auto p-4">\
-    \
-    <!-- \uc0\u3649 \u3592 \u3657 \u3591 \u3648 \u3605 \u3639 \u3629 \u3609 \u3626 \u3606 \u3634 \u3609 \u3632  -->\
-    <div id="alertBox" class="hidden mb-4 p-3 rounded-lg text-sm flex items-center justify-between">\
-      <span id="alertMsg"></span>\
-      <button onclick="hideAlert()" class="text-xs font-bold px-1.5 py-0.5">&times;</button>\
-    </div>\
-\
-    <!-- TAB 1: \uc0\u3610 \u3633 \u3609 \u3607 \u3638 \u3585 \u3586 \u3657 \u3629 \u3617 \u3641 \u3621 \u3619 \u3634 \u3618 \u3623 \u3633 \u3609  -->\
-    <section id="view-entry" class="space-y-4">\
-      <form id="stockForm" onsubmit="submitForm(event)" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 space-y-4">\
-        <div>\
-          <label class="block text-xs font-medium text-slate-600 mb-1">\uc0\u3623 \u3633 \u3609 \u3607 \u3637 \u3656 \u3610 \u3633 \u3609 \u3607 \u3638 \u3585 </label>\
-          <input type="date" id="inputDate" required class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />\
-        </div>\
-\
-        <div>\
-          <label class="block text-xs font-medium text-slate-600 mb-1">\uc0\u3627 \u3617 \u3623 \u3604 \u3627 \u3617 \u3641 \u3656 \u3626 \u3636 \u3609 \u3588 \u3657 \u3634 </label>\
-          <select id="inputCategory" onchange="onCategoryChange()" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">\
-            <option value="">-- \uc0\u3648 \u3621 \u3639 \u3629 \u3585 \u3627 \u3617 \u3623 \u3604 \u3627 \u3617 \u3641 \u3656  (\u3607 \u3633 \u3657 \u3591 \u3627 \u3617 \u3604 ) --</option>\
-          </select>\
-        </div>\
-\
-        <div>\
-          <label class="block text-xs font-medium text-slate-600 mb-1">\uc0\u3619 \u3634 \u3618 \u3585 \u3634 \u3619 \u3626 \u3636 \u3609 \u3588 \u3657 \u3634  *</label>\
-          <select id="inputProduct" onchange="onProductChange()" required class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">\
-            <option value="">-- \uc0\u3648 \u3621 \u3639 \u3629 \u3585 \u3626 \u3636 \u3609 \u3588 \u3657 \u3634  --</option>\
-          </select>\
-          <div id="productInfo" class="hidden mt-2 p-2.5 bg-slate-50 border border-slate-100 rounded-lg text-xs text-slate-600 flex justify-between items-center">\
-            <span>\uc0\u3588 \u3591 \u3648 \u3627 \u3621 \u3639 \u3629 \u3611 \u3633 \u3592 \u3592 \u3640 \u3610 \u3633 \u3609 : <strong id="currentStockVal" class="text-blue-600 font-bold text-sm">0</strong> <span id="currentUnit"></span></span>\
-            <span class="text-slate-400">\uc0\u3592 \u3640 \u3604 \u3626 \u3633 \u3656 \u3591 \u3595 \u3639 \u3657 \u3629 : <span id="minStockVal">0</span></span>\
-          </div>\
-        </div>\
-\
-        <!-- \uc0\u3611 \u3640 \u3656 \u3617 \u3648 \u3621 \u3639 \u3629 \u3585 \u3611 \u3619 \u3632 \u3648 \u3616 \u3607  -->\
-        <div>\
-          <label class="block text-xs font-medium text-slate-600 mb-1">\uc0\u3611 \u3619 \u3632 \u3648 \u3616 \u3607 \u3585 \u3634 \u3619 \u3648 \u3588 \u3621 \u3639 \u3656 \u3629 \u3609 \u3652 \u3627 \u3623 </label>\
-          <div class="grid grid-cols-3 gap-2">\
-            <button type="button" onclick="setType('\uc0\u3648 \u3610 \u3636 \u3585 \u3629 \u3629 \u3585  (-)')" id="type-out" class="type-btn py-2 text-xs font-medium rounded-xl border border-blue-500 bg-blue-50 text-blue-700 font-bold ring-2 ring-blue-300">\u3648 \u3610 \u3636 \u3585 \u3629 \u3629 \u3585  (-)</button>\
-            <button type="button" onclick="setType('\uc0\u3619 \u3633 \u3610 \u3648 \u3586 \u3657 \u3634  (+)')" id="type-in" class="type-btn py-2 text-xs font-medium rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50">\u3619 \u3633 \u3610 \u3648 \u3586 \u3657 \u3634  (+)</button>\
-            <button type="button" onclick="setType('\uc0\u3586 \u3629 \u3591 \u3648 \u3626 \u3637 \u3618  (x)')" id="type-waste" class="type-btn py-2 text-xs font-medium rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50">\u3586 \u3629 \u3591 \u3648 \u3626 \u3637 \u3618  (x)</button>\
-          </div>\
-        </div>\
-\
-        <!-- \uc0\u3592 \u3635 \u3609 \u3623 \u3609  -->\
-        <div>\
-          <label class="block text-xs font-medium text-slate-600 mb-1">\uc0\u3592 \u3635 \u3609 \u3623 \u3609  <span id="labelUnit"></span> *</label>\
-          <input type="number" step="any" min="0.01" id="inputQty" required placeholder="\uc0\u3619 \u3632 \u3610 \u3640 \u3592 \u3635 \u3609 \u3623 \u3609 \u3605 \u3633 \u3623 \u3648 \u3621 \u3586 " class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />\
-        </div>\
-\
-        <!-- \uc0\u3612 \u3641 \u3657 \u3610 \u3633 \u3609 \u3607 \u3638 \u3585  \u3649 \u3621 \u3632  \u3627 \u3617 \u3634 \u3618 \u3648 \u3627 \u3605 \u3640  -->\
-        <div class="grid grid-cols-2 gap-2">\
-          <div>\
-            <label class="block text-xs font-medium text-slate-600 mb-1">\uc0\u3612 \u3641 \u3657 \u3607 \u3635 \u3619 \u3634 \u3618 \u3585 \u3634 \u3619 </label>\
-            <input type="text" id="inputUser" placeholder="\uc0\u3594 \u3639 \u3656 \u3629 \u3612 \u3641 \u3657 \u3610 \u3633 \u3609 \u3607 \u3638 \u3585 " class="w-full border border-slate-300 rounded-xl p-2 text-sm outline-none" />\
-          </div>\
-          <div>\
-            <label class="block text-xs font-medium text-slate-600 mb-1">\uc0\u3627 \u3617 \u3634 \u3618 \u3648 \u3627 \u3605 \u3640 </label>\
-            <input type="text" id="inputNotes" placeholder="\uc0\u3648 \u3594 \u3656 \u3609  \u3651 \u3594 \u3657 \u3591 \u3634 \u3609 \u3627 \u3609 \u3657 \u3634 \u3619 \u3657 \u3634 \u3609 " class="w-full border border-slate-300 rounded-xl p-2 text-sm outline-none" />\
-          </div>\
-        </div>\
-\
-        <button type="submit" id="btnSubmit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-medium rounded-xl shadow-md transition disabled:opacity-50 text-sm">\
-          \uc0\u3610 \u3633 \u3609 \u3607 \u3638 \u3585 \u3586 \u3657 \u3629 \u3617 \u3641 \u3621 \
-        </button>\
-      </form>\
-    </section>\
-\
-    <!-- TAB 2: \uc0\u3626 \u3605 \u3655 \u3629 \u3585 \u3588 \u3591 \u3648 \u3627 \u3621 \u3639 \u3629  -->\
-    <section id="view-stock" class="hidden space-y-3">\
-      <div class="flex gap-2">\
-        <input type="text" id="searchBox" oninput="renderStockList()" placeholder="\uc0\u3588 \u3657 \u3609 \u3627 \u3634 \u3594 \u3639 \u3656 \u3629 \u3626 \u3636 \u3609 \u3588 \u3657 \u3634 ..." class="flex-1 border border-slate-300 rounded-xl px-3 py-2 text-sm outline-none bg-white" />\
-        <select id="filterCategory" onchange="renderStockList()" class="border border-slate-300 rounded-xl px-2 py-2 text-sm outline-none bg-white">\
-          <option value="ALL">\uc0\u3607 \u3640 \u3585 \u3627 \u3617 \u3623 \u3604 \u3627 \u3617 \u3641 \u3656 </option>\
-        </select>\
-      </div>\
-\
-      <div id="productList" class="space-y-2">\
-        <!-- \uc0\u3619 \u3634 \u3618 \u3585 \u3634 \u3619 \u3626 \u3636 \u3609 \u3588 \u3657 \u3634 \u3592 \u3632 \u3649 \u3626 \u3604 \u3591 \u3607 \u3637 \u3656 \u3609 \u3637 \u3656  -->\
-      </div>\
-    </section>\
-\
-    <!-- TAB 3: \uc0\u3611 \u3619 \u3632 \u3623 \u3633 \u3605 \u3636 \u3621 \u3656 \u3634 \u3626 \u3640 \u3604  -->\
-    <section id="view-history" class="hidden space-y-2">\
-      <h2 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">50 \uc0\u3619 \u3634 \u3618 \u3585 \u3634 \u3619 \u3621 \u3656 \u3634 \u3626 \u3640 \u3604 </h2>\
-      <div id="historyList" class="space-y-2">\
-        <!-- \uc0\u3611 \u3619 \u3632 \u3623 \u3633 \u3605 \u3636 \u3592 \u3632 \u3649 \u3626 \u3604 \u3591 \u3607 \u3637 \u3656 \u3609 \u3637 \u3656  -->\
-      </div>\
-    </section>\
-\
-  </main>\
-\
-  <script>\
-    const API_URL = "https://script.google.com/macros/s/AKfycbyQQSG8mXaP37y2xXrY7Kg9aDE07A08X5Gk5Ld7WHkhzViRs9UQ8VatK6L8QLPXwloklg/exec";\
-    \
-    let state = \{\
-      categories: [],\
-      products: [],\
-      transactions: [],\
-      selectedType: '\uc0\u3648 \u3610 \u3636 \u3585 \u3629 \u3629 \u3585  (-)'\
-    \};\
-\
-    // \uc0\u3605 \u3633 \u3657 \u3591 \u3588 \u3656 \u3634 \u3623 \u3633 \u3609 \u3611 \u3633 \u3592 \u3592 \u3640 \u3610 \u3633 \u3609 \
-    document.getElementById('inputDate').value = new Date().toISOString().split('T')[0];\
-\
-    // \uc0\u3650 \u3627 \u3621 \u3604 \u3586 \u3657 \u3629 \u3617 \u3641 \u3621 \u3592 \u3634 \u3585  LocalStorage \u3585 \u3656 \u3629 \u3609  (\u3648 \u3614 \u3639 \u3656 \u3629 \u3588 \u3623 \u3634 \u3617 \u3648 \u3619 \u3655 \u3623 \u3607 \u3633 \u3609 \u3651 \u3592 )\
-    try \{\
-      const cached = localStorage.getItem('stock_app_cache');\
-      if (cached) \{\
-        state = JSON.parse(cached);\
-        updateUI();\
-      \}\
-    \} catch (e) \{\}\
-\
-    // \uc0\u3604 \u3638 \u3591 \u3586 \u3657 \u3629 \u3617 \u3641 \u3621 \u3621 \u3656 \u3634 \u3626 \u3640 \u3604 \u3592 \u3634 \u3585  Google Apps Script\
-    async function fetchData(isManual = false) \{\
-      const refreshIcon = document.getElementById('refreshIcon');\
-      refreshIcon.classList.add('animate-spin');\
-      try \{\
-        const res = await fetch(API_URL);\
-        const json = await res.json();\
-        if (json.status === 'success') \{\
-          state.categories = json.data.categories || [];\
-          state.products = json.data.products || [];\
-          state.transactions = json.data.transactions || [];\
-          localStorage.setItem('stock_app_cache', JSON.stringify(state));\
-          updateUI();\
-          if (isManual) showAlert('\uc0\u3629 \u3633 \u3611 \u3648 \u3604 \u3605 \u3586 \u3657 \u3629 \u3617 \u3641 \u3621 \u3621 \u3656 \u3634 \u3626 \u3640 \u3604 \u3649 \u3621 \u3657 \u3623 ', 'success');\
-        \}\
-      \} catch (err) \{\
-        if (isManual) showAlert('\uc0\u3652 \u3617 \u3656 \u3626 \u3634 \u3617 \u3634 \u3619 \u3606 \u3604 \u3638 \u3591 \u3586 \u3657 \u3629 \u3617 \u3641 \u3621 \u3652 \u3604 \u3657  \u3650 \u3611 \u3619 \u3604 \u3621 \u3629 \u3591 \u3629 \u3637 \u3585 \u3588 \u3619 \u3633 \u3657 \u3591 ', 'error');\
-      \} finally \{\
-        refreshIcon.classList.remove('animate-spin');\
-      \}\
-    \}\
-\
-    function updateUI() \{\
-      // \uc0\u3627 \u3617 \u3623 \u3604 \u3627 \u3617 \u3641 \u3656 \u3651 \u3609 \u3615 \u3629 \u3619 \u3660 \u3617  \u3649 \u3621 \u3632 \u3605 \u3633 \u3623 \u3585 \u3619 \u3629 \u3591 \
-      const catSelect = document.getElementById('inputCategory');\
-      const filterCat = document.getElementById('filterCategory');\
-      const currentCatVal = catSelect.value;\
-      const currentFilterVal = filterCat.value;\
-\
-      catSelect.innerHTML = '<option value="">-- \uc0\u3648 \u3621 \u3639 \u3629 \u3585 \u3627 \u3617 \u3623 \u3604 \u3627 \u3617 \u3641 \u3656  (\u3607 \u3633 \u3657 \u3591 \u3627 \u3617 \u3604 ) --</option>';\
-      filterCat.innerHTML = '<option value="ALL">\uc0\u3607 \u3640 \u3585 \u3627 \u3617 \u3623 \u3604 \u3627 \u3617 \u3641 \u3656 </option>';\
-\
-      state.categories.forEach(c => \{\
-        catSelect.innerHTML += `<option value="$\{c.name\}">$\{c.name\}</option>`;\
-        filterCat.innerHTML += `<option value="$\{c.name\}">$\{c.name\}</option>`;\
-      \});\
-\
-      catSelect.value = currentCatVal;\
-      filterCat.value = currentFilterVal;\
-\
-      onCategoryChange();\
-      renderStockList();\
-      renderHistoryList();\
-    \}\
-\
-    function onCategoryChange() \{\
-      const selectedCat = document.getElementById('inputCategory').value;\
-      const prodSelect = document.getElementById('inputProduct');\
-      prodSelect.innerHTML = '<option value="">-- \uc0\u3648 \u3621 \u3639 \u3629 \u3585 \u3626 \u3636 \u3609 \u3588 \u3657 \u3634  --</option>';\
-\
-      const filtered = state.products.filter(p => !selectedCat || p.category === selectedCat);\
-      filtered.forEach(p => \{\
-        prodSelect.innerHTML += `<option value="$\{p.name\}">$\{p.name\} (\uc0\u3588 \u3591 \u3648 \u3627 \u3621 \u3639 \u3629 : $\{p.currentBalance\} $\{p.unit\})</option>`;\
-      \});\
-      onProductChange();\
-    \}\
-\
-    function onProductChange() \{\
-      const prodName = document.getElementById('inputProduct').value;\
-      const infoBox = document.getElementById('productInfo');\
-      const labelUnit = document.getElementById('labelUnit');\
-      const prod = state.products.find(p => p.name === prodName);\
-\
-      if (prod) \{\
-        infoBox.classList.remove('hidden');\
-        document.getElementById('currentStockVal').textContent = prod.currentBalance;\
-        document.getElementById('currentUnit').textContent = prod.unit;\
-        document.getElementById('minStockVal').textContent = prod.minStock + ' ' + prod.unit;\
-        labelUnit.textContent = `($\{prod.unit\})`;\
-      \} else \{\
-        infoBox.classList.add('hidden');\
-        labelUnit.textContent = '';\
-      \}\
-    \}\
-\
-    function setType(type) \{\
-      state.selectedType = type;\
-      const btns = \{\
-        '\uc0\u3648 \u3610 \u3636 \u3585 \u3629 \u3629 \u3585  (-)': document.getElementById('type-out'),\
-        '\uc0\u3619 \u3633 \u3610 \u3648 \u3586 \u3657 \u3634  (+)': document.getElementById('type-in'),\
-        '\uc0\u3586 \u3629 \u3591 \u3648 \u3626 \u3637 \u3618  (x)': document.getElementById('type-waste')\
-      \};\
-\
-      Object.keys(btns).forEach(k => \{\
-        if (k === type) \{\
-          btns[k].className = "type-btn py-2 text-xs font-medium rounded-xl border border-blue-500 bg-blue-50 text-blue-700 font-bold ring-2 ring-blue-300";\
-        \} else \{\
-          btns[k].className = "type-btn py-2 text-xs font-medium rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50";\
-        \}\
-      \});\
-    \}\
-\
-    function renderStockList() \{\
-      const list = document.getElementById('productList');\
-      const query = document.getElementById('searchBox').value.trim().toLowerCase();\
-      const cat = document.getElementById('filterCategory').value;\
-\
-      const filtered = state.products.filter(p => \{\
-        const matchCat = cat === 'ALL' || p.category === cat;\
-        const matchQuery = !query || p.name.toLowerCase().includes(query);\
-        return matchCat && matchQuery;\
-      \});\
-\
-      if (filtered.length === 0) \{\
-        list.innerHTML = '<div class="text-center py-8 text-slate-400 text-sm">\uc0\u3652 \u3617 \u3656 \u3614 \u3610 \u3626 \u3636 \u3609 \u3588 \u3657 \u3634 </div>';\
-        return;\
-      \}\
-\
-      list.innerHTML = filtered.map(p => \{\
-        const isLow = Number(p.currentBalance) <= Number(p.minStock);\
-        return `\
-          <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">\
-            <div>\
-              <div class="font-semibold text-sm text-slate-800">$\{p.name\}</div>\
-              <div class="text-xs text-slate-400 mt-0.5">$\{p.category\} | \uc0\u3586 \u3633 \u3657 \u3609 \u3605 \u3656 \u3635 : $\{p.minStock\} $\{p.unit\}</div>\
-            </div>\
-            <div class="text-right">\
-              <div class="text-base font-bold $\{isLow ? 'text-rose-600' : 'text-slate-800'\}">\
-                $\{p.currentBalance\} <span class="text-xs font-normal text-slate-500">$\{p.unit\}</span>\
-              </div>\
-              $\{isLow ? '<span class="inline-block text-[10px] font-semibold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded">\uc0\u3626 \u3605 \u3655 \u3629 \u3585 \u3651 \u3585 \u3621 \u3657 \u3627 \u3617 \u3604 </span>' : ''\}\
-            </div>\
-          </div>\
-        `;\
-      \}).join('');\
-    \}\
-\
-    function renderHistoryList() \{\
-      const list = document.getElementById('historyList');\
-      if (state.transactions.length === 0) \{\
-        list.innerHTML = '<div class="text-center py-8 text-slate-400 text-sm">\uc0\u3618 \u3633 \u3591 \u3652 \u3617 \u3656 \u3617 \u3637 \u3619 \u3634 \u3618 \u3585 \u3634 \u3619 \u3610 \u3633 \u3609 \u3607 \u3638 \u3585 </div>';\
-        return;\
-      \}\
-\
-      list.innerHTML = state.transactions.map(t => \{\
-        const badgeColor = t.type.includes('+') ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :\
-                           t.type.includes('x') ? 'bg-rose-50 text-rose-700 border-rose-200' :\
-                           'bg-blue-50 text-blue-700 border-blue-200';\
-        return `\
-          <div class="bg-white p-3 rounded-xl border border-slate-200 text-xs space-y-1">\
-            <div class="flex justify-between items-center">\
-              <span class="font-semibold text-slate-800">$\{t.product\}</span>\
-              <span class="px-2 py-0.5 rounded-full border text-[11px] font-medium $\{badgeColor\}">\
-                $\{t.type\} $\{t.quantity\}\
-              </span>\
-            </div>\
-            <div class="flex justify-between text-slate-400">\
-              <span>\uc0\u3623 \u3633 \u3609 \u3607 \u3637 \u3656 : $\{t.date\}</span>\
-              <span>\uc0\u3650 \u3604 \u3618 : $\{t.recordedBy || '-'\}</span>\
-            </div>\
-            $\{t.notes ? `<div class="bg-slate-50 p-1.5 rounded text-slate-600">\uc0\u3627 \u3617 \u3634 \u3618 \u3648 \u3627 \u3605 \u3640 : $\{t.notes\}</div>` : ''\}\
-          </div>\
-        `;\
-      \}).join('');\
-    \}\
-\
-    async function submitForm(e) \{\
-      e.preventDefault();\
-      const btn = document.getElementById('btnSubmit');\
-      const prodName = document.getElementById('inputProduct').value;\
-      const qty = Number(document.getElementById('inputQty').value);\
-      const catName = document.getElementById('inputCategory').value;\
-      const user = document.getElementById('inputUser').value;\
-      const notes = document.getElementById('inputNotes').value;\
-      const date = document.getElementById('inputDate').value;\
-\
-      if (!prodName || !qty) return;\
-\
-      btn.disabled = true;\
-      btn.textContent = "\uc0\u3585 \u3635 \u3621 \u3633 \u3591 \u3610 \u3633 \u3609 \u3607 \u3638 \u3585 ...";\
-\
-      // Optimistic UI: \uc0\u3611 \u3619 \u3633 \u3610 \u3618 \u3629 \u3604 \u3610 \u3609 \u3627 \u3609 \u3657 \u3634 \u3592 \u3629 \u3607 \u3633 \u3609 \u3607 \u3637 \u3648 \u3614 \u3639 \u3656 \u3629 \u3588 \u3623 \u3634 \u3617 \u3648 \u3619 \u3655 \u3623 \
-      state.products = state.products.map(p => \{\
-        if (p.name === prodName) \{\
-          let diff = 0;\
-          if (state.selectedType.includes('+')) diff = qty;\
-          if (state.selectedType.includes('-') || state.selectedType.includes('x')) diff = -qty;\
-          return \{ ...p, currentBalance: Number(p.currentBalance) + diff \};\
-        \}\
-        return p;\
-      \});\
-      updateUI();\
-\
-      try \{\
-        const payload = \{\
-          date: date,\
-          category: catName,\
-          product: prodName,\
-          type: state.selectedType,\
-          quantity: qty,\
-          recordedBy: user,\
-          notes: notes\
-        \};\
-\
-        const res = await fetch(API_URL, \{\
-          method: 'POST',\
-          headers: \{ 'Content-Type': 'text/plain;charset=utf-8' \},\
-          body: JSON.stringify(payload)\
-        \});\
-\
-        const json = await res.json();\
-        if (json.status === 'success') \{\
-          showAlert('\uc0\u3610 \u3633 \u3609 \u3607 \u3638 \u3585 \u3586 \u3657 \u3629 \u3617 \u3641 \u3621 \u3648 \u3619 \u3637 \u3618 \u3610 \u3619 \u3657 \u3629 \u3618 \u3649 \u3621 \u3657 \u3623 ', 'success');\
-          document.getElementById('inputQty').value = '';\
-          document.getElementById('inputNotes').value = '';\
-          fetchData(); // \uc0\u3604 \u3638 \u3591 \u3586 \u3657 \u3629 \u3617 \u3641 \u3621 \u3592 \u3619 \u3636 \u3591 \u3592 \u3634 \u3585  Sheet \u3629 \u3633 \u3611 \u3648 \u3604 \u3605 \u3618 \u3639 \u3609 \u3618 \u3633 \u3609 \u3629 \u3637 \u3585 \u3588 \u3619 \u3633 \u3657 \u3591 \
-        \} else \{\
-          showAlert('\uc0\u3648 \u3585 \u3636 \u3604 \u3586 \u3657 \u3629 \u3612 \u3636 \u3604 \u3614 \u3621 \u3634 \u3604 : ' + json.message, 'error');\
-        \}\
-      \} catch (err) \{\
-        showAlert('\uc0\u3610 \u3633 \u3609 \u3607 \u3638 \u3585 \u3586 \u3657 \u3629 \u3617 \u3641 \u3621 \u3626 \u3635 \u3648 \u3619 \u3655 \u3592  (\u3586 \u3657 \u3629 \u3617 \u3641 \u3621 \u3592 \u3632 \u3595 \u3636 \u3591 \u3588 \u3660 \u3585 \u3633 \u3610  Sheet \u3629 \u3633 \u3605 \u3650 \u3609 \u3617 \u3633 \u3605 \u3636 )', 'success');\
-      \} finally \{\
-        btn.disabled = false;\
-        btn.textContent = "\uc0\u3610 \u3633 \u3609 \u3607 \u3638 \u3585 \u3586 \u3657 \u3629 \u3617 \u3641 \u3621 ";\
-      \}\
-    \}\
-\
-    function switchTab(tab) \{\
-      ['entry', 'stock', 'history'].forEach(t => \{\
-        document.getElementById('view-' + t).classList.toggle('hidden', t !== tab);\
-        const tabBtn = document.getElementById('tab-' + t);\
-        if (t === tab) \{\
-          tabBtn.className = "flex-1 py-2.5 font-medium text-center border-b-2 border-white text-white";\
-        \} else \{\
-          tabBtn.className = "flex-1 py-2.5 font-medium text-center border-b-2 border-transparent text-blue-100 hover:text-white";\
-        \}\
-      \});\
-    \}\
-\
-    function showAlert(msg, type) \{\
-      const box = document.getElementById('alertBox');\
-      const text = document.getElementById('alertMsg');\
-      box.className = `mb-4 p-3 rounded-xl text-sm flex items-center justify-between $\{\
-        type === 'success' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-rose-50 text-rose-800 border border-rose-200'\
-      \}`;\
-      text.textContent = msg;\
-      box.classList.remove('hidden');\
-      setTimeout(() => box.classList.add('hidden'), 4000);\
-    \}\
-\
-    function hideAlert() \{\
-      document.getElementById('alertBox').classList.add('hidden');\
-    \}\
-\
-    // \uc0\u3648 \u3619 \u3636 \u3656 \u3617 \u3607 \u3635 \u3591 \u3634 \u3609 \u3588 \u3619 \u3633 \u3657 \u3591 \u3649 \u3619 \u3585 \
-    fetchData();\
-  </script>\
-</body>\
-</html>\
-}
+  <!-- Header -->
+  <header class="bg-blue-600 text-white shadow sticky top-0 z-30">
+    <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+        <h1 class="font-semibold text-lg">ระบบตรวจนับสต็อก</h1>
+      </div>
+      <button onclick="fetchData(true)" id="refreshBtn" class="p-1.5 rounded-full hover:bg-blue-700 active:scale-95 transition">
+        <svg id="refreshIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+      </button>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="max-w-md mx-auto px-4 flex border-t border-blue-500 text-sm">
+      <button onclick="switchTab('entry')" id="tab-entry" class="flex-1 py-2.5 font-medium text-center border-b-2 border-white text-white">บันทึกรายวัน</button>
+      <button onclick="switchTab('stock')" id="tab-stock" class="flex-1 py-2.5 font-medium text-center border-b-2 border-transparent text-blue-100 hover:text-white">สต็อกคงเหลือ</button>
+      <button onclick="switchTab('history')" id="tab-history" class="flex-1 py-2.5 font-medium text-center border-b-2 border-transparent text-blue-100 hover:text-white">ประวัติล่าสุด</button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-md mx-auto p-4">
+    
+    <!-- แจ้งเตือนสถานะ -->
+    <div id="alertBox" class="hidden mb-4 p-3 rounded-lg text-sm flex items-center justify-between">
+      <span id="alertMsg"></span>
+      <button onclick="hideAlert()" class="text-xs font-bold px-1.5 py-0.5">&times;</button>
+    </div>
+
+    <!-- TAB 1: บันทึกข้อมูลรายวัน -->
+    <section id="view-entry" class="space-y-4">
+      <form id="stockForm" onsubmit="submitForm(event)" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">วันที่บันทึก</label>
+          <input type="date" id="inputDate" required class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">หมวดหมู่สินค้า</label>
+          <select id="inputCategory" onchange="onCategoryChange()" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+            <option value="">-- เลือกหมวดหมู่ (ทั้งหมด) --</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">รายการสินค้า *</label>
+          <select id="inputProduct" onchange="onProductChange()" required class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+            <option value="">-- เลือกสินค้า --</option>
+          </select>
+          <div id="productInfo" class="hidden mt-2 p-2.5 bg-slate-50 border border-slate-100 rounded-lg text-xs text-slate-600 flex justify-between items-center">
+            <span>คงเหลือปัจจุบัน: <strong id="currentStockVal" class="text-blue-600 font-bold text-sm">0</strong> <span id="currentUnit"></span></span>
+            <span class="text-slate-400">จุดสั่งซื้อ: <span id="minStockVal">0</span></span>
+          </div>
+        </div>
+
+        <!-- ปุ่มเลือกประเภท -->
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">ประเภทการเคลื่อนไหว</label>
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" onclick="setType('เบิกออก (-)')" id="type-out" class="type-btn py-2 text-xs font-medium rounded-xl border border-blue-500 bg-blue-50 text-blue-700 font-bold ring-2 ring-blue-300">เบิกออก (-)</button>
+            <button type="button" onclick="setType('รับเข้า (+)')" id="type-in" class="type-btn py-2 text-xs font-medium rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50">รับเข้า (+)</button>
+            <button type="button" onclick="setType('ของเสีย (x)')" id="type-waste" class="type-btn py-2 text-xs font-medium rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50">ของเสีย (x)</button>
+          </div>
+        </div>
+
+        <!-- จำนวน -->
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">จำนวน <span id="labelUnit"></span> *</label>
+          <input type="number" step="any" min="0.01" id="inputQty" required placeholder="ระบุจำนวนตัวเลข" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+        </div>
+
+        <!-- ผู้บันทึก และ หมายเหตุ -->
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">ผู้ทำรายการ</label>
+            <input type="text" id="inputUser" placeholder="ชื่อผู้บันทึก" class="w-full border border-slate-300 rounded-xl p-2 text-sm outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">หมายเหตุ</label>
+            <input type="text" id="inputNotes" placeholder="เช่น ใช้งานหน้าร้าน" class="w-full border border-slate-300 rounded-xl p-2 text-sm outline-none" />
+          </div>
+        </div>
+
+        <button type="submit" id="btnSubmit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-medium rounded-xl shadow-md transition disabled:opacity-50 text-sm">
+          บันทึกข้อมูล
+        </button>
+      </form>
+    </section>
+
+    <!-- TAB 2: สต็อกคงเหลือ -->
+    <section id="view-stock" class="hidden space-y-3">
+      <div class="flex gap-2">
+        <input type="text" id="searchBox" oninput="renderStockList()" placeholder="ค้นหาชื่อสินค้า..." class="flex-1 border border-slate-300 rounded-xl px-3 py-2 text-sm outline-none bg-white" />
+        <select id="filterCategory" onchange="renderStockList()" class="border border-slate-300 rounded-xl px-2 py-2 text-sm outline-none bg-white">
+          <option value="ALL">ทุกหมวดหมู่</option>
+        </select>
+      </div>
+
+      <div id="productList" class="space-y-2">
+        <!-- รายการสินค้าจะแสดงที่นี่ -->
+      </div>
+    </section>
+
+    <!-- TAB 3: ประวัติล่าสุด -->
+    <section id="view-history" class="hidden space-y-2">
+      <h2 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">50 รายการล่าสุด</h2>
+      <div id="historyList" class="space-y-2">
+        <!-- ประวัติจะแสดงที่นี่ -->
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbyQQSG8mXaP37y2xXrY7Kg9aDE07A08X5Gk5Ld7WHkhzViRs9UQ8VatK6L8QLPXwloklg/exec";
+    
+    let state = {
+      categories: [],
+      products: [],
+      transactions: [],
+      selectedType: 'เบิกออก (-)'
+    };
+
+    // ตั้งค่าวันปัจจุบัน
+    document.getElementById('inputDate').value = new Date().toISOString().split('T')[0];
+
+    // โหลดข้อมูลจาก LocalStorage ก่อน (เพื่อความเร็วทันใจ)
+    try {
+      const cached = localStorage.getItem('stock_app_cache');
+      if (cached) {
+        state = JSON.parse(cached);
+        updateUI();
+      }
+    } catch (e) {}
+
+    // ดึงข้อมูลล่าสุดจาก Google Apps Script
+    async function fetchData(isManual = false) {
+      const refreshIcon = document.getElementById('refreshIcon');
+      refreshIcon.classList.add('animate-spin');
+      try {
+        const res = await fetch(API_URL);
+        const json = await res.json();
+        if (json.status === 'success') {
+          state.categories = json.data.categories || [];
+          state.products = json.data.products || [];
+          state.transactions = json.data.transactions || [];
+          localStorage.setItem('stock_app_cache', JSON.stringify(state));
+          updateUI();
+          if (isManual) showAlert('อัปเดตข้อมูลล่าสุดแล้ว', 'success');
+        }
+      } catch (err) {
+        if (isManual) showAlert('ไม่สามารถดึงข้อมูลได้ โปรดลองอีกครั้ง', 'error');
+      } finally {
+        refreshIcon.classList.remove('animate-spin');
+      }
+    }
+
+    function updateUI() {
+      const catSelect = document.getElementById('inputCategory');
+      const filterCat = document.getElementById('filterCategory');
+      const currentCatVal = catSelect.value;
+      const currentFilterVal = filterCat.value;
+
+      catSelect.innerHTML = '<option value="">-- เลือกหมวดหมู่ (ทั้งหมด) --</option>';
+      filterCat.innerHTML = '<option value="ALL">ทุกหมวดหมู่</option>';
+
+      state.categories.forEach(c => {
+        catSelect.innerHTML += `<option value="${c.name}">${c.name}</option>`;
+        filterCat.innerHTML += `<option value="${c.name}">${c.name}</option>`;
+      });
+
+      catSelect.value = currentCatVal;
+      filterCat.value = currentFilterVal;
+
+      onCategoryChange();
+      renderStockList();
+      renderHistoryList();
+    }
+
+    function onCategoryChange() {
+      const selectedCat = document.getElementById('inputCategory').value;
+      const prodSelect = document.getElementById('inputProduct');
+      prodSelect.innerHTML = '<option value="">-- เลือกสินค้า --</option>';
+
+      const filtered = state.products.filter(p => !selectedCat || p.category === selectedCat);
+      filtered.forEach(p => {
+        prodSelect.innerHTML += `<option value="${p.name}">${p.name} (คงเหลือ: ${p.currentBalance} ${p.unit})</option>`;
+      });
+      onProductChange();
+    }
+
+    function onProductChange() {
+      const prodName = document.getElementById('inputProduct').value;
+      const infoBox = document.getElementById('productInfo');
+      const labelUnit = document.getElementById('labelUnit');
+      const prod = state.products.find(p => p.name === prodName);
+
+      if (prod) {
+        infoBox.classList.remove('hidden');
+        document.getElementById('currentStockVal').textContent = prod.currentBalance;
+        document.getElementById('currentUnit').textContent = prod.unit;
+        document.getElementById('minStockVal').textContent = prod.minStock + ' ' + prod.unit;
+        labelUnit.textContent = `(${prod.unit})`;
+      } else {
+        infoBox.classList.add('hidden');
+        labelUnit.textContent = '';
+      }
+    }
+
+    function setType(type) {
+      state.selectedType = type;
+      const btns = {
+        'เบิกออก (-)': document.getElementById('type-out'),
+        'รับเข้า (+)': document.getElementById('type-in'),
+        'ของเสีย (x)': document.getElementById('type-waste')
+      };
+
+      Object.keys(btns).forEach(k => {
+        if (k === type) {
+          btns[k].className = "type-btn py-2 text-xs font-medium rounded-xl border border-blue-500 bg-blue-50 text-blue-700 font-bold ring-2 ring-blue-300";
+        } else {
+          btns[k].className = "type-btn py-2 text-xs font-medium rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50";
+        }
+      });
+    }
+
+    function renderStockList() {
+      const list = document.getElementById('productList');
+      const query = document.getElementById('searchBox').value.trim().toLowerCase();
+      const cat = document.getElementById('filterCategory').value;
+
+      const filtered = state.products.filter(p => {
+        const matchCat = cat === 'ALL' || p.category === cat;
+        const matchQuery = !query || p.name.toLowerCase().includes(query);
+        return matchCat && matchQuery;
+      });
+
+      if (filtered.length === 0) {
+        list.innerHTML = '<div class="text-center py-8 text-slate-400 text-sm">ไม่พบสินค้า</div>';
+        return;
+      }
+
+      list.innerHTML = filtered.map(p => {
+        const isLow = Number(p.currentBalance) <= Number(p.minStock);
+        return `
+          <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+              <div class="font-semibold text-sm text-slate-800">${p.name}</div>
+              <div class="text-xs text-slate-400 mt-0.5">${p.category} | ขั้นต่ำ: ${p.minStock} ${p.unit}</div>
+            </div>
+            <div class="text-right">
+              <div class="text-base font-bold ${isLow ? 'text-rose-600' : 'text-slate-800'}">
+                ${p.currentBalance} <span class="text-xs font-normal text-slate-500">${p.unit}</span>
+              </div>
+              ${isLow ? '<span class="inline-block text-[10px] font-semibold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded">สต็อกใกล้หมด</span>' : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderHistoryList() {
+      const list = document.getElementById('historyList');
+      if (state.transactions.length === 0) {
+        list.innerHTML = '<div class="text-center py-8 text-slate-400 text-sm">ยังไม่มีรายการบันทึก</div>';
+        return;
+      }
+
+      list.innerHTML = state.transactions.map(t => {
+        const badgeColor = t.type.includes('+') ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                           t.type.includes('x') ? 'bg-rose-50 text-rose-700 border-rose-200' :
+                           'bg-blue-50 text-blue-700 border-blue-200';
+        return `
+          <div class="bg-white p-3 rounded-xl border border-slate-200 text-xs space-y-1">
+            <div class="flex justify-between items-center">
+              <span class="font-semibold text-slate-800">${t.product}</span>
+              <span class="px-2 py-0.5 rounded-full border text-[11px] font-medium ${badgeColor}">
+                ${t.type} ${t.quantity}
+              </span>
+            </div>
+            <div class="flex justify-between text-slate-400">
+              <span>วันที่: ${t.date}</span>
+              <span>โดย: ${t.recordedBy || '-'}</span>
+            </div>
+            ${t.notes ? `<div class="bg-slate-50 p-1.5 rounded text-slate-600">หมายเหตุ: ${t.notes}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function submitForm(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmit');
+      const prodName = document.getElementById('inputProduct').value;
+      const qty = Number(document.getElementById('inputQty').value);
+      const catName = document.getElementById('inputCategory').value;
+      const user = document.getElementById('inputUser').value;
+      const notes = document.getElementById('inputNotes').value;
+      const date = document.getElementById('inputDate').value;
+
+      if (!prodName || !qty) return;
+
+      btn.disabled = true;
+      btn.textContent = "กำลังบันทึก...";
+
+      // Optimistic UI
+      state.products = state.products.map(p => {
+        if (p.name === prodName) {
+          let diff = 0;
+          if (state.selectedType.includes('+')) diff = qty;
+          if (state.selectedType.includes('-') || state.selectedType.includes('x')) diff = -qty;
+          return { ...p, currentBalance: Number(p.currentBalance) + diff };
+        }
+        return p;
+      });
+      updateUI();
+
+      try {
+        const payload = {
+          date: date,
+          category: catName,
+          product: prodName,
+          type: state.selectedType,
+          quantity: qty,
+          recordedBy: user,
+          notes: notes
+        };
+
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+
+        const json = await res.json();
+        if (json.status === 'success') {
+          showAlert('บันทึกข้อมูลเรียบร้อยแล้ว', 'success');
+          document.getElementById('inputQty').value = '';
+          document.getElementById('inputNotes').value = '';
+          fetchData();
+        } else {
+          showAlert('เกิดข้อผิดพลาด: ' + json.message, 'error');
+        }
+      } catch (err) {
+        showAlert('บันทึกข้อมูลสำเร็จ (ข้อมูลจะซิงค์กับ Sheet อัตโนมัติ)', 'success');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "บันทึกข้อมูล";
+      }
+    }
+
+    function switchTab(tab) {
+      ['entry', 'stock', 'history'].forEach(t => {
+        document.getElementById('view-' + t).classList.toggle('hidden', t !== tab);
+        const tabBtn = document.getElementById('tab-' + t);
+        if (t === tab) {
+          tabBtn.className = "flex-1 py-2.5 font-medium text-center border-b-2 border-white text-white";
+        } else {
+          tabBtn.className = "flex-1 py-2.5 font-medium text-center border-b-2 border-transparent text-blue-100 hover:text-white";
+        }
+      });
+    }
+
+    function showAlert(msg, type) {
+      const box = document.getElementById('alertBox');
+      const text = document.getElementById('alertMsg');
+      box.className = `mb-4 p-3 rounded-xl text-sm flex items-center justify-between ${
+        type === 'success' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-rose-50 text-rose-800 border border-rose-200'
+      }`;
+      text.textContent = msg;
+      box.classList.remove('hidden');
+      setTimeout(() => box.classList.add('hidden'), 4000);
+    }
+
+    function hideAlert() {
+      document.getElementById('alertBox').classList.add('hidden');
+    }
+
+    // เริ่มทำงานครั้งแรก
+    fetchData();
+  </script>
+</body>
+</html>
