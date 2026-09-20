@@ -40,7 +40,7 @@
         <button onclick="openPurchaseCartModal()" id="btnHeaderCart" class="relative p-2 rounded-xl hover:bg-blue-700 active:scale-95 transition bg-blue-500/50 flex items-center gap-1.5 text-xs font-medium" title="ดูตะกร้าสั่งซื้อ">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
           <span class="hidden sm:inline">ตะกร้า</span>
-          <span id="headerCartBadge" class="hidden absolute -top-1 -right-1 bg-amber-400 text-slate-900 font-black text-[9px] w-4.5 h-4.5 rounded-full flex items-center justify-center shadow">0</span>
+          <span id="headerCartBadge" class="hidden absolute -top-1 -right-1 bg-amber-400 text-slate-900 font-black text-[11px] w-5 h-5 rounded-full flex items-center justify-center shadow ring-2 ring-blue-700">0</span>
         </button>
 
         <button onclick="fetchData(true)" id="refreshBtn" title="รีเฟรชข้อมูล" class="p-2 rounded-xl hover:bg-blue-700 active:scale-95 transition bg-blue-500/50 flex items-center gap-1.5 text-xs font-medium">
@@ -229,11 +229,11 @@
     <div class="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-3 rounded-full shadow-2xl flex items-center gap-2.5 font-bold text-xs border-2 border-white hover:brightness-105">
       <div class="relative">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-        <span id="floatingCartCount" class="absolute -top-2.5 -right-2.5 bg-rose-600 text-white text-[10px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center ring-2 ring-white">0</span>
+        <span id="floatingCartCount" class="absolute -top-2.5 -right-2.5 bg-rose-600 text-white text-[11px] font-black w-5 h-5 rounded-full flex items-center justify-center ring-2 ring-white">0</span>
       </div>
       <div class="flex flex-col text-left leading-tight pr-1">
         <span>ตะกร้าสั่งซื้อ</span>
-        <span id="floatingCartSummary" class="text-[10px] font-normal text-amber-100">0 รายการ</span>
+        <span id="floatingCartSummary" class="text-xs font-bold text-amber-100">0 รายการ</span>
       </div>
       <svg class="w-4 h-4 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
     </div>
@@ -454,17 +454,17 @@
             <div class="grid grid-cols-2 gap-2">
               <div>
                 <label class="block text-[11px] font-semibold text-slate-600 mb-1">ผู้ขอสั่งซื้อ</label>
-                <input type="text" id="poOrderer" placeholder="เช่น ผู้จัดการร้าน, บาริสต้า" class="w-full border border-slate-300 rounded-xl p-2 text-xs bg-white outline-none focus:ring-2 focus:ring-orange-400" />
+                <input type="text" id="poOrderer" oninput="renderPurchaseOrderDocument()" placeholder="เช่น ผู้จัดการร้าน, บาริสต้า" class="w-full border border-slate-300 rounded-xl p-2 text-xs bg-white outline-none focus:ring-2 focus:ring-orange-400" />
               </div>
               <div>
                 <label class="block text-[11px] font-semibold text-slate-600 mb-1">ร้านค้า / สถานที่ซื้อ</label>
-                <input type="text" id="poVendor" placeholder="เช่น แม็คโคร, โลตัส, ตลาดสด" class="w-full border border-slate-300 rounded-xl p-2 text-xs bg-white outline-none focus:ring-2 focus:ring-orange-400" />
+                <input type="text" id="poVendor" oninput="renderPurchaseOrderDocument()" placeholder="เช่น แม็คโคร, โลตัส, ตลาดสด" class="w-full border border-slate-300 rounded-xl p-2 text-xs bg-white outline-none focus:ring-2 focus:ring-orange-400" />
               </div>
             </div>
 
             <div>
               <label class="block text-[11px] font-semibold text-slate-600 mb-1">หมายเหตุใบสั่งซื้อ</label>
-              <input type="text" id="poNotes" placeholder="เช่น ซื้อด่วนช่วงเช้า, เก็บใบเสร็จด้วย" class="w-full border border-slate-300 rounded-xl p-2 text-xs bg-white outline-none focus:ring-2 focus:ring-orange-400" />
+              <input type="text" id="poNotes" oninput="renderPurchaseOrderDocument()" placeholder="เช่น ซื้อด่วนช่วงเช้า, เก็บใบเสร็จด้วย" class="w-full border border-slate-300 rounded-xl p-2 text-xs bg-white outline-none focus:ring-2 focus:ring-orange-400" />
             </div>
           </div>
 
@@ -498,91 +498,111 @@
           </div>
 
           <!-- พื้นที่เอกสารใบสั่งซื้อที่ถูกจับภาพเป็นรูปภาพ (PO Canvas Print Area) -->
-          <div class="overflow-x-auto pb-2">
-            <div id="poPrintArea" class="bg-white p-5 rounded-2xl border-2 border-slate-300 shadow-sm min-w-[500px] text-slate-800 space-y-4">
+          <div class="overflow-x-auto pb-4 flex justify-center">
+            <div id="poPrintArea" style="width: 650px; min-width: 650px; max-width: 650px; box-sizing: border-box; font-family: 'Prompt', 'Thonburi', 'Sukhumvit Set', -apple-system, sans-serif; letter-spacing: 0px; line-height: 1.4;" class="bg-white p-6 rounded-2xl border-2 border-slate-300 shadow-md text-slate-800 space-y-4">
               
               <!-- PO Header -->
               <div class="flex items-start justify-between border-b-2 border-slate-800 pb-3">
-                <div>
-                  <div class="flex items-center gap-2">
-                    <span class="p-1.5 rounded-xl bg-slate-900 text-amber-400">
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                    </span>
-                    <div>
-                      <h2 class="text-base font-black text-slate-900 tracking-tight leading-tight">GROUND CAFE</h2>
-                      <p class="text-[10px] text-slate-500 font-medium">ใบสั่งซื้อสินค้า / PURCHASE ORDER</p>
-                    </div>
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 rounded-2xl bg-slate-900 text-amber-400 flex items-center justify-center flex-shrink-0 shadow">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                  </div>
+                  <div>
+                    <h2 class="text-lg font-black text-slate-900 tracking-tight leading-none">GROUND CAFE</h2>
+                    <p class="text-xs text-slate-600 font-bold mt-1">ใบสั่งซื้อสินค้า / PURCHASE ORDER</p>
+                    <p class="text-[10px] text-slate-400 mt-0.5">ระบบจัดการสต็อกและสั่งซื้อสินค้าหน้าร้าน</p>
                   </div>
                 </div>
 
-                <div class="text-right">
-                  <div id="poNumber" class="text-xs font-black font-mono text-slate-800 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">PO-20260920-001</div>
-                  <div id="poDateText" class="text-[10px] text-slate-500 mt-1">20 ก.ย. 2026</div>
+                <div class="text-right space-y-1">
+                  <div class="inline-block bg-slate-100 text-slate-800 font-black font-mono text-xs px-2.5 py-1 rounded-lg border border-slate-300 shadow-2xs">
+                    <span class="text-slate-400 font-sans font-normal mr-1">เลขที่:</span><span id="poNumber">PO-20260920-001</span>
+                  </div>
+                  <div id="poDateText" class="text-[11px] font-semibold text-slate-600">20 ก.ย. 2569</div>
+                  <div>
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                      🟡 รอจัดซื้อ (Pending)
+                    </span>
+                  </div>
                 </div>
               </div>
 
               <!-- รายละเอียดผู้สั่งซื้อและสถานที่ -->
-              <div class="grid grid-cols-2 gap-3 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-[11px]">
+              <div class="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs">
                 <div>
-                  <span class="text-slate-400">ผู้สั่งซื้อ:</span>
-                  <span id="poOrdererDisplay" class="font-bold text-slate-800 ml-1">-</span>
+                  <span class="text-slate-400 font-medium">ผู้ขอสั่งซื้อ:</span>
+                  <span id="poOrdererDisplay" class="font-bold text-slate-800 ml-1">หน้าร้าน / บาริสต้า</span>
                 </div>
                 <div>
-                  <span class="text-slate-400">ร้านค้า / ซัพพลายเออร์:</span>
+                  <span class="text-slate-400 font-medium">ร้านค้า / แหล่งซื้อ:</span>
                   <span id="poVendorDisplay" class="font-bold text-slate-800 ml-1">แม็คโคร / ทั่วไป</span>
                 </div>
-                <div class="col-span-2" id="poNotesRow">
-                  <span class="text-slate-400">หมายเหตุ:</span>
+                <div class="col-span-2 pt-1 border-t border-slate-200">
+                  <span class="text-slate-400 font-medium">หมายเหตุคำสั่งซื้อ:</span>
                   <span id="poNotesDisplay" class="font-medium text-slate-700 ml-1">-</span>
                 </div>
               </div>
 
-              <!-- ตารางรายการสินค้าที่สั่งซื้อ -->
-              <div class="rounded-xl border border-slate-300 overflow-hidden">
-                <table class="w-full text-left border-collapse text-xs">
-                  <thead class="bg-slate-800 text-white text-[11px]">
-                    <tr>
-                      <th class="p-2 text-center w-8">#</th>
-                      <th class="p-2">รายการสินค้า</th>
-                      <th class="p-2 text-center w-20">หมวดหมู่</th>
-                      <th class="p-2 text-center w-16">คงเหลือ</th>
-                      <th class="p-2 text-center w-24 bg-amber-600 text-white font-bold">จำนวนสั่งซื้อ</th>
-                      <th class="p-2 w-28">หมายเหตุ</th>
+              <!-- ตารางรายการสินค้าที่สั่งซื้อ (จัดช่องให้ตรงเป๊ะ ไม่เลื่อน ไม่ซ้อน) -->
+              <div class="rounded-xl border border-slate-300 overflow-hidden shadow-2xs">
+                <table class="w-full text-left border-collapse table-fixed text-xs">
+                  <colgroup>
+                    <col style="width: 7%;">
+                    <col style="width: 39%;">
+                    <col style="width: 14%;">
+                    <col style="width: 20%;">
+                    <col style="width: 20%;">
+                  </colgroup>
+                  <thead>
+                    <tr class="bg-slate-900 text-white text-[11px] font-bold">
+                      <th class="p-2.5 text-center border-r border-slate-700">#</th>
+                      <th class="p-2.5 text-left border-r border-slate-700">รายการสินค้า & หมวดหมู่</th>
+                      <th class="p-2.5 text-center border-r border-slate-700">คงเหลือ</th>
+                      <th class="p-2.5 text-center border-r border-slate-700 text-amber-300 font-black">จำนวนสั่งซื้อ</th>
+                      <th class="p-2.5 text-left">หมายเหตุ</th>
                     </tr>
                   </thead>
-                  <tbody id="poTableBody" class="divide-y divide-slate-200 bg-white text-[11px]">
-                    <!-- Rendered by JS -->
+                  <tbody id="poTableBody" class="divide-y divide-slate-200 bg-white text-xs">
+                    <!-- Rendered dynamically by JS -->
                   </tbody>
                 </table>
               </div>
 
               <!-- สรุปผลด้านล่าง -->
-              <div class="flex items-center justify-between p-3 bg-amber-50 rounded-xl border border-amber-200">
-                <div class="text-xs font-bold text-amber-900">
-                  รวมรายการทั้งสิ้น: <span id="poTotalItems" class="text-sm font-black text-amber-950">0</span> รายการ
+              <div class="flex items-center justify-between p-3.5 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border-2 border-amber-300 text-xs">
+                <div class="font-bold text-amber-950 flex items-center gap-1.5">
+                  <svg class="w-4 h-4 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                  <span>รวมรายการสั่งซื้อ:</span>
+                  <span id="poTotalItems" class="text-sm font-black text-slate-900 ml-1">0</span>
+                  <span class="font-normal text-slate-600">รายการ</span>
                 </div>
-                <div class="text-xs font-bold text-amber-900">
-                  รวมจำนวนที่สั่งซื้อ: <span id="poTotalQty" class="text-base font-black text-orange-600">0</span> ชิ้น
+                <div class="font-bold text-amber-950 flex items-center gap-1.5">
+                  <span>รวมจำนวนที่สั่งซื้อ:</span>
+                  <span id="poTotalQty" class="text-base font-black text-orange-600 ml-1">0</span>
+                  <span class="font-normal text-slate-600">ชิ้น / หน่วย</span>
                 </div>
               </div>
 
-              <!-- ช่องลงชื่อกำกับ -->
-              <div class="grid grid-cols-2 gap-6 pt-3 text-[10px] text-slate-500 border-t border-slate-200 text-center">
-                <div class="space-y-4">
-                  <p>ลงชื่อผู้ขอสั่งซื้อ</p>
-                  <div class="border-b border-slate-300 w-3/4 mx-auto"></div>
-                  <p class="text-[9px]">(...................................................)</p>
+              <!-- ช่องลงชื่อกำกับ (เส้นตรงสวยงาม ไม่ใช้จุดไข่ปลา) -->
+              <div class="grid grid-cols-2 gap-8 pt-4 text-xs border-t border-slate-200">
+                <div class="text-center space-y-2">
+                  <p class="font-bold text-slate-700">ผู้ขอจัดซื้อ (Requested by)</p>
+                  <div class="border-b-2 border-dashed border-slate-400 w-44 mx-auto my-3"></div>
+                  <p class="text-[11px] text-slate-500">(....................................................)</p>
+                  <p class="text-[10px] text-slate-400">วันที่: ______/______/__________</p>
                 </div>
-                <div class="space-y-4">
-                  <p>ลงชื่อผู้จัดซื้อ / รับของ</p>
-                  <div class="border-b border-slate-300 w-3/4 mx-auto"></div>
-                  <p class="text-[9px]">(...................................................)</p>
+                <div class="text-center space-y-2">
+                  <p class="font-bold text-slate-700">ผู้รับเรื่อง / จัดซื้อ (Purchased by)</p>
+                  <div class="border-b-2 border-dashed border-slate-400 w-44 mx-auto my-3"></div>
+                  <p class="text-[11px] text-slate-500">(....................................................)</p>
+                  <p class="text-[10px] text-slate-400">วันที่: ______/______/__________</p>
                 </div>
               </div>
 
               <!-- Footer -->
-              <div class="text-center text-[9px] text-slate-400 pt-1">
-                เอกสารนี้สร้างอัตโนมัติจากระบบ Ground Cafe Stock App
+              <div class="text-center text-[10px] text-slate-400 pt-2 border-t border-slate-100 flex items-center justify-between">
+                <span>Ground Cafe Inventory Tracker</span>
+                <span>เอกสารสำหรับใช้จัดซื้อสินค้า</span>
               </div>
             </div>
           </div>
@@ -1042,13 +1062,15 @@
                 // เช็คว่ามีในตะกร้าสั่งซื้อแล้วหรือยัง
                 const inCartItem = (state.cart || []).find(item => item.productName === p.name);
 
-                const cardBorderClass = isOut 
+                const cardBorderClass = inCartItem
+                  ? 'border-2 border-amber-500 ring-2 ring-amber-300 bg-amber-50/15 shadow-md'
+                  : isOut 
                   ? 'border-2 border-rose-500 bg-rose-50/20 ring-2 ring-rose-200' 
                   : isLow 
                   ? 'border-2 border-rose-400 bg-rose-50/30 ring-1 ring-rose-300' 
                   : 'bg-white hover:shadow-md transition';
 
-                const cardCustomBorderStyle = (!isOut && !isLow) ? `border: 2px solid ${colorData.hex};` : '';
+                const cardCustomBorderStyle = (!isOut && !isLow && !inCartItem) ? `border: 2px solid ${colorData.hex};` : '';
 
                 let visualHeader = '';
                 if (p.imageUrl) {
@@ -1059,7 +1081,7 @@
                       <span class="absolute top-2 left-2 px-2 py-0.5 rounded-md text-[9px] font-bold shadow-sm backdrop-blur-md" style="${colorData.badgeStyle}">
                         ${p.category}
                       </span>
-                      ${isOut ? '<span class="absolute top-2 right-2 px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-rose-600 text-white shadow">หมด</span>' : isLow ? '<span class="absolute top-2 right-2 px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-600 text-white shadow animate-pulse">เหลือน้อย</span>' : ''}
+                      ${inCartItem ? `<span class="absolute top-2 right-2 px-2 py-0.5 rounded-lg text-[11px] font-black bg-amber-500 text-white shadow-md border border-white flex items-center gap-1">🛒 ${inCartItem.quantity} ${p.unit}</span>` : isOut ? '<span class="absolute top-2 right-2 px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-rose-600 text-white shadow">หมด</span>' : isLow ? '<span class="absolute top-2 right-2 px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-600 text-white shadow animate-pulse">เหลือน้อย</span>' : ''}
                     </div>
                   `;
                 } else {
@@ -1069,7 +1091,7 @@
                         <span class="px-2 py-0.5 rounded-md text-[9px] font-bold shadow-xs" style="${colorData.badgeStyle}">
                           ${p.category}
                         </span>
-                        ${isOut ? '<span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-rose-600 text-white">หมด</span>' : isLow ? '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-600 text-white animate-pulse">เหลือน้อย</span>' : ''}
+                        ${inCartItem ? `<span class="px-2 py-0.5 rounded-lg text-[10px] font-black bg-amber-500 text-white shadow-xs">🛒 สั่ง ${inCartItem.quantity} ${p.unit}</span>` : isOut ? '<span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-rose-600 text-white">หมด</span>' : isLow ? '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-600 text-white animate-pulse">เหลือน้อย</span>' : ''}
                       </div>
                       <div class="text-[10px] text-slate-400 flex items-center gap-1 font-medium">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
@@ -1105,9 +1127,28 @@
                         </div>
 
                         ${inCartItem ? `
-                          <div class="mt-1 flex items-center justify-between bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200 text-[10px] text-amber-900 font-bold">
-                            <span>🛒 ในตะกร้า:</span>
-                            <span>${inCartItem.quantity} ${p.unit}</span>
+                          <!-- ป้ายแสดงจำนวนที่สั่งซื้อในตะกร้า ขนาดใหญ่ เด่นชัด อ่านง่าย -->
+                          <div class="mt-2 p-2 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-400 shadow-xs flex items-center justify-between gap-1">
+                            <div class="flex items-center gap-1 text-amber-900 font-black text-xs">
+                              <span class="text-sm">🛒</span>
+                              <span class="text-xs">สั่งซื้อ:</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                              <button type="button" 
+                                      onclick="event.stopPropagation(); updateCartItemQty('${p.name}', -1)"
+                                      class="w-6 h-6 rounded-lg bg-white hover:bg-amber-200 text-amber-900 font-black text-xs border border-amber-300 shadow-xs flex items-center justify-center active:scale-90 transition">
+                                -
+                              </button>
+                              <span class="bg-white text-orange-600 font-black text-sm px-2.5 py-0.5 rounded-lg border border-amber-300 shadow-xs text-center min-w-[3rem] flex items-baseline justify-center gap-0.5">
+                                <span>${inCartItem.quantity}</span>
+                                <span class="text-[10px] font-bold text-slate-500">${p.unit}</span>
+                              </span>
+                              <button type="button" 
+                                      onclick="event.stopPropagation(); updateCartItemQty('${p.name}', 1)"
+                                      class="w-6 h-6 rounded-lg bg-white hover:bg-amber-200 text-amber-900 font-black text-xs border border-amber-300 shadow-xs flex items-center justify-center active:scale-90 transition">
+                                +
+                              </button>
+                            </div>
                           </div>
                         ` : ''}
                       </div>
@@ -1121,10 +1162,10 @@
                         </button>
                         <button type="button" 
                                 onclick="event.stopPropagation(); quickAddToCart('${p.name}')"
-                                class="col-span-2 py-1.5 px-1 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white text-[10px] font-bold rounded-lg transition flex items-center justify-center gap-0.5 shadow-xs"
-                                title="กดเพิ่มลงตะกร้าสั่งซื้อทันที">
+                                class="col-span-2 py-1.5 px-1 ${inCartItem ? 'bg-orange-600 hover:bg-orange-700 ring-1 ring-orange-400' : 'bg-amber-500 hover:bg-amber-600'} active:scale-95 text-white text-[10px] font-bold rounded-lg transition flex items-center justify-center gap-0.5 shadow-xs"
+                                title="กดเพิ่มลงตะกร้าสั่งซื้อ">
                           <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-                          <span>สั่งซื้อ</span>
+                          <span>${inCartItem ? '+ เพิ่มอีก' : 'สั่งซื้อ'}</span>
                         </button>
                       </div>
                     </div>
@@ -1644,6 +1685,7 @@
     function openPurchaseCartModal() {
       state.cart = getStoredCart();
       renderCartItemsList();
+      renderPurchaseOrderDocument();
       switchCartTab('items');
       document.getElementById('modalPurchaseCart').classList.remove('hidden');
     }
@@ -1664,6 +1706,10 @@
       document.getElementById('cart-tab-preview').className = !isItems 
         ? 'flex-1 py-2.5 font-bold text-center border-b-2 border-orange-500 text-orange-600 bg-white'
         : 'flex-1 py-2.5 font-medium text-center border-b-2 border-transparent text-slate-500 hover:text-slate-700';
+
+      if (!isItems) {
+        renderPurchaseOrderDocument();
+      }
     }
 
     function renderCartItemsList() {
@@ -1733,69 +1779,112 @@
       }).join('');
     }
 
-    // สร้างเอกสารใบสั่งซื้อ และ สลับไปหน้าพรีวิว (PO Sheet View)
-    function generateAndShowPO() {
+    // เรนเดอร์เอกสารใบสั่งซื้อให้ตรงเป๊ะทุกจุด ไม่คลาดเคลื่อน
+    function renderPurchaseOrderDocument() {
+      state.cart = getStoredCart();
       const cart = state.cart || [];
-      if (cart.length === 0) {
-        alert('กรุณาเลือกสินค้าเข้าตะกร้าก่อนสร้างใบสั่งซื้อครับ');
-        return;
-      }
 
-      const orderer = document.getElementById('poOrderer').value.trim() || 'ผู้จัดการร้าน / แผนกจัดซื้อ';
-      const vendor = document.getElementById('poVendor').value.trim() || 'แม็คโคร / ซัพพลายเออร์ทั่วไป';
-      const notes = document.getElementById('poNotes').value.trim() || '-';
+      const ordererInput = document.getElementById('poOrderer');
+      const vendorInput = document.getElementById('poVendor');
+      const notesInput = document.getElementById('poNotes');
 
-      // กำหนดเลขที่ PO อัตโนมัติ: PO-YYYYMMDD-XXXX
+      const orderer = (ordererInput && ordererInput.value.trim()) ? ordererInput.value.trim() : 'หน้าร้าน / บาริสต้า (Ground Cafe)';
+      const vendor = (vendorInput && vendorInput.value.trim()) ? vendorInput.value.trim() : 'แม็คโคร / ซัพพลายเออร์ทั่วไป';
+      const notes = (notesInput && notesInput.value.trim()) ? notesInput.value.trim() : '-';
+
+      // กำหนดเลขที่ PO และ วันที่ภาษาไทย
       const dateObj = new Date();
+      const thaiMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+      const thaiYear = dateObj.getFullYear() + 543;
       const y = dateObj.getFullYear();
       const m = String(dateObj.getMonth() + 1).padStart(2, '0');
       const d = String(dateObj.getDate()).padStart(2, '0');
-      const randomCode = Math.floor(100 + Math.random() * 900);
-      const poNum = `PO-${y}${m}${d}-${randomCode}`;
+      
+      const poNumEl = document.getElementById('poNumber');
+      if (poNumEl && (!poNumEl.textContent || poNumEl.textContent.trim() === 'PO-20260920-001' || poNumEl.textContent.trim() === 'PO')) {
+        const randomCode = Math.floor(100 + Math.random() * 900);
+        poNumEl.textContent = `PO-${y}${m}${d}-${randomCode}`;
+      }
 
-      document.getElementById('poNumber').textContent = poNum;
-      document.getElementById('poDateText').textContent = dateObj.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+      const dateTextEl = document.getElementById('poDateText');
+      if (dateTextEl) {
+        const hours = String(dateObj.getHours()).padStart(2, '0');
+        const mins = String(dateObj.getMinutes()).padStart(2, '0');
+        dateTextEl.textContent = `${dateObj.getDate()} ${thaiMonths[dateObj.getMonth()]} ${thaiYear} (${hours}:${mins} น.)`;
+      }
+
       document.getElementById('poOrdererDisplay').textContent = orderer;
       document.getElementById('poVendorDisplay').textContent = vendor;
       document.getElementById('poNotesDisplay').textContent = notes;
 
-      // เรนเดอร์ตารางสินค้าในใบสั่งซื้อ
       const tbody = document.getElementById('poTableBody');
       let totalQty = 0;
+
+      if (cart.length === 0) {
+        tbody.innerHTML = `
+          <tr class="bg-white">
+            <td colspan="5" class="p-8 text-center text-slate-400 text-xs">
+              <div class="py-4 space-y-1">
+                <p class="font-bold text-slate-500 text-xs">ยังไม่มีรายการสินค้าในใบสั่งซื้อ</p>
+                <p class="text-[11px] text-slate-400">โปรดกดปุ่ม "+ สั่งซื้อ" บนการ์ดสินค้าในหน้าแดชบอร์ดก่อนครับ</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        document.getElementById('poTotalItems').textContent = '0';
+        document.getElementById('poTotalQty').textContent = '0';
+        return;
+      }
 
       tbody.innerHTML = cart.map((item, idx) => {
         totalQty += (Number(item.quantity) || 0);
         const colorData = getCategoryColorData(item.category);
 
         return `
-          <tr class="${idx % 2 === 1 ? 'bg-slate-50/50' : 'bg-white'} hover:bg-amber-50/30">
-            <td class="p-2 text-center text-slate-400 font-mono">${idx + 1}</td>
-            <td class="p-2">
+          <tr class="${idx % 2 === 1 ? 'bg-slate-50/70' : 'bg-white'} border-b border-slate-200">
+            <td class="p-2.5 text-center text-slate-400 font-mono align-middle border-r border-slate-200">${idx + 1}</td>
+            <td class="p-2.5 text-left align-middle border-r border-slate-200">
               <div class="flex items-center gap-2">
-                ${item.imageUrl ? `<img src="${item.imageUrl}" class="w-6 h-6 rounded object-cover border border-slate-200">` : ''}
-                <span class="font-bold text-slate-800">${item.productName}</span>
+                ${item.imageUrl ? `<img src="${item.imageUrl}" class="w-8 h-8 rounded-lg object-cover border border-slate-200 flex-shrink-0">` : ''}
+                <div>
+                  <span class="font-bold text-slate-900 text-xs block leading-tight">${item.productName}</span>
+                  <span class="inline-block px-1.5 py-0.2 rounded text-[9px] font-bold mt-0.5" style="${colorData.badgeStyle}">${item.category}</span>
+                </div>
               </div>
             </td>
-            <td class="p-2 text-center">
-              <span class="px-1.5 py-0.5 rounded text-[9px] font-bold" style="${colorData.badgeStyle}">${item.category}</span>
+            <td class="p-2.5 text-center text-slate-600 font-mono align-middle border-r border-slate-200 text-xs">
+              ${item.currentStock} ${item.unit}
             </td>
-            <td class="p-2 text-center text-slate-500 font-mono">${item.currentStock}</td>
-            <td class="p-2 text-center font-bold text-xs text-orange-600 bg-orange-50/40 font-mono">
-              ${item.quantity} ${item.unit}
+            <td class="p-2.5 text-center align-middle border-r border-slate-200 bg-amber-50/50">
+              <span class="inline-block px-3 py-1 bg-amber-100 text-amber-950 border border-amber-300 rounded-lg font-black text-sm shadow-2xs">
+                ${item.quantity} ${item.unit}
+              </span>
             </td>
-            <td class="p-2 text-slate-500 italic text-[10px]">${item.note || '-'}</td>
+            <td class="p-2.5 text-left text-slate-600 italic text-[11px] align-middle">
+              ${item.note || '-'}
+            </td>
           </tr>
         `;
       }).join('');
 
       document.getElementById('poTotalItems').textContent = cart.length;
       document.getElementById('poTotalQty').textContent = totalQty;
+    }
 
+    // เมื่อกดปุ่ม "สร้างใบสั่งซื้อ & ส่งออกรูปภาพ" จากหน้าตะกร้า
+    function generateAndShowPO() {
+      const cart = state.cart || [];
+      if (cart.length === 0) {
+        alert('กรุณาเลือกสินค้าเข้าตะกร้าก่อนสร้างใบสั่งซื้อครับ');
+        return;
+      }
+      renderPurchaseOrderDocument();
       switchCartTab('preview');
     }
 
-    // ส่งออกใบสั่งซื้อเป็นรูปภาพ PNG (Export as Image)
+    // ส่งออกใบสั่งซื้อเป็นรูปภาพ PNG (Export as Image) คมชัด ไม่คลาดเคลื่อน
     async function exportPOImage() {
+      renderPurchaseOrderDocument();
       const poArea = document.getElementById('poPrintArea');
       if (!poArea) return;
 
@@ -1805,11 +1894,16 @@
       btn.innerHTML = '<span class="animate-pulse">กำลังประมวลผลรูป...</span>';
 
       try {
+        if (document.fonts && document.fonts.ready) {
+          await document.fonts.ready;
+        }
+
         const canvas = await html2canvas(poArea, {
-          scale: 2, // คมชัดแบบ Retina 2x
+          scale: 2,
           useCORS: true,
           allowTaint: true,
-          backgroundColor: '#ffffff'
+          backgroundColor: '#ffffff',
+          logging: false
         });
 
         const imgData = canvas.toDataURL('image/png');
@@ -1834,6 +1928,7 @@
 
     // คัดลอกรูปภาพ หรือ แชร์ตรงไปยัง LINE
     async function shareOrCopyPOImage() {
+      renderPurchaseOrderDocument();
       const poArea = document.getElementById('poPrintArea');
       if (!poArea) return;
 
@@ -1843,7 +1938,10 @@
       btn.innerHTML = '<span>กำลังคัดลอก...</span>';
 
       try {
-        const canvas = await html2canvas(poArea, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+        if (document.fonts && document.fonts.ready) {
+          await document.fonts.ready;
+        }
+        const canvas = await html2canvas(poArea, { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', logging: false });
         canvas.toBlob(async (blob) => {
           const poNum = document.getElementById('poNumber').textContent.trim() || 'PO';
           const file = new File([blob], `ใบสั่งซื้อ_${poNum}.png`, { type: 'image/png' });
