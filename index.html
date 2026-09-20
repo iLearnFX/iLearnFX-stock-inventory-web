@@ -27,14 +27,14 @@
 
   <!-- Top App Bar -->
   <header class="bg-blue-600 text-white shadow-md sticky top-0 z-30">
-    <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
       <div class="flex items-center gap-2.5">
         <div class="bg-blue-500/80 p-2 rounded-xl shadow-inner">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
         </div>
         <div>
-          <h1 class="font-bold text-base leading-tight">แดชบอร์ดสต็อกสินค้า</h1>
-          <p class="text-[10px] text-blue-200">Ground Cafe & Inventory Tracker</p>
+          <h1 class="font-bold text-base sm:text-xl leading-tight">แดชบอร์ดสต็อกสินค้า</h1>
+          <p class="text-[10px] sm:text-xs text-blue-200">Ground Cafe & Inventory Tracker</p>
         </div>
       </div>
       <div class="flex items-center gap-2">
@@ -53,7 +53,7 @@
     </div>
 
     <!-- Navigation Tabs (5 แท็บหลัก ออกแบบเลื่อนได้แนวนอนบนมือถือ) -->
-    <div class="max-w-2xl mx-auto px-2 flex border-t border-blue-500 text-xs overflow-x-auto no-scrollbar whitespace-nowrap">
+    <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 flex border-t border-blue-500 text-xs sm:text-sm overflow-x-auto no-scrollbar whitespace-nowrap">
       <button onclick="switchTab('dashboard')" id="tab-dashboard" class="flex-1 min-w-[5.2rem] py-2.5 px-2 font-bold text-center border-b-2 border-white text-white transition flex items-center justify-center gap-1">
         <span>📊</span><span>สต็อก</span>
       </button>
@@ -73,7 +73,7 @@
   </header>
 
   <!-- Main Container -->
-  <main class="max-w-2xl mx-auto p-4 space-y-4">
+  <main class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
     
     <!-- แจ้งเตือนสถานะ Alert Box -->
     <div id="alertBox" class="hidden p-3 rounded-xl text-xs flex items-center justify-between shadow-sm transition">
@@ -84,21 +84,21 @@
     <!-- TAB 1: แดชบอร์ดภาพรวมการ์ดสินค้า (Visual Dashboard Grid) -->
     <section id="view-dashboard" class="space-y-4">
       
-      <!-- สรุปสถิติสต็อกด้านบน (KPI Cards) -->
-      <div class="grid grid-cols-3 gap-2">
-        <div class="bg-white p-2.5 rounded-2xl border border-slate-200 shadow-sm text-center">
-          <div class="text-[10px] text-slate-500 font-medium">สินค้าทั้งหมด</div>
-          <div id="kpiTotal" class="text-lg font-bold text-slate-800">0</div>
+      <!-- สรุปสถิติสต็อกด้านบน (KPI Cards Responsive Desktop & Mobile) -->
+      <div class="grid grid-cols-3 gap-2.5 sm:gap-4">
+        <div class="bg-white p-2.5 sm:p-4 rounded-2xl border border-slate-200 shadow-xs sm:shadow-sm text-center hover:border-slate-300 transition">
+          <div class="text-[10px] sm:text-xs text-slate-500 font-medium">สินค้าทั้งหมด</div>
+          <div id="kpiTotal" class="text-lg sm:text-3xl font-black text-slate-800 sm:mt-1">0</div>
         </div>
-        <div class="bg-white p-2.5 rounded-2xl border border-slate-200 shadow-sm text-center">
-          <div class="text-[10px] text-emerald-600 font-medium">สต็อกปกติ</div>
-          <div id="kpiNormal" class="text-lg font-bold text-emerald-600">0</div>
+        <div class="bg-white p-2.5 sm:p-4 rounded-2xl border border-slate-200 shadow-xs sm:shadow-sm text-center hover:border-slate-300 transition">
+          <div class="text-[10px] sm:text-xs text-emerald-600 font-medium">สต็อกปกติ</div>
+          <div id="kpiNormal" class="text-lg sm:text-3xl font-black text-emerald-600 sm:mt-1">0</div>
         </div>
-        <div onclick="toggleLowStockFilter()" class="bg-rose-50 p-2.5 rounded-2xl border border-rose-200 shadow-sm text-center cursor-pointer active:scale-95 transition">
-          <div class="text-[10px] text-rose-700 font-bold flex items-center justify-center gap-1">
+        <div onclick="toggleLowStockFilter()" class="bg-rose-50 hover:bg-rose-100/70 p-2.5 sm:p-4 rounded-2xl border border-rose-200 shadow-xs sm:shadow-sm text-center cursor-pointer active:scale-95 transition">
+          <div class="text-[10px] sm:text-xs text-rose-700 font-bold flex items-center justify-center gap-1">
             <span>⚠️ สต็อกต่ำ</span>
           </div>
-          <div id="kpiLow" class="text-lg font-bold text-rose-700">0</div>
+          <div id="kpiLow" class="text-lg sm:text-3xl font-black text-rose-700 sm:mt-1">0</div>
         </div>
       </div>
 
@@ -128,15 +128,15 @@
 
       <!-- แถบค้นหา และ กรองตามหมวดหมู่ -->
       <div class="space-y-2">
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 sm:gap-3">
           <div class="relative flex-1">
-            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-            <input type="text" id="searchBox" oninput="renderDashboard()" placeholder="ค้นหาชื่อสินค้าหรือหมวดหมู่..." class="w-full bg-white border border-slate-300 rounded-xl pl-9 pr-3 py-2 text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-sm" />
+            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 absolute left-3 sm:left-3.5 top-2.5 sm:top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input type="text" id="searchBox" oninput="renderDashboard()" placeholder="ค้นหาชื่อสินค้าหรือหมวดหมู่..." class="w-full bg-white border border-slate-300 rounded-xl pl-9 sm:pl-10 pr-3 py-2 sm:py-2.5 text-xs sm:text-sm outline-none focus:ring-2 focus:ring-blue-500 shadow-xs" />
           </div>
-          <button type="button" onclick="openAddProductModal()" class="px-3 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition flex-shrink-0" title="เพิ่มสินค้าใหม่ (SKU ใหม่)">
+          <button type="button" onclick="openAddProductModal()" class="px-3 sm:px-4 py-2 sm:py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl text-xs sm:text-sm flex items-center gap-1.5 shadow-sm active:scale-95 transition flex-shrink-0" title="เพิ่มสินค้าใหม่ (SKU ใหม่)">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-            <span class="hidden sm:inline">เพิ่มสินค้าใหม่</span>
-            <span class="sm:hidden">เพิ่ม SKU</span>
+            <span class="hidden sm:inline">เพิ่มสินค้าใหม่ (SKU)</span>
+            <span class="sm:hidden">+ SKU</span>
           </button>
         </div>
 
@@ -147,15 +147,19 @@
             <!-- Chips จะเรนเดอร์อัตโนมัติ -->
           </div>
 
-          <!-- ปุ่มสลับมุมมอง การ์ดกะทัดรัด (2 คอลัมน์) vs รายการแน่นสำหรับมือถือ -->
+          <!-- ปุ่มสลับ 3 มุมมอง: 📱 ปัดหน้าจอ | 🔲 การ์ดตาราง | 📋 รายการแน่น -->
           <div class="flex items-center bg-slate-200/80 p-0.5 rounded-xl flex-shrink-0 shadow-2xs">
-            <button type="button" onclick="setDashboardViewMode('grid')" id="btnViewGrid" class="py-1 px-2 rounded-lg text-xs font-bold transition bg-white text-blue-600 shadow-2xs flex items-center gap-1" title="มุมมองการ์ดกะทัดรัด (2 คอลัมน์)">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-              <span class="hidden sm:inline">การ์ด</span>
+            <button type="button" onclick="setDashboardViewMode('swipe')" id="btnViewSwipe" class="py-1 px-2 sm:px-2.5 rounded-lg text-xs font-bold transition flex items-center gap-1" title="มุมมองปัดหน้าจอ ซ้าย-ขวา สไตล์แอปมือถือ">
+              <span class="text-xs">📱</span>
+              <span class="inline">ปัดหน้าจอ</span>
             </button>
-            <button type="button" onclick="setDashboardViewMode('list')" id="btnViewList" class="py-1 px-2 rounded-lg text-xs font-medium transition text-slate-600 hover:text-slate-900 flex items-center gap-1" title="มุมมองรายการแน่น (เห็น 8-10 SKU ในหน้าเดียว)">
+            <button type="button" onclick="setDashboardViewMode('grid')" id="btnViewGrid" class="py-1 px-2 sm:px-2.5 rounded-lg text-xs font-medium transition flex items-center gap-1" title="มุมมองการ์ดตาราง">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+              <span class="inline">การ์ด</span>
+            </button>
+            <button type="button" onclick="setDashboardViewMode('list')" id="btnViewList" class="py-1 px-2 sm:px-2.5 rounded-lg text-xs font-medium transition flex items-center gap-1" title="มุมมองรายการแน่น">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-              <span class="hidden sm:inline">รายการ</span>
+              <span class="inline">รายการ</span>
             </button>
           </div>
         </div>
@@ -471,7 +475,7 @@
 
   <!-- QUICK ACTION MODAL: คลิกที่การ์ดแล้ว Popup ขึ้นมาจัดการได้ทันที -->
   <div id="modalCardAction" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden max-h-[92vh] flex flex-col animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
+    <div class="bg-white w-full sm:max-w-xl md:max-w-2xl rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden max-h-[92vh] flex flex-col animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
       
       <!-- Modal Header พร้อมรูปภาพ/แถบสี -->
       <div class="relative bg-slate-900 text-white p-4 flex items-center justify-between overflow-hidden">
@@ -646,7 +650,7 @@
 
   <!-- PURCHASE ORDER CART & EXPORT MODAL: ตะกร้าสั่งซื้อ และ สร้างใบสั่งซื้อเป็นรูปภาพ -->
   <div id="modalPurchaseCart" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-white w-full sm:max-w-xl rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden max-h-[92vh] flex flex-col animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
+    <div class="bg-white w-full sm:max-w-2xl md:max-w-3xl rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden max-h-[92vh] flex flex-col animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
       
       <!-- Modal Header -->
       <div class="bg-gradient-to-r from-amber-500 to-orange-500 text-white p-4 flex items-center justify-between">
@@ -866,7 +870,7 @@
   
   <!-- MODAL เพิ่มสินค้าใหม่: ถ่ายรูป/อัปโหลดรูปจากมือถือ ตั้งชื่อ และบันทึกลง Google Sheet -->
   <div id="modalAddProduct" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden max-h-[92vh] flex flex-col animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
+    <div class="bg-white w-full sm:max-w-xl md:max-w-2xl rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden max-h-[92vh] flex flex-col animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
       
       <!-- Modal Header -->
       <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 flex items-center justify-between">
@@ -970,7 +974,7 @@
 
   <!-- MODAL แก้ไข SKU: แก้ไขชื่อ และ อัปโหลดรูปภาพจากอุปกรณ์ บันทึกลง Google Sheet -->
   <div id="modalEditSku" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden max-h-[92vh] flex flex-col animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
+    <div class="bg-white w-full sm:max-w-xl md:max-w-2xl rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden max-h-[92vh] flex flex-col animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
       
       <!-- Modal Header -->
       <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 flex items-center justify-between">
@@ -1070,7 +1074,7 @@
   
   <!-- MODAL จัดการซัพพลายเออร์: เพิ่ม / แก้ไข รายชื่อ ข้อมูลติดต่อ และรอบการจัดส่ง -->
   <div id="modalSupplierEdit" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden max-h-[92vh] flex flex-col animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
+    <div class="bg-white w-full sm:max-w-xl md:max-w-2xl rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden max-h-[92vh] flex flex-col animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
       
       <!-- Modal Header -->
       <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 flex items-center justify-between">
@@ -1139,7 +1143,7 @@
 
   <!-- CATEGORY MANAGEMENT & COLOR PICKER MODAL: จัดการและเพิ่มหมวดหมู่พร้อมกำหนดสีเอง -->
   <div id="modalCategoryManage" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden max-h-[90vh] flex flex-col animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
+    <div class="bg-white w-full sm:max-w-xl md:max-w-2xl rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden max-h-[90vh] flex flex-col animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
       
       <!-- Modal Header -->
       <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 flex items-center justify-between">
@@ -1277,7 +1281,7 @@
       historyFilter: 'ALL',
       activeCategoryFilter: 'ALL',
       showOnlyLowStock: false,
-      dashboardViewMode: localStorage.getItem('stock_view_mode_v1') || 'grid',
+      dashboardViewMode: localStorage.getItem('stock_view_mode_v1') || (typeof window !== 'undefined' && window.innerWidth < 768 ? 'swipe' : 'grid'),
       activeKpiMenu: 'chart'
     };
 
@@ -1565,30 +1569,207 @@
     }
 
     // 3. เรนเดอร์ แดชบอร์ดการ์ดสินค้าทั้งหมด
-    // สลับมุมมองแดชบอร์ด: การ์ดกะทัดรัด (Grid) vs รายการแน่น (Dense List)
+    // ==========================================
+    // ตัวแปรและฟังก์ชันระบบปัดหน้าจอ ซ้าย-ขวา สไตล์หน้าจอแอปมือถือ (Horizontal Swipe Pages)
+    // ==========================================
+    let currentSwipePageIndex = 0;
+    let swipeScrollTimer = null;
+
     function setDashboardViewMode(mode) {
       state.dashboardViewMode = mode;
       localStorage.setItem('stock_view_mode_v1', mode);
+      currentSwipePageIndex = 0; // รีเซ็ตหน้าแรกเมื่อเปลี่ยนโหมด
       
-      const btnGrid = document.getElementById('btnViewGrid');
-      const btnList = document.getElementById('btnViewList');
-      if (btnGrid && btnList) {
-        if (mode === 'grid') {
-          btnGrid.className = "py-1 px-2 rounded-lg text-xs font-bold transition bg-white text-blue-600 shadow-2xs flex items-center gap-1";
-          btnList.className = "py-1 px-2 rounded-lg text-xs font-medium transition text-slate-600 hover:text-slate-900 flex items-center gap-1";
-        } else {
-          btnList.className = "py-1 px-2 rounded-lg text-xs font-bold transition bg-white text-blue-600 shadow-2xs flex items-center gap-1";
-          btnGrid.className = "py-1 px-2 rounded-lg text-xs font-medium transition text-slate-600 hover:text-slate-900 flex items-center gap-1";
+      ['swipe', 'grid', 'list'].forEach(m => {
+        const btn = document.getElementById('btnView' + m.charAt(0).toUpperCase() + m.slice(1));
+        if (btn) {
+          if (m === mode) {
+            btn.className = "py-1 px-2 sm:px-2.5 rounded-lg text-xs font-bold transition bg-white text-blue-600 shadow-2xs flex items-center gap-1";
+          } else {
+            btn.className = "py-1 px-2 sm:px-2.5 rounded-lg text-xs font-medium transition text-slate-600 hover:text-slate-900 flex items-center gap-1";
+          }
         }
-      }
+      });
       renderDashboard();
     }
 
-    // 3. เรนเดอร์ แดชบอร์ดการ์ดสินค้าทั้งหมด (ปรับให้กะทัดรัด เห็นได้หลาย SKU บนมือถือ)
+    function goToSwipePage(pageIdx) {
+      const container = document.getElementById('swipePagesScrollContainer');
+      if (!container) return;
+      const totalPages = parseInt(container.getAttribute('data-total-pages') || '1', 10);
+      if (pageIdx < 0 || pageIdx >= totalPages) return;
+      
+      currentSwipePageIndex = pageIdx;
+      const targetLeft = pageIdx * container.clientWidth;
+      container.scrollTo({ left: targetLeft, behavior: 'smooth' });
+      updateSwipePageUI(pageIdx, totalPages);
+    }
+
+    function prevSwipePage() {
+      goToSwipePage(currentSwipePageIndex - 1);
+    }
+
+    function nextSwipePage() {
+      goToSwipePage(currentSwipePageIndex + 1);
+    }
+
+    function onSwipeContainerScroll(container) {
+      if (swipeScrollTimer) clearTimeout(swipeScrollTimer);
+      swipeScrollTimer = setTimeout(() => {
+        const pageWidth = container.clientWidth;
+        if (!pageWidth) return;
+        const pageIdx = Math.round(container.scrollLeft / pageWidth);
+        const totalPages = parseInt(container.getAttribute('data-total-pages') || '1', 10);
+        if (pageIdx !== currentSwipePageIndex && pageIdx >= 0 && pageIdx < totalPages) {
+          currentSwipePageIndex = pageIdx;
+          updateSwipePageUI(pageIdx, totalPages);
+        }
+      }, 50);
+    }
+
+    function updateSwipePageUI(pageIdx, totalPages) {
+      const badge = document.getElementById('swipePageBadgeText');
+      const countText = document.getElementById('swipeItemCountText');
+      const dotsList = document.getElementById('swipeDotsList');
+      const btnPrev = document.getElementById('btnPrevSwipe');
+      const btnNext = document.getElementById('btnNextSwipe');
+
+      if (badge) badge.textContent = `หน้า ${pageIdx + 1} จาก ${totalPages}`;
+      
+      const totalItems = parseInt(document.getElementById('swipePagesScrollContainer')?.getAttribute('data-total-items') || '0', 10);
+      const pageSize = parseInt(document.getElementById('swipePagesScrollContainer')?.getAttribute('data-page-size') || '6', 10);
+      const startItem = pageIdx * pageSize + 1;
+      const endItem = Math.min(totalItems, (pageIdx + 1) * pageSize);
+      if (countText && totalItems > 0) {
+        countText.textContent = `(แสดง ${startItem}-${endItem} จาก ${totalItems} รายการ)`;
+      }
+
+      if (dotsList) {
+        const dots = dotsList.querySelectorAll('button');
+        dots.forEach((dot, idx) => {
+          if (idx === pageIdx) {
+            dot.className = "h-2 rounded-full transition-all duration-300 w-6 bg-blue-600 shadow-2xs";
+          } else {
+            dot.className = "h-2 rounded-full transition-all duration-300 w-2 bg-slate-300 hover:bg-slate-400";
+          }
+        });
+      }
+
+      if (btnPrev) btnPrev.disabled = (pageIdx <= 0);
+      if (btnNext) btnNext.disabled = (pageIdx >= totalPages - 1);
+    }
+
+    // ฟังก์ชันสร้าง HTML การ์ด SKU เดียว (รองรับทั้งมือถือและคอมพิวเตอร์อย่างสวยงาม)
+    function renderSkuCardHtml(p, colorData) {
+      const isLow = Number(p.currentBalance) <= Number(p.minStock);
+      const isOut = Number(p.currentBalance) <= 0;
+      const inCartItem = (state.cart || []).find(item => item.productName === p.name);
+
+      const cardBorderClass = inCartItem
+        ? 'border-2 border-amber-500 ring-2 ring-amber-300 bg-amber-50/15 shadow-sm'
+        : isOut 
+        ? 'border-2 border-rose-500 bg-rose-50/20 ring-1 ring-rose-200' 
+        : isLow 
+        ? 'border-2 border-rose-400 bg-rose-50/20 ring-1 ring-rose-200' 
+        : 'bg-white border border-slate-200 hover:border-blue-400 hover:shadow-md transition';
+
+      let visualHeader = '';
+      if (p.imageUrl) {
+        visualHeader = `
+          <div class="h-24 sm:h-32 md:h-36 w-full bg-slate-100 relative overflow-hidden flex-shrink-0">
+            <img src="${p.imageUrl}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" loading="lazy">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10"></div>
+            <span class="absolute top-1.5 sm:top-2 left-1.5 sm:left-2 px-1.5 sm:px-2 py-0.5 rounded-md text-[8px] sm:text-[10px] font-bold shadow-2xs backdrop-blur-md" style="${colorData.badgeStyle}">
+              ${p.category}
+            </span>
+            ${inCartItem ? `<span class="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 px-1.5 sm:px-2 py-0.5 rounded-lg text-[9px] sm:text-xs font-black bg-amber-500 text-white shadow-sm border border-white flex items-center gap-1">🛒 ${inCartItem.quantity} ${p.unit}</span>` : isOut ? '<span class="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 px-1.5 py-0.5 rounded text-[8px] sm:text-[10px] font-black bg-rose-600 text-white shadow">หมด</span>' : isLow ? '<span class="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 px-1.5 py-0.5 rounded text-[8px] sm:text-[10px] font-bold bg-rose-600 text-white shadow animate-pulse">เหลือน้อย</span>' : ''}
+          </div>
+        `;
+      } else {
+        visualHeader = `
+          <div class="h-14 sm:h-20 md:h-24 w-full p-2 sm:p-2.5 flex items-center justify-between relative flex-shrink-0" style="${colorData.lightBgStyle}">
+            <span class="px-2 py-0.5 rounded-md text-[8px] sm:text-[10px] font-bold shadow-2xs" style="${colorData.badgeStyle}">
+              ${p.category}
+            </span>
+            ${inCartItem ? `<span class="px-2 py-0.5 rounded-lg text-[9px] sm:text-xs font-black bg-amber-500 text-white shadow-2xs">🛒 สั่ง ${inCartItem.quantity}</span>` : isOut ? '<span class="px-1.5 py-0.5 rounded text-[8px] sm:text-[10px] font-black bg-rose-600 text-white">หมด</span>' : isLow ? '<span class="px-1.5 py-0.5 rounded text-[8px] sm:text-[10px] font-bold bg-rose-600 text-white animate-pulse">เหลือน้อย</span>' : ''}
+          </div>
+        `;
+      }
+
+      return `
+        <div onclick="openCardActionModal('${p.name}')" 
+             class="rounded-2xl overflow-hidden cursor-pointer group active:scale-[0.98] transition shadow-2xs ${cardBorderClass} flex flex-col justify-between bg-white h-full">
+          ${visualHeader}
+
+          <!-- เนื้อหาภายในการ์ด -->
+          <div class="p-2 sm:p-3 flex-1 flex flex-col justify-between">
+            <div>
+              <h4 class="font-bold text-xs sm:text-sm text-slate-800 line-clamp-2 leading-tight group-hover:text-blue-600 transition" title="${p.name}">${p.name}</h4>
+              
+              <!-- จำนวนคงเหลือ -->
+              <div class="flex items-baseline justify-between mt-1.5 pt-1 border-t border-slate-100">
+                <span class="text-[10px] sm:text-xs text-slate-400 font-medium">คงเหลือ:</span>
+                <div class="text-right">
+                  <span class="text-base sm:text-xl font-black ${isOut || isLow ? 'text-rose-600' : 'text-slate-900'}">${p.currentBalance}</span>
+                  <span class="text-[10px] sm:text-xs font-medium text-slate-500">${p.unit}</span>
+                </div>
+              </div>
+
+              <!-- รายละเอียดขั้นต่ำ & ซัพพลายเออร์ -->
+              <div class="flex items-center justify-between text-[9px] sm:text-[11px] text-slate-400 mt-1">
+                <span>ขั้นต่ำ: ${p.minStock} ${p.unit}</span>
+                <span class="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-medium max-w-[55%] truncate" title="${p.supplier || 'ทั่วไป'}">🏢 ${p.supplier || 'ทั่วไป'}</span>
+              </div>
+            </div>
+
+            <!-- ปุ่ม Action ด้านล่างการ์ด -->
+            <div class="mt-2.5 flex items-center gap-1 sm:gap-1.5 pt-1.5 border-t border-slate-100">
+              <button type="button" 
+                      onclick="event.stopPropagation(); openCardActionModal('${p.name}')"
+                      class="flex-1 py-1.5 sm:py-2 px-1 sm:px-2 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-600 text-[10px] sm:text-xs font-bold rounded-xl transition text-center">
+                จัดการ
+              </button>
+              <button type="button" 
+                      onclick="event.stopPropagation(); openEditSkuModal('${p.name}')"
+                      class="p-1.5 sm:p-2 bg-slate-100 hover:bg-indigo-50 text-slate-500 hover:text-indigo-600 rounded-xl transition flex-shrink-0"
+                      title="แก้ไข SKU">
+                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+              </button>
+              <button type="button" 
+                      onclick="event.stopPropagation(); quickAddToCart('${p.name}')"
+                      class="py-1.5 sm:py-2 px-2 sm:px-3 ${inCartItem ? 'bg-orange-600 hover:bg-orange-700 font-black ring-1 ring-orange-400' : 'bg-amber-500 hover:bg-amber-600 font-bold'} active:scale-95 text-white text-[10px] sm:text-xs rounded-xl transition flex items-center justify-center gap-1 shadow-2xs flex-shrink-0"
+                      title="สั่งซื้อ">
+                <span>🛒</span>
+                <span>${inCartItem ? '+1' : 'สั่ง'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // 3. เรนเดอร์ แดชบอร์ดการ์ดสินค้าทั้งหมด
     function renderDashboard() {
       const container = document.getElementById('dashboardContainer');
       const search = (document.getElementById('searchBox')?.value || '').trim().toLowerCase();
-      const mode = state.dashboardViewMode || 'grid';
+      
+      // กำหนดค่าเริ่มต้นโหมดแสดงผล: บนมือถือเริ่มที่ swipe, บนคอมเริ่มที่ grid
+      if (!state.dashboardViewMode) {
+        state.dashboardViewMode = localStorage.getItem('stock_view_mode_v1') || (window.innerWidth < 768 ? 'swipe' : 'grid');
+      }
+      const mode = state.dashboardViewMode;
+
+      // อัปเดตสถานะปุ่มทั้ง 3
+      ['swipe', 'grid', 'list'].forEach(m => {
+        const btn = document.getElementById('btnView' + m.charAt(0).toUpperCase() + m.slice(1));
+        if (btn) {
+          if (m === mode) {
+            btn.className = "py-1 px-2 sm:px-2.5 rounded-lg text-xs font-bold transition bg-white text-blue-600 shadow-2xs flex items-center gap-1";
+          } else {
+            btn.className = "py-1 px-2 sm:px-2.5 rounded-lg text-xs font-medium transition text-slate-600 hover:text-slate-900 flex items-center gap-1";
+          }
+        }
+      });
 
       let lowCount = 0;
       state.products.forEach(p => {
@@ -1606,11 +1787,200 @@
       });
 
       if (filtered.length === 0) {
-        container.innerHTML = '<div class="text-center py-16 text-slate-400 text-xs bg-white rounded-2xl border border-dashed border-slate-300">ไม่พบสินค้าตามเงื่อนไข</div>';
+        container.innerHTML = '<div class="text-center py-16 text-slate-400 text-xs sm:text-sm bg-white rounded-3xl border border-dashed border-slate-300">ไม่พบสินค้าตามเงื่อนไขที่ค้นหา</div>';
         return;
       }
 
-      // จัดกลุ่มตามหมวดหมู่
+      // ==========================================
+      // โหมด 1: ปัดหน้าจอ ซ้าย-ขวา สไตล์หน้าจอแอปมือถือ (Horizontal Swipe Pages)
+      // ==========================================
+      if (mode === 'swipe') {
+        const isDesktop = window.innerWidth >= 1024;
+        const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+        // บนมือถือแสดง 6 รายการต่อหน้า (2 คอลัมน์ x 3 แถว พอดีความสูงจอโดยไม่ต้องเลื่อนแนวตั้ง)
+        const pageSize = isDesktop ? 12 : isTablet ? 8 : 6;
+        const totalPages = Math.ceil(filtered.length / pageSize);
+
+        if (currentSwipePageIndex >= totalPages) {
+          currentSwipePageIndex = Math.max(0, totalPages - 1);
+        }
+
+        const pages = [];
+        for (let i = 0; i < filtered.length; i += pageSize) {
+          pages.push(filtered.slice(i, i + pageSize));
+        }
+
+        let pagesHtml = `
+          <div class="space-y-2">
+            <!-- คำแนะนำการใช้งานแบบปัด -->
+            <div class="flex items-center justify-between px-1 text-xs text-slate-500">
+              <span class="flex items-center gap-1">
+                <span>👉 ปัดหน้าจอซ้าย-ขวา หรือกดปุ่ม เพื่อเปลี่ยนหน้า SKU</span>
+              </span>
+              <span class="font-bold text-blue-600">${filtered.length} SKU ทั้งหมด</span>
+            </div>
+
+            <!-- กล่อง Container สไลด์ปัดหน้าจอ (Horizontal Scroll-Snap) -->
+            <div id="swipePagesScrollContainer" 
+                 class="flex overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar w-full pb-1"
+                 onscroll="onSwipeContainerScroll(this)"
+                 data-total-pages="${totalPages}"
+                 data-total-items="${filtered.length}"
+                 data-page-size="${pageSize}">
+              ${pages.map((pageItems, pIdx) => `
+                <div class="snap-start snap-always min-w-full w-full flex-shrink-0 px-0.5">
+                  <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3.5">
+                    ${pageItems.map(p => {
+                      const colorData = getCategoryColorData(p.category);
+                      return renderSkuCardHtml(p, colorData);
+                    }).join('')}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+
+            <!-- ตัวควบคุมและตัวบอกหน้า (Mobile Springboard Pagination Controller) -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-2.5 sm:p-3 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-2.5 select-none">
+              <!-- ปุ่มก่อนหน้า -->
+              <button type="button" onclick="prevSwipePage()" id="btnPrevSwipe" 
+                      ${currentSwipePageIndex === 0 ? 'disabled' : ''}
+                      class="w-full sm:w-auto px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition active:scale-95 disabled:opacity-30 disabled:pointer-events-none">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                <span>หน้าก่อนหน้า</span>
+              </button>
+
+              <!-- กลาง: จุดบอกหน้า (Dot Indicators เหมือนเปิดแอปหน้าจอมือถือ) + ตัวเลขบอกว่าปัดไปได้กี่ครั้ง -->
+              <div class="flex flex-col items-center gap-1.5">
+                <!-- จุด Dots เลื่อนตามหน้าที่ปัดไป -->
+                <div id="swipeDotsList" class="flex items-center justify-center gap-1.5 py-1">
+                  ${Array.from({ length: totalPages }).map((_, i) => `
+                    <button type="button" onclick="goToSwipePage(${i})" 
+                            class="h-2 rounded-full transition-all duration-300 ${i === currentSwipePageIndex ? 'w-6 bg-blue-600 shadow-2xs' : 'w-2 bg-slate-300 hover:bg-slate-400'}"
+                            title="ไปที่หน้า ${i + 1}" aria-label="ไปที่หน้า ${i + 1}">
+                    </button>
+                  `).join('')}
+                </div>
+
+                <div class="text-xs font-bold text-slate-700 flex items-center gap-2">
+                  <span id="swipePageBadgeText" class="px-2.5 py-0.5 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 shadow-2xs">
+                    หน้า ${currentSwipePageIndex + 1} จาก ${totalPages}
+                  </span>
+                  <span id="swipeItemCountText" class="text-slate-400 font-normal text-[11px]">
+                    (แสดง ${currentSwipePageIndex * pageSize + 1}-${Math.min(filtered.length, (currentSwipePageIndex + 1) * pageSize)} จาก ${filtered.length} รายการ)
+                  </span>
+                </div>
+              </div>
+
+              <!-- ปุ่มถัดไป -->
+              <button type="button" onclick="nextSwipePage()" id="btnNextSwipe" 
+                      ${currentSwipePageIndex >= totalPages - 1 ? 'disabled' : ''}
+                      class="w-full sm:w-auto px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition active:scale-95 shadow-xs disabled:opacity-30 disabled:pointer-events-none">
+                <span>หน้าถัดไป</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+          </div>
+        `;
+
+        container.innerHTML = pagesHtml;
+        return;
+      }
+
+      // ==========================================
+      // โหมด 2: รายการแน่นสำหรับมือถือและคอม (Ultra-compact Dense List View)
+      // ==========================================
+      if (mode === 'list') {
+        const grouped = {};
+        filtered.forEach(p => {
+          if (!grouped[p.category]) grouped[p.category] = [];
+          grouped[p.category].push(p);
+        });
+
+        let html = '';
+        Object.keys(grouped).forEach(catName => {
+          const colorData = getCategoryColorData(catName);
+          const items = grouped[catName];
+
+          html += `
+            <div class="space-y-2">
+              <div class="flex items-center justify-between px-1">
+                <div class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full shadow-2xs" style="${colorData.dotStyle}"></span>
+                  <h3 class="font-bold text-xs sm:text-sm text-slate-800 uppercase tracking-wide">
+                    ${catName}
+                  </h3>
+                </div>
+                <span class="text-[10px] sm:text-xs text-slate-400 font-medium">${items.length} SKU</span>
+              </div>
+
+              <div class="space-y-1.5">
+                ${items.map(p => {
+                  const isLow = Number(p.currentBalance) <= Number(p.minStock);
+                  const isOut = Number(p.currentBalance) <= 0;
+                  const inCartItem = (state.cart || []).find(item => item.productName === p.name);
+
+                  const rowBorderClass = inCartItem
+                    ? 'border-amber-400 ring-1 ring-amber-300 bg-amber-50/20'
+                    : isOut
+                    ? 'border-rose-300 bg-rose-50/30'
+                    : isLow
+                    ? 'border-rose-200 bg-rose-50/15'
+                    : 'border-slate-200 bg-white hover:border-slate-300';
+
+                  return `
+                    <div onclick="openCardActionModal('${p.name}')" 
+                         class="p-2 sm:p-2.5 rounded-2xl border shadow-2xs transition flex items-center justify-between gap-2 sm:gap-4 cursor-pointer active:scale-[0.99] ${rowBorderClass}">
+                      <!-- ซ้าย: รูปเล็ก + ข้อมูลสินค้า -->
+                      <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-slate-100 overflow-hidden flex-shrink-0 border border-slate-200 flex items-center justify-center relative">
+                          ${p.imageUrl ? `<img src="${p.imageUrl}" class="w-full h-full object-cover">` : `<span class="text-sm">📦</span>`}
+                          <span class="absolute bottom-0 left-0 right-0 h-1" style="background-color: ${colorData.hex};"></span>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                          <div class="flex items-center gap-2">
+                            <h4 class="font-bold text-xs sm:text-sm text-slate-900 truncate leading-tight">${p.name}</h4>
+                            ${isOut ? '<span class="px-1.5 py-0.2 rounded text-[8px] sm:text-[9px] font-black bg-rose-600 text-white flex-shrink-0">หมด</span>' : isLow ? '<span class="px-1.5 py-0.2 rounded text-[8px] sm:text-[9px] font-bold bg-rose-50 text-rose-700 border border-rose-200 flex-shrink-0">เหลือน้อย</span>' : ''}
+                          </div>
+                          <div class="flex items-center gap-2 text-[10px] sm:text-xs text-slate-400 mt-0.5">
+                            <span class="truncate">🏢 ${p.supplier || 'ทั่วไป'}</span>
+                            <span>•</span>
+                            <span style="color: ${colorData.hex}; font-weight: 600;">${p.category}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- กลาง: ตัวเลขคงเหลือ -->
+                      <div class="text-right flex-shrink-0 px-1 sm:px-3">
+                        <div class="font-black text-sm sm:text-lg ${isOut || isLow ? 'text-rose-600' : 'text-slate-800'}">
+                          ${p.currentBalance} <span class="text-[9px] sm:text-xs font-medium text-slate-500">${p.unit}</span>
+                        </div>
+                        <div class="text-[9px] sm:text-xs text-slate-400">ต่ำ: ${p.minStock}</div>
+                      </div>
+
+                      <!-- ขวา: ปุ่ม Action กระทัดรัด -->
+                      <div class="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                        <button type="button" onclick="event.stopPropagation(); openEditSkuModal('${p.name}')" class="p-1.5 sm:p-2 bg-slate-100 hover:bg-indigo-50 text-slate-500 hover:text-indigo-600 rounded-xl transition" title="แก้ไข SKU">
+                          <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                        </button>
+                        <button type="button" onclick="event.stopPropagation(); quickAddToCart('${p.name}')" class="px-2.5 py-1.5 sm:py-2 ${inCartItem ? 'bg-orange-600 text-white font-black ring-1 ring-orange-400' : 'bg-amber-500 text-white font-bold'} text-[10px] sm:text-xs rounded-xl shadow-2xs transition active:scale-95 flex items-center gap-1">
+                          <span>🛒</span>
+                          <span>${inCartItem ? inCartItem.quantity : 'สั่ง'}</span>
+                        </button>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          `;
+        });
+        container.innerHTML = html;
+        return;
+      }
+
+      // ==========================================
+      // โหมด 3: การ์ดตารางเต็มจอ (Responsive Grid View บนคอมพิวเตอร์และมือถือ)
+      // ==========================================
       const grouped = {};
       filtered.forEach(p => {
         if (!grouped[p.category]) grouped[p.category] = [];
@@ -1623,177 +1993,23 @@
         const items = grouped[catName];
 
         html += `
-          <div class="space-y-2">
+          <div class="space-y-2.5">
             <!-- Header หมวดหมู่ -->
             <div class="flex items-center justify-between px-1">
-              <div class="flex items-center gap-1.5">
-                <span class="w-2.5 h-2.5 rounded-full shadow-2xs" style="${colorData.dotStyle}"></span>
-                <h3 class="font-bold text-xs text-slate-800 uppercase tracking-wide">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full shadow-2xs" style="${colorData.dotStyle}"></span>
+                <h3 class="font-bold text-xs sm:text-sm text-slate-800 uppercase tracking-wide">
                   ${catName}
                 </h3>
               </div>
-              <span class="text-[10px] text-slate-400 font-medium">${items.length} SKU</span>
+              <span class="text-[10px] sm:text-xs text-slate-400 font-medium">${items.length} SKU</span>
             </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 sm:gap-4">
+              ${items.map(p => renderSkuCardHtml(p, colorData)).join('')}
+            </div>
+          </div>
         `;
-
-        if (mode === 'list') {
-          // ==========================================
-          // มุมมองรายการแน่นสำหรับมือถือ (Ultra-compact Dense List View: เห็น 8-12 SKU ในหน้าเดียว)
-          // ==========================================
-          html += `
-            <div class="space-y-1.5">
-              ${items.map(p => {
-                const isLow = Number(p.currentBalance) <= Number(p.minStock);
-                const isOut = Number(p.currentBalance) <= 0;
-                const inCartItem = (state.cart || []).find(item => item.productName === p.name);
-
-                const rowBorderClass = inCartItem
-                  ? 'border-amber-400 ring-1 ring-amber-300 bg-amber-50/20'
-                  : isOut
-                  ? 'border-rose-300 bg-rose-50/30'
-                  : isLow
-                  ? 'border-rose-200 bg-rose-50/15'
-                  : 'border-slate-200 bg-white hover:border-slate-300';
-
-                return `
-                  <div onclick="openCardActionModal('${p.name}')" 
-                       class="p-2 rounded-xl border shadow-2xs transition flex items-center justify-between gap-2 cursor-pointer active:scale-[0.99] ${rowBorderClass}">
-                    <!-- ซ้าย: รูปเล็ก + ข้อมูลสินค้า -->
-                    <div class="flex items-center gap-2 min-w-0 flex-1">
-                      <div class="w-10 h-10 rounded-lg bg-slate-100 overflow-hidden flex-shrink-0 border border-slate-200 flex items-center justify-center relative">
-                        ${p.imageUrl ? `<img src="${p.imageUrl}" class="w-full h-full object-cover">` : `<span class="text-xs">📦</span>`}
-                        <span class="absolute bottom-0 left-0 right-0 h-1" style="background-color: ${colorData.hex};"></span>
-                      </div>
-                      <div class="min-w-0 flex-1">
-                        <div class="flex items-center gap-1.5">
-                          <h4 class="font-bold text-xs text-slate-900 truncate leading-tight">${p.name}</h4>
-                          ${isOut ? '<span class="px-1 py-0.2 rounded text-[8px] font-black bg-rose-600 text-white flex-shrink-0">หมด</span>' : isLow ? '<span class="px-1 py-0.2 rounded text-[8px] font-bold bg-rose-50 text-rose-700 border border-rose-200 flex-shrink-0">เหลือน้อย</span>' : ''}
-                        </div>
-                        <div class="flex items-center gap-2 text-[10px] text-slate-400 mt-0.5">
-                          <span class="truncate">🏢 ${p.supplier || 'ทั่วไป'}</span>
-                          <span>•</span>
-                          <span style="color: ${colorData.hex}; font-weight: 600;">${p.category}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- กลาง: ตัวเลขคงเหลือ -->
-                    <div class="text-right flex-shrink-0 px-1">
-                      <div class="font-black text-sm ${isOut || isLow ? 'text-rose-600' : 'text-slate-800'}">
-                        ${p.currentBalance} <span class="text-[9px] font-medium text-slate-500">${p.unit}</span>
-                      </div>
-                      <div class="text-[9px] text-slate-400">ต่ำ: ${p.minStock}</div>
-                    </div>
-
-                    <!-- ขวา: ปุ่ม Action กระทัดรัด -->
-                    <div class="flex items-center gap-1 flex-shrink-0">
-                      <button type="button" onclick="event.stopPropagation(); openEditSkuModal('${p.name}')" class="p-1.5 bg-slate-100 hover:bg-indigo-50 text-slate-500 hover:text-indigo-600 rounded-lg transition" title="แก้ไข SKU">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                      </button>
-                      <button type="button" onclick="event.stopPropagation(); quickAddToCart('${p.name}')" class="px-2 py-1.5 ${inCartItem ? 'bg-orange-600 text-white font-black ring-1 ring-orange-400' : 'bg-amber-500 text-white font-bold'} text-[10px] rounded-lg shadow-2xs transition active:scale-95 flex items-center gap-0.5">
-                        <span>🛒</span>
-                        <span>${inCartItem ? inCartItem.quantity : 'สั่ง'}</span>
-                      </button>
-                    </div>
-                  </div>
-                `;
-              }).join('')}
-            </div>
-          `;
-        } else {
-          // ==========================================
-          // มุมมองการ์ดกะทัดรัด (Compact 2-Column Grid on Mobile: สูงเพียง ~145px เห็น 4-6 SKU พร้อมกัน)
-          // ==========================================
-          html += `
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-              ${items.map(p => {
-                const isLow = Number(p.currentBalance) <= Number(p.minStock);
-                const isOut = Number(p.currentBalance) <= 0;
-                const inCartItem = (state.cart || []).find(item => item.productName === p.name);
-
-                const cardBorderClass = inCartItem
-                  ? 'border-2 border-amber-500 ring-1 ring-amber-300 bg-amber-50/15 shadow-xs'
-                  : isOut 
-                  ? 'border-2 border-rose-500 bg-rose-50/20' 
-                  : isLow 
-                  ? 'border-2 border-rose-400 bg-rose-50/20' 
-                  : 'bg-white border border-slate-200 hover:border-slate-300 transition';
-
-                let visualHeader = '';
-                if (p.imageUrl) {
-                  visualHeader = `
-                    <div class="h-20 sm:h-24 w-full bg-slate-100 relative overflow-hidden">
-                      <img src="${p.imageUrl}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                      <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10"></div>
-                      <span class="absolute top-1.5 left-1.5 px-1.5 py-0.2 rounded text-[8px] font-bold shadow-2xs backdrop-blur-md" style="${colorData.badgeStyle}">
-                        ${p.category}
-                      </span>
-                      ${inCartItem ? `<span class="absolute top-1.5 right-1.5 px-1.5 py-0.2 rounded text-[9px] font-black bg-amber-500 text-white shadow-2xs">🛒 ${inCartItem.quantity}</span>` : isOut ? '<span class="absolute top-1.5 right-1.5 px-1.5 py-0.2 rounded text-[8px] font-black bg-rose-600 text-white">หมด</span>' : isLow ? '<span class="absolute top-1.5 right-1.5 px-1.5 py-0.2 rounded text-[8px] font-bold bg-rose-600 text-white">เหลือน้อย</span>' : ''}
-                    </div>
-                  `;
-                } else {
-                  visualHeader = `
-                    <div class="h-12 w-full p-2 flex items-center justify-between relative" style="${colorData.lightBgStyle}">
-                      <span class="px-1.5 py-0.2 rounded text-[8px] font-bold" style="${colorData.badgeStyle}">
-                        ${p.category}
-                      </span>
-                      ${inCartItem ? `<span class="px-1.5 py-0.2 rounded text-[9px] font-black bg-amber-500 text-white">🛒 ${inCartItem.quantity}</span>` : isOut ? '<span class="px-1.5 py-0.2 rounded text-[8px] font-black bg-rose-600 text-white">หมด</span>' : isLow ? '<span class="px-1.5 py-0.2 rounded text-[8px] font-bold bg-rose-600 text-white">เหลือน้อย</span>' : ''}
-                    </div>
-                  `;
-                }
-
-                return `
-                  <div onclick="openCardActionModal('${p.name}')" 
-                       class="rounded-xl overflow-hidden cursor-pointer group active:scale-[0.98] transition shadow-2xs ${cardBorderClass} flex flex-col justify-between">
-                    ${visualHeader}
-
-                    <!-- เนื้อหาในการ์ดกะทัดรัด -->
-                    <div class="p-2 flex-1 flex flex-col justify-between">
-                      <div>
-                        <h4 class="font-bold text-[11px] sm:text-xs text-slate-800 truncate leading-tight group-hover:text-blue-600 transition" title="${p.name}">${p.name}</h4>
-                        <div class="flex items-center justify-between text-[9px] text-slate-400 mt-1">
-                          <span>คงเหลือ:</span>
-                          <div>
-                            <span class="text-sm font-black ${isOut || isLow ? 'text-rose-600' : 'text-slate-900'}">${p.currentBalance}</span>
-                            <span class="text-[9px] text-slate-500">${p.unit}</span>
-                          </div>
-                        </div>
-                        <div class="flex items-center justify-between text-[9px] text-slate-400 mt-0.5">
-                          <span>ต่ำ: ${p.minStock}</span>
-                          <span class="bg-slate-100 text-slate-500 px-1 rounded truncate max-w-[55%]" title="${p.supplier || 'ทั่วไป'}">🏢 ${p.supplier || 'ทั่วไป'}</span>
-                        </div>
-                      </div>
-
-                      <!-- ปุ่ม Action กะทัดรัด -->
-                      <div class="mt-2 flex items-center gap-1 pt-1 border-t border-slate-100">
-                        <button type="button" 
-                                onclick="event.stopPropagation(); openCardActionModal('${p.name}')"
-                                class="flex-1 py-1 px-1 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-600 text-[9px] font-bold rounded-lg transition text-center">
-                          จัดการ
-                        </button>
-                        <button type="button" 
-                                onclick="event.stopPropagation(); openEditSkuModal('${p.name}')"
-                                class="p-1 bg-slate-100 hover:bg-indigo-50 text-slate-500 hover:text-indigo-600 rounded-lg transition"
-                                title="แก้ไข SKU">
-                          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                        </button>
-                        <button type="button" 
-                                onclick="event.stopPropagation(); quickAddToCart('${p.name}')"
-                                class="py-1 px-1.5 ${inCartItem ? 'bg-orange-600 hover:bg-orange-700' : 'bg-amber-500 hover:bg-amber-600'} active:scale-95 text-white text-[9px] font-bold rounded-lg transition flex items-center justify-center gap-0.5"
-                                title="สั่งซื้อ">
-                          <span>🛒</span>
-                          <span>${inCartItem ? '+1' : 'สั่ง'}</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                `;
-              }).join('')}
-            </div>
-          `;
-        }
-
-        html += `</div>`;
       });
 
       container.innerHTML = html;
