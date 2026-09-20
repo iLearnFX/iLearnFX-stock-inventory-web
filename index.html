@@ -391,7 +391,7 @@
           </div>
         </div>
         <div class="relative z-10 flex items-center gap-1.5">
-          <button type="button" onclick="openEditSkuModal()" class="text-xs font-bold text-white bg-white/20 hover:bg-white/30 px-2.5 py-1.5 rounded-xl flex items-center gap-1 border border-white/30 transition active:scale-95 shadow-xs" title="แก้ไขชื่อและรูปภาพสินค้า">
+          <button type="button" onclick="openEditSkuModal(activeModalProduct ? activeModalProduct.name : null)" class="text-xs font-bold text-white bg-white/20 hover:bg-white/30 px-2.5 py-1.5 rounded-xl flex items-center gap-1 border border-white/30 transition active:scale-95 shadow-xs" title="แก้ไขชื่อและรูปภาพสินค้า">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
             <span>แก้ไข SKU</span>
           </button>
@@ -769,7 +769,7 @@
   
   
   <!-- MODAL เพิ่มสินค้าใหม่: ถ่ายรูป/อัปโหลดรูปจากมือถือ ตั้งชื่อ และบันทึกลง Google Sheet -->
-  <div id="modalAddProduct" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+  <div id="modalAddProduct" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden max-h-[92vh] flex flex-col animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
       
       <!-- Modal Header -->
@@ -873,7 +873,7 @@
   </div>
 
   <!-- MODAL แก้ไข SKU: แก้ไขชื่อ และ อัปโหลดรูปภาพจากอุปกรณ์ บันทึกลง Google Sheet -->
-  <div id="modalEditSku" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+  <div id="modalEditSku" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden max-h-[92vh] flex flex-col animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
       
       <!-- Modal Header -->
@@ -973,7 +973,7 @@
 
   
   <!-- MODAL จัดการซัพพลายเออร์: เพิ่ม / แก้ไข รายชื่อ ข้อมูลติดต่อ และรอบการจัดส่ง -->
-  <div id="modalSupplierEdit" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+  <div id="modalSupplierEdit" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden max-h-[92vh] flex flex-col animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
       
       <!-- Modal Header -->
@@ -1276,7 +1276,14 @@
     try {
       const cached = localStorage.getItem('stock_app_cache_v4');
       if (cached) {
-        state = JSON.parse(cached);
+        const parsed = JSON.parse(cached);
+        state = { ...state, ...parsed };
+      }
+      if (!state.suppliers || !Array.isArray(state.suppliers) || state.suppliers.length === 0) {
+        state.suppliers = getStoredSuppliers();
+      }
+      if (!state.categories || !Array.isArray(state.categories) || state.categories.length === 0) {
+        state.categories = ['วัตถุดิบ', 'บรรจุภัณฑ์', 'อุปกรณ์/เครื่องใช้', 'สินค้าสำเร็จรูป'].map(n => ({ name: n }));
       }
       state.cart = getStoredCart();
       updateUI();
@@ -2974,18 +2981,34 @@
       document.getElementById('newProductCategoryCustom').value = '';
       document.getElementById('newProductCategoryCustom').classList.add('hidden');
 
+      let cats = state.categories;
+      if (!cats || !Array.isArray(cats) || cats.length === 0) {
+        cats = ['วัตถุดิบ', 'บรรจุภัณฑ์', 'อุปกรณ์/เครื่องใช้', 'สินค้าสำเร็จรูป'].map(n => ({ name: n }));
+      }
       const select = document.getElementById('newProductCategorySelect');
-      select.innerHTML = state.categories.map(c => 
-        `<option value="${c.name}">${c.name}</option>`
-      ).join('') + '<option value="__NEW__">+ สร้างหมวดหมู่ใหม่...</option>';
+      if (select) {
+        select.innerHTML = cats.map(c => {
+          const cName = typeof c === 'string' ? c : (c.name || '');
+          return `<option value="${cName}">${cName}</option>`;
+        }).join('') + '<option value="__NEW__">+ สร้างหมวดหมู่ใหม่...</option>';
+      }
 
       const supSelect = document.getElementById('newProductSupplier');
       if (supSelect) {
-        supSelect.innerHTML = state.suppliers.map(s => `<option value="${s.name}">${s.name}</option>`).join('');
+        let sups = state.suppliers;
+        if (!sups || !Array.isArray(sups) || sups.length === 0) {
+          sups = getStoredSuppliers();
+          state.suppliers = sups;
+        }
+        supSelect.innerHTML = sups.map(s => {
+          const sName = typeof s === 'string' ? s : (s.name || '');
+          return `<option value="${sName}">${sName}</option>`;
+        }).join('');
       }
 
       updateNewProductImgPreview('');
-      document.getElementById('modalAddProduct').classList.remove('hidden');
+      const modal = document.getElementById('modalAddProduct');
+      if (modal) modal.classList.remove('hidden');
     }
 
     function closeAddProductModal() {
@@ -3170,30 +3193,66 @@
     // ==========================================
     let editingSkuProduct = null;
 
-    function openEditSkuModal(productName) {
-      const prod = productName ? state.products.find(p => p.name === productName) : activeModalProduct;
-      if (!prod) return;
+    function openEditSkuModal(productName = null) {
+      let prod = null;
+      if (productName) {
+        prod = state.products.find(p => p.name === productName);
+      }
+      if (!prod && activeModalProduct) {
+        prod = activeModalProduct;
+      }
+      if (!prod && state.products && state.products.length > 0) {
+        prod = state.products[0];
+      }
+      if (!prod) {
+        alert('ไม่พบข้อมูลสินค้าที่ต้องการแก้ไข');
+        return;
+      }
       editingSkuProduct = prod;
 
-      document.getElementById('editSkuName').value = prod.name;
-      document.getElementById('editSkuMinStock').value = prod.minStock;
-      document.getElementById('editSkuUnit').value = prod.unit;
-      document.getElementById('editSkuImageUrl').value = prod.imageUrl || '';
+      // ปิดหน้าต่างจัดการสต็อกเดิม
+      closeCardActionModal();
+
+      const nameInput = document.getElementById('editSkuName');
+      if (nameInput) nameInput.value = prod.name || '';
+
+      const minStockInput = document.getElementById('editSkuMinStock');
+      if (minStockInput) minStockInput.value = prod.minStock !== undefined ? prod.minStock : 0;
+
+      const unitInput = document.getElementById('editSkuUnit');
+      if (unitInput) unitInput.value = prod.unit || '';
+
+      const imgUrlInput = document.getElementById('editSkuImageUrl');
+      if (imgUrlInput) imgUrlInput.value = prod.imageUrl || '';
 
       const catSelect = document.getElementById('editSkuCategory');
-      catSelect.innerHTML = state.categories.map(c => 
-        `<option value="${c.name}" ${c.name === prod.category ? 'selected' : ''}>${c.name}</option>`
-      ).join('');
+      if (catSelect) {
+        let cats = state.categories;
+        if (!cats || !Array.isArray(cats) || cats.length === 0) {
+          cats = ['วัตถุดิบ', 'บรรจุภัณฑ์', 'อุปกรณ์/เครื่องใช้', 'สินค้าสำเร็จรูป'].map(n => ({ name: n }));
+        }
+        catSelect.innerHTML = cats.map(c => {
+          const cName = typeof c === 'string' ? c : (c.name || '');
+          return `<option value="${cName}" ${cName === prod.category ? 'selected' : ''}>${cName}</option>`;
+        }).join('');
+      }
 
       const supSelect = document.getElementById('editSkuSupplier');
       if (supSelect) {
-        supSelect.innerHTML = state.suppliers.map(s => 
-          `<option value="${s.name}" ${s.name === prod.supplier ? 'selected' : ''}>${s.name}</option>`
-        ).join('');
+        let sups = state.suppliers;
+        if (!sups || !Array.isArray(sups) || sups.length === 0) {
+          sups = getStoredSuppliers();
+          state.suppliers = sups;
+        }
+        supSelect.innerHTML = sups.map(s => {
+          const sName = typeof s === 'string' ? s : (s.name || '');
+          return `<option value="${sName}" ${sName === prod.supplier ? 'selected' : ''}>${sName}</option>`;
+        }).join('');
       }
 
       updateSkuImgPreview(prod.imageUrl || '');
-      document.getElementById('modalEditSku').classList.remove('hidden');
+      const modal = document.getElementById('modalEditSku');
+      if (modal) modal.classList.remove('hidden');
     }
 
     function closeEditSkuModal() {
