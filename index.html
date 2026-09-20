@@ -2075,12 +2075,20 @@
       showAlert(`เพิ่ม "${activeModalProduct.name}" (${qty} ${activeModalProduct.unit}) เข้าตะกร้าแล้ว`, 'success');
     }
 
+    function getItemSupplier(item) {
+      if (item.supplier) return item.supplier;
+      const prod = state.products.find(p => p.name === (item.productName || item.name));
+      return (prod && prod.supplier) ? prod.supplier : 'แม็คโคร (CP Axtra)';
+    }
+
     function addToCart(product, qty, note = '') {
       if (!state.cart) state.cart = [];
       const existingIdx = state.cart.findIndex(item => item.productName === product.name);
+      const supplierName = product.supplier || getItemSupplier(product);
 
       if (existingIdx >= 0) {
         state.cart[existingIdx].quantity = qty;
+        state.cart[existingIdx].supplier = supplierName;
         if (note) state.cart[existingIdx].note = note;
       } else {
         state.cart.push({
@@ -2091,7 +2099,8 @@
           unit: product.unit,
           quantity: qty,
           note: note,
-          imageUrl: product.imageUrl || ''
+          imageUrl: product.imageUrl || '',
+          supplier: supplierName
         });
       }
 
@@ -2224,51 +2233,84 @@
       document.getElementById('btnGoToPO').disabled = false;
       document.getElementById('btnGoToPO').classList.remove('opacity-50');
 
-      container.innerHTML = cart.map(item => {
-        const colorData = getCategoryColorData(item.category);
-        const isLow = Number(item.currentStock) <= Number(item.minStock);
+      // จัดกลุ่มรายการในตะกร้าตามซัพพลายเออร์
+      const groups = {};
+      cart.forEach(item => {
+        const sup = getItemSupplier(item);
+        if (!groups[sup]) groups[sup] = [];
+        groups[sup].push(item);
+      });
 
-        return `
-          <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-xs space-y-2.5">
-            <div class="flex items-start justify-between gap-2">
-              <div class="flex items-center gap-2.5">
-                <div class="w-10 h-10 rounded-xl bg-slate-100 overflow-hidden flex-shrink-0 border border-slate-200 flex items-center justify-center">
-                  ${item.imageUrl ? `<img src="${item.imageUrl}" class="w-full h-full object-cover">` : `<svg class="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>`}
-                </div>
-                <div>
-                  <span class="px-2 py-0.5 rounded text-[9px] font-bold" style="${colorData.badgeStyle}">${item.category}</span>
-                  <h4 class="font-bold text-xs text-slate-800 leading-tight mt-0.5">${item.productName}</h4>
-                  <div class="text-[10px] text-slate-400">คงเหลือ: <span class="${isLow ? 'text-rose-600 font-bold' : 'text-slate-600'}">${item.currentStock}</span> / ขั้นต่ำ: ${item.minStock} ${item.unit}</div>
-                </div>
+      let html = '';
+      Object.keys(groups).forEach(supName => {
+        const supItems = groups[supName];
+        const supInfo = state.suppliers.find(s => s.name === supName);
+        const groupTotalQty = supItems.reduce((sum, it) => sum + (Number(it.quantity) || 0), 0);
+
+        html += `
+          <div class="space-y-2 bg-slate-100/80 p-3 rounded-2xl border border-slate-200">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1.5">
+                <span class="text-xs font-black text-indigo-700 bg-white px-2 py-0.5 rounded-lg border border-indigo-200 shadow-2xs">🏢 ${supName}</span>
+                ${supInfo?.phone ? `<a href="tel:${supInfo.phone}" class="text-[10px] text-blue-600 font-bold hover:underline">📞 ${supInfo.phone}</a>` : ''}
               </div>
-
-              <!-- ปุ่มลบรายการออกจากตะกร้า -->
-              <button onclick="removeCartItem('${item.productName}')" class="text-slate-300 hover:text-rose-500 p-1 transition" title="ลบรายการนี้">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-              </button>
+              <span class="text-[10px] font-bold text-slate-500 bg-white px-2 py-0.5 rounded-md border border-slate-200">
+                รวม ${supItems.length} รายการ (${groupTotalQty} ชิ้น)
+              </span>
             </div>
 
-            <!-- แถวปรับจำนวน & หมายเหตุ -->
-            <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
-              <input type="text" 
-                     value="${item.note || ''}" 
-                     onchange="updateCartItemNote('${item.productName}', this.value)" 
-                     placeholder="หมายเหตุ เช่น ยี่ห้อเดิม" 
-                     class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1 text-[11px] outline-none focus:ring-1 focus:ring-orange-400" />
+            <div class="space-y-2">
+              ${supItems.map(item => {
+                const colorData = getCategoryColorData(item.category);
+                const isLow = Number(item.currentStock) <= Number(item.minStock);
 
-              <div class="flex items-center gap-1.5 flex-shrink-0">
-                <button type="button" onclick="updateCartItemQty('${item.productName}', -1)" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm flex items-center justify-center active:scale-95">-</button>
-                <input type="number" step="any" min="0.1" 
-                       value="${item.quantity}" 
-                       onchange="changeCartItemQtyDirect('${item.productName}', this.value)" 
-                       class="w-14 text-center font-bold text-xs bg-white border border-slate-300 rounded-lg py-1 outline-none focus:ring-2 focus:ring-orange-400" />
-                <span class="text-[10px] text-slate-500 font-medium">${item.unit}</span>
-                <button type="button" onclick="updateCartItemQty('${item.productName}', 1)" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm flex items-center justify-center active:scale-95">+</button>
-              </div>
+                return `
+                  <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs space-y-2">
+                    <div class="flex items-start justify-between gap-2">
+                      <div class="flex items-center gap-2.5">
+                        <div class="w-10 h-10 rounded-xl bg-slate-100 overflow-hidden flex-shrink-0 border border-slate-200 flex items-center justify-center">
+                          ${item.imageUrl ? `<img src="${item.imageUrl}" class="w-full h-full object-cover">` : `<svg class="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>`}
+                        </div>
+                        <div>
+                          <div class="flex items-center gap-1">
+                            <span class="px-1.5 py-0.2 rounded text-[9px] font-bold" style="${colorData.badgeStyle}">${item.category}</span>
+                          </div>
+                          <h4 class="font-bold text-xs text-slate-800 leading-tight mt-0.5">${item.productName}</h4>
+                          <div class="text-[10px] text-slate-400">คงเหลือ: <span class="${isLow ? 'text-rose-600 font-bold' : 'text-slate-600'}">${item.currentStock}</span> / ขั้นต่ำ: ${item.minStock} ${item.unit}</div>
+                        </div>
+                      </div>
+
+                      <button onclick="removeCartItem('${item.productName}')" class="text-slate-300 hover:text-rose-500 p-1 transition" title="ลบรายการนี้">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                      </button>
+                    </div>
+
+                    <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
+                      <input type="text" 
+                             value="${item.note || ''}" 
+                             onchange="updateCartItemNote('${item.productName}', this.value)" 
+                             placeholder="หมายเหตุ เช่น ยี่ห้อเดิม" 
+                             class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1 text-[11px] outline-none focus:ring-1 focus:ring-orange-400" />
+
+                      <div class="flex items-center gap-1.5 flex-shrink-0">
+                        <button type="button" onclick="updateCartItemQty('${item.productName}', -1)" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm flex items-center justify-center active:scale-95">-</button>
+                        <input type="number" step="any" min="0.1" 
+                               value="${item.quantity}" 
+                               onchange="changeCartItemQtyDirect('${item.productName}', this.value)" 
+                               class="w-14 text-center font-bold text-xs bg-white border border-slate-300 rounded-lg py-1 outline-none focus:ring-2 focus:ring-orange-400" />
+                        <span class="text-[10px] text-slate-500 font-medium">${item.unit}</span>
+                        <button type="button" onclick="updateCartItemQty('${item.productName}', 1)" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm flex items-center justify-center active:scale-95">+</button>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
             </div>
           </div>
         `;
-      }).join('');
+      });
+
+      container.innerHTML = html;
     }
 
     // เรนเดอร์เอกสารใบสั่งซื้อให้ตรงเป๊ะทุกจุด ไม่คลาดเคลื่อน
@@ -2337,40 +2379,116 @@
         return;
       }
 
-      tbody.innerHTML = cart.map((item, idx) => {
-        totalQty += (Number(item.quantity) || 0);
-        const colorData = getCategoryColorData(item.category);
+      // จัดกลุ่มรายการสินค้าในใบสั่งซื้อตามซัพพลายเออร์
+      const supGroups = {};
+      cart.forEach(item => {
+        const sup = getItemSupplier(item);
+        if (!supGroups[sup]) supGroups[sup] = [];
+        supGroups[sup].push(item);
+      });
 
-        return `
-          <tr class="${idx % 2 === 1 ? 'bg-slate-50/70' : 'bg-white'} border-b border-slate-200">
-            <td class="p-2.5 text-center text-slate-400 font-mono align-middle border-r border-slate-200 text-xs">${idx + 1}</td>
-            <td class="p-2.5 text-left align-middle border-r border-slate-200">
-              <div class="flex items-center gap-2.5">
-                ${item.imageUrl ? `<img src="${item.imageUrl}" class="w-7 h-7 rounded-lg object-cover border border-slate-200 flex-shrink-0">` : ''}
-                <span class="font-bold text-slate-900 text-xs leading-tight">${item.productName}</span>
+      // ปรับปรุงชื่อผู้ขาย / ซัพพลายเออร์ ในหัวเอกสารให้ตรงกับที่จัดกลุ่ม
+      const supNames = Object.keys(supGroups);
+      if (selectedSup !== 'ALL') {
+        const sInfo = state.suppliers.find(s => s.name === selectedSup);
+        document.getElementById('poVendorDisplay').textContent = `${selectedSup} ${sInfo?.phone ? '(โทร: ' + sInfo.phone + ')' : ''}`;
+      } else if (supNames.length === 1) {
+        const sInfo = state.suppliers.find(s => s.name === supNames[0]);
+        document.getElementById('poVendorDisplay').textContent = `${supNames[0]} ${sInfo?.phone ? '(โทร: ' + sInfo.phone + ')' : ''}`;
+      } else {
+        document.getElementById('poVendorDisplay').textContent = `รวมจัดซื้อ ${supNames.length} ซัพพลายเออร์ (${supNames.join(', ')})`;
+      }
+
+      let rowsHtml = '';
+      let globalIdx = 1;
+
+      supNames.forEach(supName => {
+        const groupItems = supGroups[supName];
+        const supInfo = state.suppliers.find(s => s.name === supName);
+        const groupQty = groupItems.reduce((sum, it) => sum + (Number(it.quantity) || 0), 0);
+
+        // แถวหัวกลุ่มซัพพลายเออร์ (Group Header Row)
+        rowsHtml += `
+          <tr class="bg-indigo-50/90 border-y-2 border-indigo-200">
+            <td colspan="6" class="p-2.5">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="w-5 h-5 rounded-md bg-indigo-600 text-white font-bold flex items-center justify-center text-[10px] shadow-2xs">🏢</span>
+                  <span class="font-black text-indigo-950 text-xs">ซัพพลายเออร์: ${supName}</span>
+                  ${supInfo?.phone ? `<span class="text-[10px] font-bold text-blue-700 bg-white px-2 py-0.5 rounded border border-indigo-200">📞 ${supInfo.phone}</span>` : ''}
+                  ${supInfo?.leadTime ? `<span class="text-[10px] font-semibold text-amber-800 bg-amber-100/90 px-1.5 py-0.5 rounded">⏱️ ส่งใน ${supInfo.leadTime}</span>` : ''}
+                </div>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white text-indigo-900 border border-indigo-200 shadow-2xs">
+                  ${groupItems.length} รายการ (รวม ${groupQty} ชิ้น)
+                </span>
               </div>
-            </td>
-            <td class="p-2.5 text-center align-middle border-r border-slate-200">
-              <span class="inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold shadow-2xs whitespace-nowrap" style="${colorData.badgeStyle}">
-                <span class="w-1.5 h-1.5 rounded-full" style="${colorData.dotStyle}"></span>
-                <span>${item.category}</span>
-              </span>
-            </td>
-            <td class="p-2.5 text-center text-slate-600 font-mono align-middle border-r border-slate-200 text-xs whitespace-nowrap">
-              ${item.currentStock} ${item.unit}
-            </td>
-            <td class="p-2.5 text-center align-middle border-r border-slate-200 bg-amber-50/40">
-              <span class="inline-flex items-center justify-center gap-1 px-3 py-1 bg-amber-100 text-amber-950 border border-amber-300 rounded-xl font-black text-xs shadow-2xs whitespace-nowrap">
-                <span>${item.quantity}</span>
-                <span class="text-[10px] font-bold text-slate-600">${item.unit}</span>
-              </span>
-            </td>
-            <td class="p-2.5 text-left text-slate-600 italic text-[11px] align-middle">
-              ${item.note || '-'}
             </td>
           </tr>
         `;
-      }).join('');
+
+        // แถวรายการสินค้าภายในกลุ่มซัพพลายเออร์นี้
+        groupItems.forEach((item, itemIdx) => {
+          totalQty += (Number(item.quantity) || 0);
+          const colorData = getCategoryColorData(item.category);
+
+          rowsHtml += `
+            <tr class="${itemIdx % 2 === 1 ? 'bg-slate-50/60' : 'bg-white'} border-b border-slate-200 hover:bg-amber-50/20 transition">
+              <!-- ช่องติ๊กเช็คของ [ ] + ลำดับ สำหรับผู้ไปซื้อ -->
+              <td class="p-2.5 text-center align-middle border-r border-slate-200">
+                <div class="flex items-center justify-center gap-1.5">
+                  <span class="w-3.5 h-3.5 rounded border-2 border-slate-400 bg-white inline-block flex-shrink-0" title="ช่องติ๊กเช็คของ"></span>
+                  <span class="font-mono text-slate-400 text-[11px] font-bold">${globalIdx++}</span>
+                </div>
+              </td>
+              <td class="p-2.5 text-left align-middle border-r border-slate-200">
+                <div class="flex items-center gap-2.5">
+                  ${item.imageUrl ? `<img src="${item.imageUrl}" class="w-7 h-7 rounded-lg object-cover border border-slate-200 flex-shrink-0">` : ''}
+                  <div>
+                    <span class="font-bold text-slate-900 text-xs leading-tight">${item.productName}</span>
+                  </div>
+                </div>
+              </td>
+              <td class="p-2.5 text-center align-middle border-r border-slate-200">
+                <span class="inline-flex items-center justify-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold shadow-2xs whitespace-nowrap" style="${colorData.badgeStyle}">
+                  <span class="w-1.5 h-1.5 rounded-full" style="${colorData.dotStyle}"></span>
+                  <span>${item.category}</span>
+                </span>
+              </td>
+              <td class="p-2.5 text-center text-slate-600 font-mono align-middle border-r border-slate-200 text-xs whitespace-nowrap">
+                ${item.currentStock} ${item.unit}
+              </td>
+              <td class="p-2.5 text-center align-middle border-r border-slate-200 bg-amber-50/40">
+                <span class="inline-flex items-center justify-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-950 border border-amber-300 rounded-xl font-black text-xs shadow-2xs whitespace-nowrap">
+                  <span>${item.quantity}</span>
+                  <span class="text-[10px] font-bold text-slate-600">${item.unit}</span>
+                </span>
+              </td>
+              <td class="p-2.5 text-left text-slate-600 italic text-[11px] align-middle">
+                ${item.note || '-'}
+              </td>
+            </tr>
+          `;
+        });
+
+        // สรุปยอดรวมย่อยของซัพพลายเออร์เจ้านี้
+        if (supNames.length > 1) {
+          rowsHtml += `
+            <tr class="bg-slate-50 text-[11px] font-semibold text-slate-600 border-b-2 border-slate-300">
+              <td colspan="4" class="p-2 text-right text-slate-500 font-normal">
+                รวมยอดสั่งซื้อเฉพาะ <strong>${supName}</strong>:
+              </td>
+              <td class="p-2 text-center text-amber-950 font-black text-xs bg-amber-100/50">
+                ${groupQty} ชิ้น/หน่วย
+              </td>
+              <td class="p-2 text-slate-400 italic text-[10px]">
+                ${groupItems.length} รายการ
+              </td>
+            </tr>
+          `;
+        }
+      });
+
+      tbody.innerHTML = rowsHtml;
 
       document.getElementById('poTotalItems').textContent = cart.length;
       document.getElementById('poTotalQty').textContent = totalQty;
