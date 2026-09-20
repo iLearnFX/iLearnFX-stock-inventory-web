@@ -499,7 +499,7 @@
 
           <!-- พื้นที่เอกสารใบสั่งซื้อที่ถูกจับภาพเป็นรูปภาพ (PO Canvas Print Area) -->
           <div class="overflow-x-auto pb-4 flex justify-center">
-            <div id="poPrintArea" style="width: 650px; min-width: 650px; max-width: 650px; box-sizing: border-box; font-family: 'Prompt', 'Thonburi', 'Sukhumvit Set', -apple-system, sans-serif; letter-spacing: 0px; line-height: 1.4;" class="bg-white p-6 rounded-2xl border-2 border-slate-300 shadow-md text-slate-800 space-y-4">
+            <div id="poPrintArea" style="width: 660px; min-width: 660px; max-width: 660px; box-sizing: border-box; font-family: 'Prompt', 'Thonburi', 'Sukhumvit Set', -apple-system, sans-serif; letter-spacing: 0px; line-height: 1.4;" class="bg-white p-6 rounded-2xl border-2 border-slate-300 shadow-md text-slate-800 space-y-4">
               
               <!-- PO Header -->
               <div class="flex items-start justify-between border-b-2 border-slate-800 pb-3">
@@ -514,49 +514,53 @@
                   </div>
                 </div>
 
-                <div class="text-right space-y-1">
-                  <div class="inline-block bg-slate-100 text-slate-800 font-black font-mono text-xs px-2.5 py-1 rounded-lg border border-slate-300 shadow-2xs">
-                    <span class="text-slate-400 font-sans font-normal mr-1">เลขที่:</span><span id="poNumber">PO-20260920-001</span>
+                <div class="text-right space-y-1.5">
+                  <div class="inline-flex items-center gap-1.5 bg-slate-100 text-slate-800 font-black font-mono text-xs px-3 py-1 rounded-lg border border-slate-300 shadow-2xs">
+                    <span class="text-slate-400 font-sans font-normal text-[10px]">เลขที่:</span><span id="poNumber">PO-25690920-736</span>
                   </div>
-                  <div id="poDateText" class="text-[11px] font-semibold text-slate-600">20 ก.ย. 2569</div>
+                  <div id="poDateText" class="text-[11px] font-semibold text-slate-600">20 ก.ย. 2569 (12:47 น.)</div>
+                  <!-- ป้ายสถานะ (Status Chip ปรับขนาดพอดี ไม่ลอย ไม่ตัดขอบ) -->
                   <div>
-                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
-                      🟡 รอจัดซื้อ (Pending)
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-800 border border-amber-300 shadow-2xs">
+                      <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                      <span>รอจัดซื้อ (Pending)</span>
                     </span>
                   </div>
                 </div>
               </div>
 
-              <!-- รายละเอียดผู้สั่งซื้อและสถานที่ -->
-              <div class="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs">
-                <div>
-                  <span class="text-slate-400 font-medium">ผู้ขอสั่งซื้อ:</span>
-                  <span id="poOrdererDisplay" class="font-bold text-slate-800 ml-1">หน้าร้าน / บาริสต้า</span>
+              <!-- รายละเอียดผู้สั่งซื้อและสถานที่ (จัดกล่องเป็นสัดส่วนชัดเจน) -->
+              <div class="grid grid-cols-2 gap-3 bg-slate-50/90 p-3.5 rounded-xl border border-slate-200 text-xs">
+                <div class="space-y-0.5">
+                  <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">ผู้ขอจัดซื้อ (Requested by)</div>
+                  <div id="poOrdererDisplay" class="font-bold text-slate-800 text-xs leading-tight">หน้าร้าน / บาริสต้า (Ground Cafe)</div>
                 </div>
-                <div>
-                  <span class="text-slate-400 font-medium">ร้านค้า / แหล่งซื้อ:</span>
-                  <span id="poVendorDisplay" class="font-bold text-slate-800 ml-1">แม็คโคร / ทั่วไป</span>
+                <div class="space-y-0.5">
+                  <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">ร้านค้า / ซัพพลายเออร์ (Vendor)</div>
+                  <div id="poVendorDisplay" class="font-bold text-slate-800 text-xs leading-tight">แม็คโคร / ซัพพลายเออร์ทั่วไป</div>
                 </div>
-                <div class="col-span-2 pt-1 border-t border-slate-200">
-                  <span class="text-slate-400 font-medium">หมายเหตุคำสั่งซื้อ:</span>
-                  <span id="poNotesDisplay" class="font-medium text-slate-700 ml-1">-</span>
+                <div class="col-span-2 pt-2 border-t border-slate-200/80 flex items-start gap-2">
+                  <span class="text-[10px] font-bold text-slate-400 whitespace-nowrap">หมายเหตุคำสั่งซื้อ:</span>
+                  <span id="poNotesDisplay" class="text-[11px] font-medium text-slate-700 leading-tight">-</span>
                 </div>
               </div>
 
-              <!-- ตารางรายการสินค้าที่สั่งซื้อ (จัดช่องให้ตรงเป๊ะ ไม่เลื่อน ไม่ซ้อน) -->
+              <!-- ตารางรายการสินค้าที่สั่งซื้อ (แยกคอลัมน์ หมวดหมู่ ชัดเจน ป้าย Chip พอดี) -->
               <div class="rounded-xl border border-slate-300 overflow-hidden shadow-2xs">
                 <table class="w-full text-left border-collapse table-fixed text-xs">
                   <colgroup>
-                    <col style="width: 7%;">
-                    <col style="width: 39%;">
+                    <col style="width: 6%;">
+                    <col style="width: 34%;">
+                    <col style="width: 16%;">
+                    <col style="width: 12%;">
+                    <col style="width: 18%;">
                     <col style="width: 14%;">
-                    <col style="width: 20%;">
-                    <col style="width: 20%;">
                   </colgroup>
                   <thead>
                     <tr class="bg-slate-900 text-white text-[11px] font-bold">
                       <th class="p-2.5 text-center border-r border-slate-700">#</th>
-                      <th class="p-2.5 text-left border-r border-slate-700">รายการสินค้า & หมวดหมู่</th>
+                      <th class="p-2.5 text-left border-r border-slate-700">รายการสินค้า</th>
+                      <th class="p-2.5 text-center border-r border-slate-700">หมวดหมู่</th>
                       <th class="p-2.5 text-center border-r border-slate-700">คงเหลือ</th>
                       <th class="p-2.5 text-center border-r border-slate-700 text-amber-300 font-black">จำนวนสั่งซื้อ</th>
                       <th class="p-2.5 text-left">หมายเหตุ</th>
@@ -570,32 +574,38 @@
 
               <!-- สรุปผลด้านล่าง -->
               <div class="flex items-center justify-between p-3.5 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border-2 border-amber-300 text-xs">
-                <div class="font-bold text-amber-950 flex items-center gap-1.5">
-                  <svg class="w-4 h-4 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                <div class="font-bold text-amber-950 flex items-center gap-2">
+                  <span class="p-1 rounded-lg bg-amber-200/60 text-amber-800">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                  </span>
                   <span>รวมรายการสั่งซื้อ:</span>
-                  <span id="poTotalItems" class="text-sm font-black text-slate-900 ml-1">0</span>
+                  <span id="poTotalItems" class="text-sm font-black text-slate-900">0</span>
                   <span class="font-normal text-slate-600">รายการ</span>
                 </div>
                 <div class="font-bold text-amber-950 flex items-center gap-1.5">
                   <span>รวมจำนวนที่สั่งซื้อ:</span>
-                  <span id="poTotalQty" class="text-base font-black text-orange-600 ml-1">0</span>
+                  <span id="poTotalQty" class="text-base font-black text-orange-600">0</span>
                   <span class="font-normal text-slate-600">ชิ้น / หน่วย</span>
                 </div>
               </div>
 
-              <!-- ช่องลงชื่อกำกับ (เส้นตรงสวยงาม ไม่ใช้จุดไข่ปลา) -->
+              <!-- ช่องลงชื่อกำกับ (เส้นตรงมาตรฐาน สวยงาม ไม่ใช้จุดไข่ปลา) -->
               <div class="grid grid-cols-2 gap-8 pt-4 text-xs border-t border-slate-200">
-                <div class="text-center space-y-2">
-                  <p class="font-bold text-slate-700">ผู้ขอจัดซื้อ (Requested by)</p>
-                  <div class="border-b-2 border-dashed border-slate-400 w-44 mx-auto my-3"></div>
-                  <p class="text-[11px] text-slate-500">(....................................................)</p>
-                  <p class="text-[10px] text-slate-400">วันที่: ______/______/__________</p>
+                <div class="text-center space-y-1.5">
+                  <p class="font-bold text-slate-700 text-xs">ผู้ขอจัดซื้อ (Requested by)</p>
+                  <div class="w-48 mx-auto border-b border-slate-300 pt-5 pb-0.5">
+                    <span class="text-[10px] text-slate-400">ลงชื่อ</span>
+                  </div>
+                  <p class="text-[11px] text-slate-500 font-medium">(....................................................)</p>
+                  <p class="text-[10px] text-slate-400">วันที่: _____ / _____ / _________</p>
                 </div>
-                <div class="text-center space-y-2">
-                  <p class="font-bold text-slate-700">ผู้รับเรื่อง / จัดซื้อ (Purchased by)</p>
-                  <div class="border-b-2 border-dashed border-slate-400 w-44 mx-auto my-3"></div>
-                  <p class="text-[11px] text-slate-500">(....................................................)</p>
-                  <p class="text-[10px] text-slate-400">วันที่: ______/______/__________</p>
+                <div class="text-center space-y-1.5">
+                  <p class="font-bold text-slate-700 text-xs">ผู้รับเรื่อง / จัดซื้อ (Purchased by)</p>
+                  <div class="w-48 mx-auto border-b border-slate-300 pt-5 pb-0.5">
+                    <span class="text-[10px] text-slate-400">ลงชื่อ</span>
+                  </div>
+                  <p class="text-[11px] text-slate-500 font-medium">(....................................................)</p>
+                  <p class="text-[10px] text-slate-400">วันที่: _____ / _____ / _________</p>
                 </div>
               </div>
 
@@ -1823,7 +1833,7 @@
       if (cart.length === 0) {
         tbody.innerHTML = `
           <tr class="bg-white">
-            <td colspan="5" class="p-8 text-center text-slate-400 text-xs">
+            <td colspan="6" class="p-8 text-center text-slate-400 text-xs">
               <div class="py-4 space-y-1">
                 <p class="font-bold text-slate-500 text-xs">ยังไม่มีรายการสินค้าในใบสั่งซื้อ</p>
                 <p class="text-[11px] text-slate-400">โปรดกดปุ่ม "+ สั่งซื้อ" บนการ์ดสินค้าในหน้าแดชบอร์ดก่อนครับ</p>
@@ -1842,22 +1852,26 @@
 
         return `
           <tr class="${idx % 2 === 1 ? 'bg-slate-50/70' : 'bg-white'} border-b border-slate-200">
-            <td class="p-2.5 text-center text-slate-400 font-mono align-middle border-r border-slate-200">${idx + 1}</td>
+            <td class="p-2.5 text-center text-slate-400 font-mono align-middle border-r border-slate-200 text-xs">${idx + 1}</td>
             <td class="p-2.5 text-left align-middle border-r border-slate-200">
-              <div class="flex items-center gap-2">
-                ${item.imageUrl ? `<img src="${item.imageUrl}" class="w-8 h-8 rounded-lg object-cover border border-slate-200 flex-shrink-0">` : ''}
-                <div>
-                  <span class="font-bold text-slate-900 text-xs block leading-tight">${item.productName}</span>
-                  <span class="inline-block px-1.5 py-0.2 rounded text-[9px] font-bold mt-0.5" style="${colorData.badgeStyle}">${item.category}</span>
-                </div>
+              <div class="flex items-center gap-2.5">
+                ${item.imageUrl ? `<img src="${item.imageUrl}" class="w-7 h-7 rounded-lg object-cover border border-slate-200 flex-shrink-0">` : ''}
+                <span class="font-bold text-slate-900 text-xs leading-tight">${item.productName}</span>
               </div>
             </td>
-            <td class="p-2.5 text-center text-slate-600 font-mono align-middle border-r border-slate-200 text-xs">
+            <td class="p-2.5 text-center align-middle border-r border-slate-200">
+              <span class="inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold shadow-2xs whitespace-nowrap" style="${colorData.badgeStyle}">
+                <span class="w-1.5 h-1.5 rounded-full" style="${colorData.dotStyle}"></span>
+                <span>${item.category}</span>
+              </span>
+            </td>
+            <td class="p-2.5 text-center text-slate-600 font-mono align-middle border-r border-slate-200 text-xs whitespace-nowrap">
               ${item.currentStock} ${item.unit}
             </td>
-            <td class="p-2.5 text-center align-middle border-r border-slate-200 bg-amber-50/50">
-              <span class="inline-block px-3 py-1 bg-amber-100 text-amber-950 border border-amber-300 rounded-lg font-black text-sm shadow-2xs">
-                ${item.quantity} ${item.unit}
+            <td class="p-2.5 text-center align-middle border-r border-slate-200 bg-amber-50/40">
+              <span class="inline-flex items-center justify-center gap-1 px-3 py-1 bg-amber-100 text-amber-950 border border-amber-300 rounded-xl font-black text-xs shadow-2xs whitespace-nowrap">
+                <span>${item.quantity}</span>
+                <span class="text-[10px] font-bold text-slate-600">${item.unit}</span>
               </span>
             </td>
             <td class="p-2.5 text-left text-slate-600 italic text-[11px] align-middle">
