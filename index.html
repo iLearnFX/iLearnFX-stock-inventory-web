@@ -254,11 +254,11 @@
       <!-- แถบค้นหา และ กรองตามหมวดหมู่ -->
       <div class="space-y-2">
         <div class="flex items-center gap-2 sm:gap-3">
-          <div class="relative flex-1">
-            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 absolute left-3 sm:left-3.5 top-2.5 sm:top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <div class="relative flex-1 flex items-center">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 absolute left-3 sm:left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             <input type="text" id="searchBox" oninput="renderDashboard()" placeholder="ค้นหาชื่อสินค้าหรือหมวดหมู่..." class="w-full bg-white border border-slate-300 rounded-xl pl-9 sm:pl-10 pr-10 py-2 sm:py-2.5 text-xs sm:text-sm outline-none focus:ring-2 focus:ring-blue-500 shadow-xs" />
-            <!-- ปุ่มสแกนบาร์โค้ด / QR Code ด้วยกล้องมือถือ -->
-            <button type="button" onclick="openBarcodeScannerModal()" class="absolute right-2 top-1.5 sm:top-2 p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition active:scale-95" title="สแกนบาร์โค้ด / QR Code ด้วยกล้องมือถือ">
+            <!-- ปุ่มสแกนบาร์โค้ด / QR Code ด้วยกล้องมือถือ (กึ่งกลางแนวตั้งสมบูรณ์แบบ) -->
+            <button type="button" onclick="openBarcodeScannerModal()" class="absolute right-1.5 sm:right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition active:scale-90" title="สแกนบาร์โค้ด / QR Code ด้วยกล้องมือถือ">
               <svg class="w-4 h-4 sm:w-4.5 sm:h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7V5a2 2 0 012-2h2m10 0h2a2 2 0 012 2v2m0 10v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2M7 12h10M12 7v10"/></svg>
             </button>
           </div>
@@ -6617,8 +6617,37 @@
 
       stopBarcodeCamera();
 
-      // ดึง ID กล้องที่เคยเลือกไว้หรือที่ระบุมา
+      // 1. ดึงข้อมูลกล้องที่เคยบันทึกไว้ในอุปกรณ์นี้ (ID, Label, หรือ Index)
       const savedDeviceId = requestedDeviceId || localStorage.getItem('stock_app_preferred_cam_id');
+      const savedCamLabel = localStorage.getItem('stock_app_preferred_cam_label');
+      const savedCamIndex = localStorage.getItem('stock_app_preferred_cam_index');
+
+      // ตรวจสอบรายชื่อกล้องที่มีสิทธิ์ในระบบล่วงหน้า
+      let targetDeviceId = savedDeviceId;
+      try {
+        const existingDevices = await getAvailableCameras();
+        if (existingDevices.length > 0) {
+          barcodeScannerDevices = existingDevices;
+          let matched = null;
+          if (targetDeviceId) {
+            matched = barcodeScannerDevices.find(d => d.deviceId === targetDeviceId);
+          }
+          if (!matched && savedCamLabel) {
+            matched = barcodeScannerDevices.find(d => d.label === savedCamLabel);
+          }
+          if (!matched && savedCamIndex !== null && barcodeScannerDevices[parseInt(savedCamIndex, 10)]) {
+            matched = barcodeScannerDevices[parseInt(savedCamIndex, 10)];
+          }
+
+          if (matched) {
+            targetDeviceId = matched.deviceId;
+            barcodeScannerCurrentIndex = barcodeScannerDevices.indexOf(matched);
+          } else {
+            targetDeviceId = barcodeScannerDevices[0].deviceId;
+            barcodeScannerCurrentIndex = 0;
+          }
+        }
+      } catch (e) {}
 
       // ตั้งค่าคอนสเตรนท์แบบ High Definition (1080p) + Continuous Autofocus เหมือนแอปธนาคาร
       const baseConstraints = {
@@ -6630,8 +6659,9 @@
         }
       };
 
-      if (savedDeviceId) {
-        baseConstraints.video.deviceId = { exact: savedDeviceId };
+      if (targetDeviceId) {
+        // ใช้ ideal แทน exact เพื่อไม่ให้ Safari โยน OverconstrainedError หาก token ชั่วคราวเปลี่ยน
+        baseConstraints.video.deviceId = { ideal: targetDeviceId };
       } else {
         baseConstraints.video.facingMode = { ideal: 'environment' };
       }
@@ -6656,7 +6686,7 @@
         video.setAttribute('playsinline', 'true');
         await video.play();
 
-        // ตรวจสอบรายชื่อกล้องหลังทั้งหมด
+        // ตรวจสอบและซิงค์รายชื่อกล้องหลังทั้งหมด
         barcodeScannerDevices = await getAvailableCameras();
         const currentTrack = stream.getVideoTracks()[0];
         const currentSettings = currentTrack ? currentTrack.getSettings() : {};
@@ -6664,8 +6694,9 @@
 
         if (activeDeviceId && barcodeScannerDevices.length > 0) {
           const foundIndex = barcodeScannerDevices.findIndex(d => d.deviceId === activeDeviceId);
-          barcodeScannerCurrentIndex = foundIndex >= 0 ? foundIndex : 0;
-          localStorage.setItem('stock_app_preferred_cam_id', activeDeviceId);
+          if (foundIndex >= 0) {
+            barcodeScannerCurrentIndex = foundIndex;
+          }
         }
 
         updateCameraSwitchButtonUI();
@@ -6724,9 +6755,13 @@
 
       barcodeScannerCurrentIndex = (barcodeScannerCurrentIndex + 1) % barcodeScannerDevices.length;
       const targetDevice = barcodeScannerDevices[barcodeScannerCurrentIndex];
-      localStorage.setItem('stock_app_preferred_cam_id', targetDevice.deviceId);
 
-      showAlert(`สลับไปยัง: ${targetDevice.label || `กล้องที่ ${barcodeScannerCurrentIndex + 1}`}`, 'info');
+      // บันทึกเฉพาะเมื่อผู้ใช้กดสลับกล้องด้วยตัวเอง เพื่อให้ครั้งต่อไปเปิดกล้องนี้เสมอ
+      localStorage.setItem('stock_app_preferred_cam_id', targetDevice.deviceId);
+      localStorage.setItem('stock_app_preferred_cam_label', targetDevice.label || '');
+      localStorage.setItem('stock_app_preferred_cam_index', String(barcodeScannerCurrentIndex));
+
+      showAlert(`สลับและบันทึกเป็นกล้องเริ่มต้น: ${targetDevice.label || `กล้องที่ ${barcodeScannerCurrentIndex + 1}`}`, 'success');
       await startBarcodeCamera(targetDevice.deviceId);
     }
 
@@ -6745,7 +6780,7 @@
       devName = devName.replace(/\(.*?\)/g, '').replace(/camera/gi, 'กล้อง').trim();
 
       if (label) label.textContent = `สลับ (${barcodeScannerCurrentIndex + 1}/${barcodeScannerDevices.length})`;
-      if (lensInfo) lensInfo.textContent = devName;
+      if (lensInfo) lensInfo.textContent = `${devName} (จำค่าแล้ว)`;
     }
 
     async function setScannerZoom(zoom) {
@@ -7001,16 +7036,29 @@
       }
 
       const cleanCode = String(extractedCode).trim().toLowerCase();
-      const matched = state.products.find(p => {
+      // ค้นหาแบบตรงตัวก่อน
+      let matched = state.products.find(p => {
         return (p.barcode && String(p.barcode).trim().toLowerCase() === cleanCode) ||
                (p.id && String(p.id).trim().toLowerCase() === cleanCode) ||
-               p.name.toLowerCase() === cleanCode ||
-               p.name.toLowerCase().includes(cleanCode);
+               p.name.toLowerCase() === cleanCode;
       });
+
+      // หากไม่พบตรงตัว ให้ลองค้นหาแบบคำค้นหาย่อย
+      if (!matched) {
+        matched = state.products.find(p => {
+          return p.name.toLowerCase().includes(cleanCode) ||
+                 cleanCode.includes(p.name.toLowerCase()) ||
+                 (p.barcode && cleanCode.includes(String(p.barcode).trim().toLowerCase()));
+        });
+      }
 
       if (matched) {
         showAlert(`📷 สแกนพบสินค้า: ${matched.name}`, 'success');
-        openQuickModal(matched.name, 'OUT');
+        // เปิด Popup หน้าต่างการ์ดสินค้าเพื่อทำ Action (เบิกออก / รับเข้า / ปรับยอด / ของเสีย) ทันที
+        setTimeout(() => {
+          openCardActionModal(matched.name);
+          setModalAction('OUT');
+        }, 150);
       } else {
         const searchBox = document.getElementById('searchBox');
         if (searchBox) {
@@ -7018,6 +7066,14 @@
           renderDashboard();
         }
         showAlert(`สแกนรหัส: "${code}" แต่ไม่พบในระบบ (ใส่ลงในช่องค้นหาแล้ว)`, 'error');
+      }
+    }
+
+    // Helper function เปิด Modal ดำเนินการสินค้า (เบิก / รับ / ปรับสต็อก / สั่งซื้อ)
+    function openQuickModal(productName, action = 'OUT') {
+      openCardActionModal(productName);
+      if (action) {
+        setModalAction(action);
       }
     }
 
