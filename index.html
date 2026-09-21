@@ -233,9 +233,10 @@
               <p class="text-[10px] text-slate-400">ระบุสีที่ใช้ในการ์ดสินค้าแต่ละหมวด แตะเพื่อกรองดู หรือกดจัดการสี</p>
             </div>
           </div>
-          <button onclick="openCategoryModal()" class="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 active:scale-95 text-blue-700 font-bold rounded-xl text-xs flex items-center gap-1 transition shadow-xs">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-            <span>เพิ่มหมวด / กำหนดสี</span>
+          <button onclick="openCategoryModal()" class="flex-shrink-0 whitespace-nowrap px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 active:scale-95 text-blue-700 font-bold rounded-xl text-xs flex items-center gap-1 transition shadow-xs ios-btn-press" title="จัดการหมวดหมู่และกำหนดสี">
+            <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+            <span class="hidden sm:inline">เพิ่มหมวด / กำหนดสี</span>
+            <span class="sm:hidden">จัดการสี</span>
           </button>
         </div>
         
@@ -561,20 +562,22 @@
     </section>
 
     <!-- TAB 3: จัดการรายชื่อซัพพลายเออร์ (Suppliers Management) -->
+    <!-- TAB 3: จัดการรายชื่อซัพพลายเออร์ (Suppliers Management) -->
     <section id="view-suppliers" class="hidden space-y-4">
-      <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <span class="p-2 rounded-xl bg-indigo-50 text-indigo-600">
+      <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5 flex-1 min-w-0">
+          <span class="p-2 sm:p-2.5 rounded-xl bg-indigo-50 text-indigo-600 flex-shrink-0 shadow-2xs">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
           </span>
-          <div>
-            <h3 class="font-bold text-sm text-slate-800">รายชื่อซัพพลายเออร์ / ร้านค้า (Suppliers)</h3>
-            <p class="text-[10px] text-slate-400">กำหนดผู้จัดจำหน่ายประจำแต่ละ SKU เพื่อออกใบสั่งซื้อและคุมรอบจัดส่งได้แม่นยำ</p>
+          <div class="flex-1 min-w-0">
+            <h3 class="font-bold text-xs sm:text-sm text-slate-800 leading-snug truncate sm:whitespace-normal">รายชื่อซัพพลายเออร์ / ร้านค้า</h3>
+            <p class="text-[10px] sm:text-xs text-slate-400 mt-0.5 truncate sm:whitespace-normal">กำหนดผู้จัดจำหน่ายประจำแต่ละ SKU เพื่อออกใบสั่งซื้อและคุมรอบส่ง</p>
           </div>
         </div>
-        <button type="button" onclick="openSupplierEditModal()" class="px-3 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-          <span>เพิ่มซัพพลายเออร์</span>
+        <button type="button" onclick="openSupplierEditModal()" class="flex-shrink-0 whitespace-nowrap px-3 py-2 sm:px-3.5 sm:py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition ios-btn-press" title="เพิ่มซัพพลายเออร์ / ร้านค้าใหม่">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          <span class="hidden sm:inline">เพิ่มซัพพลายเออร์</span>
+          <span class="sm:hidden">เพิ่มร้านค้า</span>
         </button>
       </div>
 
@@ -588,23 +591,28 @@
         <!-- TAB: สินค้าใกล้หมด & ต้องสั่งซื้อด่วน (Dedicated Low Stock Tab) -->
     <section id="view-lowstock" class="hidden space-y-4 ios-spring">
       <!-- iOS Banner หัวข้อแจ้งเตือนสินค้าใกล้หมด -->
-      <div class="ios-card p-4 sm:p-5 rounded-3xl flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
-        <div class="flex items-center gap-3">
-          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-500 to-amber-500 text-white flex items-center justify-center text-2xl shadow-md flex-shrink-0">
-            ⚠️
-          </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <h2 class="font-bold text-sm sm:text-base text-slate-900">สินค้าใกล้หมด & ต้องสั่งซื้อด่วน (Low Stock Alerts)</h2>
-              <span id="lowStockHeaderCountBadge" class="px-2 py-0.5 rounded-full text-[11px] font-black bg-rose-100 text-rose-700 border border-rose-200">0 รายการ</span>
+      <div class="ios-card p-4 sm:p-5 rounded-3xl space-y-3.5">
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex items-start gap-2.5 sm:gap-3 flex-1 min-w-0">
+            <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-rose-500 to-amber-500 text-white flex items-center justify-center text-xl sm:text-2xl shadow-md flex-shrink-0 mt-0.5">
+              ⚠️
             </div>
-            <p class="text-xs text-slate-500 mt-0.5">แสดงเฉพาะ SKU ที่คงเหลือต่ำกว่าหรือเท่ากับจุดสั่งซื้อขั้นต่ำ (Par Level)</p>
+            <div class="flex-1 min-w-0">
+              <h2 class="font-bold text-sm sm:text-base text-slate-900 leading-snug">สินค้าใกล้หมด & ต้องสั่งซื้อด่วน (Low Stock Alerts)</h2>
+              <p class="text-xs text-slate-500 mt-1">แสดงเฉพาะ SKU ที่คงเหลือต่ำกว่าหรือเท่ากับจุดสั่งซื้อขั้นต่ำ (Par Level)</p>
+            </div>
+          </div>
+
+          <!-- ชิปแสดงจำนวนสินค้าใกล้หมด: ตัวเลขอยู่ตรงกลางสมบูรณ์แบบทั้งแนวนอนและแนวตั้ง ไม่เบี้ยว ไม่หลุดบรรทัด -->
+          <div id="lowStockHeaderCountBadge" class="flex-shrink-0 flex flex-col items-center justify-center text-center min-w-[58px] sm:min-w-[64px] px-2.5 py-1.5 rounded-2xl bg-rose-100 text-rose-700 border border-rose-200/90 shadow-2xs">
+            <span id="lowStockCountNum" class="text-base sm:text-lg font-black leading-none text-rose-800 text-center">0</span>
+            <span class="text-[10px] font-bold text-rose-600 leading-tight mt-0.5 text-center">รายการ</span>
           </div>
         </div>
 
         <!-- ปุ่ม Action รวดเร็ว: สั่งของที่ใกล้หมดทั้งหมดเข้าตะกร้าในคลิกเดียว! -->
-        <div class="flex items-center gap-2 flex-shrink-0">
-          <button type="button" onclick="addAllLowStockToCart()" class="w-full sm:w-auto px-4 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:scale-95 text-white font-bold text-xs sm:text-sm rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 ios-btn-press" title="เพิ่มสินค้าที่ใกล้หมดทั้งหมดลงในตะกร้าสั่งซื้ออัตโนมัติ">
+        <div>
+          <button type="button" onclick="addAllLowStockToCart()" class="w-full px-4 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:scale-95 text-white font-bold text-xs sm:text-sm rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 ios-btn-press" title="เพิ่มสินค้าที่ใกล้หมดทั้งหมดลงในตะกร้าสั่งซื้ออัตโนมัติ">
             <span>🛒</span>
             <span>สั่งของใกล้หมดเข้าตะกร้าทั้งหมด</span>
           </button>
@@ -4072,8 +4080,13 @@
 
       const lowItems = state.products.filter(p => Number(p.currentBalance) <= Number(p.minStock));
 
-      // อัปเดตตัวเลขแจ้งเตือน
-      if (headerBadge) headerBadge.textContent = `${lowItems.length} รายการ`;
+      // อัปเดตตัวเลขแจ้งเตือน (จัดตำแหน่งกึ่งกลางสมบูรณ์แบบเสมอ)
+      const countNum = document.getElementById('lowStockCountNum');
+      if (countNum) {
+        countNum.textContent = lowItems.length;
+      } else if (headerBadge) {
+        headerBadge.innerHTML = `<span class="text-base sm:text-lg font-black leading-none text-rose-800 text-center">${lowItems.length}</span><span class="text-[10px] font-bold text-rose-600 leading-tight mt-0.5 text-center">รายการ</span>`;
+      }
       if (navBadge) {
         navBadge.textContent = lowItems.length;
         navBadge.classList.toggle('hidden', lowItems.length === 0);
