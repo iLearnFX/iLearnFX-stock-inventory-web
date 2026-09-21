@@ -146,24 +146,48 @@
       </div>
     </div>
 
-    <!-- Navigation Tabs (iOS 27 Segmented Tab Bar แบบโมเดิร์นคลีน) -->
-    <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-2 flex items-center gap-1.5 text-xs sm:text-sm overflow-x-auto no-scrollbar whitespace-nowrap border-t border-white/15">
-      <button onclick="switchTab('dashboard')" id="tab-dashboard" class="py-2 px-3 sm:px-4 rounded-xl font-bold transition-all duration-200 flex items-center justify-center gap-1.5 ios-btn-press bg-white text-blue-700 shadow-sm">
-        <span>📊</span><span>สต็อกทั้งหมด</span>
-      </button>
-      <button onclick="switchTab('lowstock')" id="tab-lowstock" class="relative py-2 px-3 sm:px-4 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-1.5 ios-btn-press text-blue-100 hover:text-white hover:bg-white/10">
-        <span>⚠️</span><span>สินค้าใกล้หมด</span>
-        <span id="navLowBadge" class="hidden ml-0.5 px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-500 text-white shadow-xs" style="animation: iosBadgePulse 2s infinite ease-in-out;">0</span>
-      </button>
-      <button onclick="switchTab('reports')" id="tab-reports" class="py-2 px-3 sm:px-4 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-1.5 ios-btn-press text-blue-100 hover:text-white hover:bg-white/10">
-        <span>📈</span><span>รายงาน & สรุปวัน</span>
-      </button>
-      <button onclick="switchTab('suppliers')" id="tab-suppliers" class="py-2 px-3 sm:px-4 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-1.5 ios-btn-press text-blue-100 hover:text-white hover:bg-white/10">
-        <span>🏢</span><span>ซัพพลายเออร์</span>
-      </button>
-      <button onclick="switchTab('history')" id="tab-history" class="py-2 px-3 sm:px-4 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-1.5 ios-btn-press text-blue-100 hover:text-white hover:bg-white/10">
-        <span>🕒</span><span>ประวัติ</span>
-      </button>
+    <!-- Navigation Tabs Container พร้อม Scroll Affordance (Gradient Fades + Chevrons + iOS Scroll Track) -->
+    <div class="relative max-w-7xl mx-auto border-t border-white/15">
+      
+      <!-- เงาเฟดขอบซ้าย + ปุ่มเลื่อนซ้าย (แสดงเมื่อมีการเลื่อนไปทางขวา) -->
+      <div id="navFadeLeft" class="hidden absolute left-0 top-0 bottom-0 z-20 flex items-center pl-1.5 pr-6 bg-gradient-to-r from-blue-600 via-blue-600/90 to-transparent pointer-events-none transition-opacity duration-200">
+        <button type="button" onclick="scrollNavBar(-140)" class="pointer-events-auto w-6 h-6 rounded-full bg-white/25 hover:bg-white/40 text-white backdrop-blur-md flex items-center justify-center text-sm font-bold shadow-xs active:scale-90 transition ios-btn-press" title="เลื่อนไปทางซ้าย">
+          ‹
+        </button>
+      </div>
+
+      <!-- แถบเมนูแท็บหลัก (เลื่อนแนวนอน ลื่นไหล สไตล์ iOS) -->
+      <div id="navScrollContainer" onscroll="updateNavScrollIndicators()" class="px-3 sm:px-6 lg:px-8 py-2 flex items-center gap-1.5 text-xs sm:text-sm overflow-x-auto no-scrollbar whitespace-nowrap scroll-smooth">
+        <button onclick="switchTab('dashboard')" id="tab-dashboard" class="py-2 px-3 sm:px-4 rounded-xl font-bold transition-all duration-200 flex items-center justify-center gap-1.5 ios-btn-press bg-white text-blue-700 shadow-sm flex-shrink-0">
+          <span>📊</span><span>สต็อกทั้งหมด</span>
+        </button>
+        <button onclick="switchTab('lowstock')" id="tab-lowstock" class="relative py-2 px-3 sm:px-4 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-1.5 ios-btn-press text-blue-100 hover:text-white hover:bg-white/10 flex-shrink-0">
+          <span>⚠️</span><span>สินค้าใกล้หมด</span>
+          <span id="navLowBadge" class="hidden ml-0.5 px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-500 text-white shadow-xs" style="animation: iosBadgePulse 2s infinite ease-in-out;">0</span>
+        </button>
+        <button onclick="switchTab('reports')" id="tab-reports" class="py-2 px-3 sm:px-4 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-1.5 ios-btn-press text-blue-100 hover:text-white hover:bg-white/10 flex-shrink-0">
+          <span>📈</span><span>รายงาน & สรุปวัน</span>
+        </button>
+        <button onclick="switchTab('suppliers')" id="tab-suppliers" class="py-2 px-3 sm:px-4 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-1.5 ios-btn-press text-blue-100 hover:text-white hover:bg-white/10 flex-shrink-0">
+          <span>🏢</span><span>ซัพพลายเออร์</span>
+        </button>
+        <button onclick="switchTab('history')" id="tab-history" class="py-2 px-3 sm:px-4 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-1.5 ios-btn-press text-blue-100 hover:text-white hover:bg-white/10 flex-shrink-0">
+          <span>🕒</span><span>ประวัติ</span>
+        </button>
+      </div>
+
+      <!-- เงาเฟดขอบขวา + ปุ่มบอกว่าเลื่อนขวาได้ (แสดงเมื่อมีแท็บทางขวาที่ถูกบังอยู่) -->
+      <div id="navFadeRight" class="absolute right-0 top-0 bottom-0 z-20 flex items-center pr-1.5 pl-6 bg-gradient-to-l from-blue-600 via-blue-600/90 to-transparent pointer-events-none transition-opacity duration-200">
+        <button type="button" onclick="scrollNavBar(140)" class="pointer-events-auto px-2 py-1 rounded-full bg-white/25 hover:bg-white/40 text-white backdrop-blur-md flex items-center gap-1 text-[11px] font-bold shadow-xs active:scale-90 transition ios-btn-press" title="เลื่อนดูเมนูเพิ่มเติม">
+          <span class="text-[9px] font-medium opacity-90 hidden sm:inline">เพิ่มเติม</span>
+          <span class="text-xs font-bold animate-pulse">›</span>
+        </button>
+      </div>
+
+      <!-- เส้นบอกตำแหน่งการเลื่อนขนาดย่อมสไตล์ iOS (Scroll Progress Track) -->
+      <div id="navScrollTrack" class="h-0.5 w-full bg-blue-700/40 relative overflow-hidden sm:hidden">
+        <div id="navScrollThumb" class="h-full bg-white/80 rounded-full transition-all duration-100 absolute left-0" style="width: 35%;"></div>
+      </div>
     </div>
   </header>
 
@@ -1534,8 +1558,9 @@
       };
     }
 
-    // ตั้งค่าวันปัจจุบัน
-    document.getElementById('inputDate').value = new Date().toISOString().split('T')[0];
+    // ตั้งค่าวันปัจจุบัน (ถ้ามี inputDate ในหน้าต่าง modal อื่น)
+    const initialDateEl = document.getElementById('inputDate');
+    if (initialDateEl) initialDateEl.value = new Date().toISOString().split('T')[0];
 
     // โหลดข้อมูลแคชเริ่มต้น
     try {
@@ -1738,7 +1763,9 @@
 
     function setDashboardViewMode(mode) {
       state.dashboardViewMode = mode;
-      localStorage.setItem('stock_view_mode_v1', mode);
+      try {
+        localStorage.setItem('stock_view_mode_v1', mode);
+      } catch (e) {}
       currentSwipePageIndex = 0; // รีเซ็ตหน้าแรกเมื่อเปลี่ยนโหมด
       
       ['swipe', 'grid', 'list'].forEach(m => {
@@ -1751,6 +1778,14 @@
           }
         }
       });
+
+      // เรนเดอร์แดชบอร์ดทันที พร้อมเอฟเฟกต์แอนิเมชัน iOS Spring
+      const container = document.getElementById('dashboardContainer');
+      if (container) {
+        container.classList.remove('ios-spring');
+        void container.offsetWidth; // บังคับให้เบราว์เซอร์ reflow แอนิเมชัน
+        container.classList.add('ios-spring');
+      }
       renderDashboard();
     }
 
@@ -3346,119 +3381,54 @@
       renderHistoryList();
     }
 
-    // ฟังก์ชันในหน้า Tab บันทึกรายวันเดิม
-    function onCategoryChange() {
-      const selectedCat = document.getElementById('inputCategory').value;
-      const prodSelect = document.getElementById('inputProduct');
-      prodSelect.innerHTML = '<option value="">-- เลือกสินค้า --</option>';
+    // ฟังก์ชันความเข้ากันได้เดิม (ปลอดภัยจาก null)
+    function onCategoryChange() {}
+    function onProductChange() {}
+    function setType(type) { state.selectedType = type; }
+    async function submitForm(e) { if (e) e.preventDefault(); }
 
-      const filtered = state.products.filter(p => !selectedCat || p.category === selectedCat);
-      filtered.forEach(p => {
-        prodSelect.innerHTML += `<option value="${p.name}">${p.name} (คงเหลือ: ${p.currentBalance} ${p.unit})</option>`;
-      });
-      onProductChange();
-    }
 
-    function onProductChange() {
-      const prodName = document.getElementById('inputProduct').value;
-      const infoBox = document.getElementById('productInfo');
-      const labelUnit = document.getElementById('labelUnit');
-      const imgPreview = document.getElementById('prodImgPreview');
-      const prod = state.products.find(p => p.name === prodName);
-
-      if (prod) {
-        infoBox.classList.remove('hidden');
-        document.getElementById('currentStockVal').textContent = prod.currentBalance;
-        document.getElementById('currentUnit').textContent = prod.unit;
-        document.getElementById('minStockVal').textContent = prod.minStock + ' ' + prod.unit;
-        labelUnit.textContent = `(${prod.unit})`;
-
-        if (prod.imageUrl) {
-          imgPreview.innerHTML = `<img src="${prod.imageUrl}" class="w-full h-full object-cover">`;
-        } else {
-          imgPreview.innerHTML = `<svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>`;
-        }
-      } else {
-        infoBox.classList.add('hidden');
-        labelUnit.textContent = '';
+    // ==========================================
+    // ตัวควบคุมการเลื่อนและตัวช่วยแสดงผลแท็บเมนูบนมือถือ (Nav Scroll Affordance)
+    // ==========================================
+    function scrollNavBar(amount) {
+      const nav = document.getElementById('navScrollContainer');
+      if (nav) {
+        nav.scrollBy({ left: amount, behavior: 'smooth' });
+        setTimeout(updateNavScrollIndicators, 150);
       }
     }
 
-    function setType(type) {
-      state.selectedType = type;
-      const btns = {
-        'เบิกออก (-)': document.getElementById('type-out'),
-        'รับเข้า (+)': document.getElementById('type-in'),
-        'ของเสีย (x)': document.getElementById('type-waste')
-      };
+    function updateNavScrollIndicators() {
+      const nav = document.getElementById('navScrollContainer');
+      const fadeLeft = document.getElementById('navFadeLeft');
+      const fadeRight = document.getElementById('navFadeRight');
+      const thumb = document.getElementById('navScrollThumb');
+      if (!nav) return;
 
-      Object.keys(btns).forEach(k => {
-        if (k === type) {
-          btns[k].className = "type-btn py-2 text-xs font-medium rounded-xl border border-blue-500 bg-blue-50 text-blue-700 font-bold ring-2 ring-blue-300";
-        } else {
-          btns[k].className = "type-btn py-2 text-xs font-medium rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50";
-        }
-      });
-    }
+      const scrollLeft = nav.scrollLeft;
+      const maxScroll = nav.scrollWidth - nav.clientWidth;
 
-    async function submitForm(e) {
-      e.preventDefault();
-      const btn = document.getElementById('btnSubmit');
-      const prodName = document.getElementById('inputProduct').value;
-      const qty = Number(document.getElementById('inputQty').value);
-      const catName = document.getElementById('inputCategory').value;
-      const user = document.getElementById('inputUser').value;
-      const notes = document.getElementById('inputNotes').value;
-      const date = document.getElementById('inputDate').value;
+      // แสดงหรือซ่อนเงาเฟดและปุ่มลูกศร
+      if (fadeLeft) {
+        fadeLeft.classList.toggle('hidden', scrollLeft <= 8);
+      }
+      if (fadeRight) {
+        fadeRight.classList.toggle('hidden', maxScroll <= 5 || scrollLeft >= maxScroll - 8);
+      }
 
-      if (!prodName || !qty) return;
-
-      btn.disabled = true;
-      btn.textContent = "กำลังบันทึก...";
-
-      const diff = state.selectedType.includes('+') ? qty : -qty;
-      state.products = state.products.map(p => {
-        if (p.name === prodName) {
-          return { ...p, currentBalance: Number(p.currentBalance) + diff };
-        }
-        return p;
-      });
-      updateUI();
-
-      try {
-        const payload = {
-          action: 'addTransaction',
-          date: date,
-          category: catName,
-          product: prodName,
-          type: state.selectedType,
-          quantity: qty,
-          recordedBy: user,
-          notes: notes
-        };
-
-        const res = await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
-        });
-
-        const json = await res.json();
-        if (json.status === 'success') {
-          showAlert('บันทึกข้อมูลเรียบร้อยแล้ว', 'success');
-          document.getElementById('inputQty').value = '';
-          document.getElementById('inputNotes').value = '';
-          fetchData();
-        } else {
-          showAlert('เกิดข้อผิดพลาด: ' + json.message, 'error');
-        }
-      } catch (err) {
-        showAlert('บันทึกข้อมูลสำเร็จ', 'success');
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "บันทึกข้อมูล";
+      // ปรับตำแหน่งหลอดบอกความคืบหน้าด้านล่าง (iOS Scroll Track Thumb)
+      if (thumb && maxScroll > 0) {
+        const thumbWidthPercent = 35;
+        const progress = Math.min(1, Math.max(0, scrollLeft / maxScroll));
+        const leftPercent = progress * (100 - thumbWidthPercent);
+        thumb.style.left = leftPercent + '%';
       }
     }
+
+    // เริ่มต้นตรวจจับสถานะ Scroll Affordance เมื่อโหลดหน้าเว็บและเมื่อย่อขยายหน้าจอ
+    window.addEventListener('resize', updateNavScrollIndicators);
+    setTimeout(updateNavScrollIndicators, 200);
 
     function switchTab(tab) {
       ['dashboard', 'lowstock', 'reports', 'suppliers', 'history'].forEach(t => {
@@ -3485,6 +3455,13 @@
       } else if (tab === 'history') {
         renderHistory();
       }
+
+      // เลื่อนแท็บที่กำลังเลือกมาอยู่กึ่งกลางจออย่างนุ่มนวลอัตโนมัติ (Auto Center Active Tab)
+      const activeBtn = document.getElementById('tab-' + tab);
+      if (activeBtn) {
+        activeBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
+      setTimeout(updateNavScrollIndicators, 300);
     }
 
     function showAlert(msg, type) {
