@@ -9,6 +9,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <!-- Chart.js สำหรับกราฟเส้นมอนิเตอร์สต็อก -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- QRCode.js สำหรับสร้าง QR Code ป้ายแท็กติดเชลฟ์สินค้า -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -18,8 +20,9 @@
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     @media print {
       body * { visibility: hidden; }
-      #poPrintArea, #poPrintArea * { visibility: visible; }
+      #poPrintArea, #poPrintArea *, #shelfTagPrintArea, #shelfTagPrintArea * { visibility: visible; }
       #poPrintArea { position: absolute; left: 0; top: 0; width: 100%; }
+      #shelfTagPrintArea { position: absolute; left: 0; top: 0; width: 100%; display: flex !important; justify-content: center; }
     }
   </style>
   <!-- Apple iOS Modern Design System & Spring Animations -->
@@ -787,9 +790,15 @@
           </div>
         </div>
         <div class="relative z-10 flex items-center gap-1.5">
+          <!-- ปุ่มสร้างป้าย QR Code แปะเชลฟ์สำหรับพิมพ์ -->
+          <button type="button" onclick="openShelfTagModal(activeModalProduct)" class="text-xs font-bold text-white bg-purple-600/75 hover:bg-purple-600 px-2.5 py-1.5 rounded-xl flex items-center gap-1 border border-white/30 transition active:scale-95 shadow-xs" title="สร้างป้าย QR Code สำหรับพิมพ์แปะเชลฟ์วางสินค้า">
+            <span>🏷️</span>
+            <span class="hidden sm:inline">ป้ายเชลฟ์</span>
+          </button>
           <button type="button" onclick="openEditSkuModal(activeModalProduct ? activeModalProduct.name : null)" class="text-xs font-bold text-white bg-white/20 hover:bg-white/30 px-2.5 py-1.5 rounded-xl flex items-center gap-1 border border-white/30 transition active:scale-95 shadow-xs" title="แก้ไขชื่อและรูปภาพสินค้า">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-            <span>แก้ไข SKU</span>
+            <span class="hidden sm:inline">แก้ไข SKU</span>
+            <span class="sm:hidden">แก้ไข</span>
           </button>
           <button onclick="closeCardActionModal()" class="text-white/80 hover:text-white bg-white/10 p-1.5 rounded-full">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -1606,6 +1615,114 @@
     </div>
   </div>
 
+  <!-- MODAL ป้าย QR CODE ติดเชลฟ์สินค้า (Shelf & Bin QR Tag for Print & Scan) -->
+  <div id="modalShelfTag" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[85] flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white w-full sm:max-w-lg rounded-t-[32px] sm:rounded-[28px] shadow-2xl border border-slate-200/80 overflow-hidden max-h-[95vh] flex flex-col ios-sheet-anim">
+      <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto my-2 sm:hidden flex-shrink-0"></div>
+
+      <!-- Header -->
+      <div class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-3.5 sm:p-4 flex items-center justify-between flex-shrink-0">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-white/20 text-white flex items-center justify-center text-lg flex-shrink-0">
+            🏷️
+          </div>
+          <div>
+            <h3 class="font-bold text-sm sm:text-base text-white">ป้าย QR Code ติดเชลฟ์สินค้า</h3>
+            <p class="text-[10px] sm:text-xs text-purple-100">พิมพ์แปะที่ชั้นวาง เมื่อสแกนจะเด้งเข้าหน้าเบิก/รับของทันที</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeShelfTagModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition active:scale-90">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Modal Body (Preview & Controls) -->
+      <div class="p-4 overflow-y-auto space-y-4 flex-1 bg-slate-100/60 flex flex-col items-center">
+        <!-- ป้ายแท็กตัวจริงที่สั่งพิมพ์ได้ (Shelf Tag Print Area) -->
+        <div id="shelfTagPrintArea" class="w-full flex justify-center py-1">
+          <div id="shelfTagCard" class="w-full max-w-[340px] bg-white rounded-2xl border-2 border-slate-300 shadow-md p-3.5 space-y-2.5 transition-all text-slate-800 relative overflow-hidden">
+            <!-- แถบสีประจำหมวดหมู่ด้านบน -->
+            <div id="tagCategoryBar" class="h-1.5 -mx-3.5 -mt-3.5 mb-2 bg-blue-600"></div>
+
+            <!-- ส่วนหัวป้าย: ชื่อ และ หมวดหมู่ -->
+            <div class="flex items-start justify-between gap-2 border-b border-slate-100 pb-2">
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-1.5">
+                  <span id="tagCategoryBadge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">หมวดหมู่</span>
+                  <span id="tagSkuId" class="text-[10px] font-mono text-slate-400 font-semibold">SKU</span>
+                </div>
+                <h2 id="tagProductName" class="font-black text-base sm:text-lg text-slate-900 leading-tight mt-1 truncate">ชื่อสินค้า</h2>
+              </div>
+              <div id="tagProductImgBox" class="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center flex-shrink-0 shadow-2xs">
+                <!-- Image or placeholder -->
+              </div>
+            </div>
+
+            <!-- เนื้อหากลางป้าย: QR Code + ข้อมูลการเบิกและ Par -->
+            <div class="flex items-center gap-3 py-1">
+              <!-- กล่อง QR Code คมชัด -->
+              <div class="flex flex-col items-center justify-center p-1.5 bg-white border border-slate-200 rounded-xl shadow-inner flex-shrink-0">
+                <div id="tagQrCodeContainer" class="w-[105px] h-[105px] flex items-center justify-center">
+                  <!-- Generated QR Code Canvas / Image -->
+                </div>
+                <span class="text-[8px] font-bold text-slate-500 mt-1 flex items-center gap-0.5">
+                  <span>📱</span><span>สแกนเบิก/รับของ</span>
+                </span>
+              </div>
+
+              <!-- รายละเอียดการเบิกใช้ & ซัพพลายเออร์ -->
+              <div class="space-y-1.5 text-xs min-w-0 flex-1">
+                <div class="bg-slate-50 p-2 rounded-xl border border-slate-100">
+                  <div class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">หน่วยในการเบิก:</div>
+                  <div id="tagUnitText" class="font-black text-sm text-slate-800 mt-0.5">-</div>
+                </div>
+
+                <div class="bg-slate-50 p-2 rounded-xl border border-slate-100">
+                  <div class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">เกณฑ์สั่งซื้อขั้นต่ำ (Par):</div>
+                  <div id="tagMinStockText" class="font-black text-sm text-rose-600 mt-0.5">-</div>
+                </div>
+
+                <div class="text-[10px] text-slate-400 truncate">
+                  <span>🏢 ร้านค้า: </span><span id="tagSupplierText" class="font-semibold text-slate-700">-</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ท้ายป้าย: Footer ข้อความของร้าน -->
+            <div class="pt-1.5 border-t border-slate-100 flex items-center justify-between text-[9px] text-slate-400 font-medium">
+              <span>Ground Cafe • Smart Inventory</span>
+              <span class="text-blue-600 font-bold">Scan to Action</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center text-[11px] text-slate-500 max-w-xs space-y-1">
+          <p>💡 <strong>วิธีใช้งาน:</strong> ปริ้นท์ป้ายนี้ไปแปะที่เชลฟ์วางของ พนักงานสามารถใช้<strong>กล้องสแกนในแอป</strong> หรือ <strong>กล้องมือถือทั่วไป</strong> ส่องป้ายแล้วจะเด้งเข้าหน้าเบิก/รับของตัวนี้ได้ทันที!</p>
+        </div>
+      </div>
+
+      <!-- Action Buttons Footer -->
+      <div class="p-3 sm:p-4 bg-white border-t border-slate-200 flex items-center justify-between gap-2 flex-shrink-0">
+        <button type="button" onclick="copyShelfTagScanUrl()" id="btnCopyTagUrl" class="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 flex-1 justify-center active:scale-95">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+          <span class="hidden sm:inline">คัดลอกลิงก์สแกน</span>
+          <span class="sm:hidden">คัดลอกลิงก์</span>
+        </button>
+
+        <button type="button" onclick="downloadShelfTagImage()" id="btnDownloadTagImg" class="px-3 py-2.5 rounded-xl bg-purple-50 hover:bg-purple-100 border border-purple-200 text-purple-700 text-xs font-bold transition flex items-center gap-1.5 flex-1 justify-center active:scale-95">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          <span class="hidden sm:inline">ดาวน์โหลดรูปป้าย</span>
+          <span class="sm:hidden">บันทึกรูป</span>
+        </button>
+
+        <button type="button" onclick="printShelfTag()" class="px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md flex-1 justify-center active:scale-95 ios-btn-press">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+          <span>สั่งพิมพ์ป้าย</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- CATEGORY MANAGEMENT & COLOR PICKER MODAL: จัดการและเพิ่มหมวดหมู่พร้อมกำหนดสีเอง -->
   <div id="modalCategoryManage" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white w-full sm:max-w-xl md:max-w-2xl rounded-t-[32px] sm:rounded-[28px] shadow-[0_25px_60px_rgba(0,0,0,0.22)] border border-slate-200/80 overflow-hidden max-h-[90vh] flex flex-col ios-sheet-anim">
@@ -1898,6 +2015,7 @@
 
           localStorage.setItem('stock_app_cache_v4', JSON.stringify(state));
           updateUI();
+          checkUrlQueryParams();
           if (isManual) showAlert('อัปเดตข้อมูลล่าสุดเรียบร้อยแล้ว', 'success');
         }
       } catch (err) {
@@ -6469,7 +6587,19 @@
 
       if (navigator.vibrate) navigator.vibrate([50, 70, 50]);
 
-      const cleanCode = String(code).trim().toLowerCase();
+      // ดึงชื่อ SKU กรณีเป็น QR Code ที่สร้างจากแอปซึ่งมี ?sku=...
+      let extractedCode = code;
+      if (code.includes('sku=')) {
+        try {
+          const urlObj = new URL(code);
+          extractedCode = urlObj.searchParams.get('sku') || extractedCode;
+        } catch(e) {
+          const m = code.match(/sku=([^&]+)/);
+          if (m) extractedCode = decodeURIComponent(m[1]);
+        }
+      }
+
+      const cleanCode = String(extractedCode).trim().toLowerCase();
       const matched = state.products.find(p => {
         return (p.barcode && String(p.barcode).trim().toLowerCase() === cleanCode) ||
                (p.id && String(p.id).trim().toLowerCase() === cleanCode) ||
@@ -6497,6 +6627,162 @@
         onBarcodeDetected(input.value.trim());
       }
     }
+
+
+    // ==========================================
+    // 5. ระบบป้าย QR CODE ติดเชลฟ์สินค้า (SHELF TAG & SCAN-TO-ACTION)
+    // ==========================================
+    let currentShelfTagProduct = null;
+    let qrCodeInstance = null;
+
+    function getProductScanUrl(product) {
+      if (!product) return window.location.href;
+      // สร้าง URL ที่เข้าถึงได้โดยตรงผ่านกล้องมือถือ
+      let base = window.location.origin + window.location.pathname;
+      if (base.endsWith('/')) base = base.slice(0, -1);
+      return `${base}?sku=${encodeURIComponent(product.name)}`;
+    }
+
+    function openShelfTagModal(prod) {
+      if (!prod) prod = activeModalProduct;
+      if (!prod) return;
+      currentShelfTagProduct = prod;
+
+      const modal = document.getElementById('modalShelfTag');
+      const nameEl = document.getElementById('tagProductName');
+      const catBadge = document.getElementById('tagCategoryBadge');
+      const skuIdEl = document.getElementById('tagSkuId');
+      const unitEl = document.getElementById('tagUnitText');
+      const minStockEl = document.getElementById('tagMinStockText');
+      const supEl = document.getElementById('tagSupplierText');
+      const imgBox = document.getElementById('tagProductImgBox');
+      const catBar = document.getElementById('tagCategoryBar');
+
+      const colorData = getCategoryColorData(prod.category);
+
+      if (nameEl) nameEl.textContent = prod.name;
+      if (catBadge) {
+        catBadge.textContent = prod.category || 'ทั่วไป';
+        catBadge.style = colorData.badgeStyle;
+      }
+      if (catBar) {
+        catBar.style.backgroundColor = colorData.hex;
+      }
+      if (skuIdEl) skuIdEl.textContent = prod.id ? `#${prod.id}` : '#SKU';
+      if (unitEl) unitEl.textContent = `${prod.unit || 'หน่วย'} (คงเหลือปัจจุบัน ${prod.currentBalance} ${prod.unit || ''})`;
+      if (minStockEl) minStockEl.textContent = `${prod.minStock || 0} ${prod.unit || 'หน่วย'}`;
+      if (supEl) supEl.textContent = prod.supplier || 'ซัพพลายเออร์ทั่วไป';
+
+      if (imgBox) {
+        if (prod.imageUrl) {
+          imgBox.innerHTML = `<img src="${prod.imageUrl}" class="w-full h-full object-cover" alt="" />`;
+        } else {
+          imgBox.innerHTML = `<span class="text-xl font-bold text-slate-400">${prod.name.slice(0, 1)}</span>`;
+        }
+      }
+
+      // สร้าง QR Code ด้วย QRCode.js หรือ Fallback เป็น Google Chart QR API
+      const qrContainer = document.getElementById('tagQrCodeContainer');
+      if (qrContainer) {
+        qrContainer.innerHTML = '';
+        const scanUrl = getProductScanUrl(prod);
+
+        if (typeof QRCode !== 'undefined') {
+          try {
+            qrCodeInstance = new QRCode(qrContainer, {
+              text: scanUrl,
+              width: 105,
+              height: 105,
+              colorDark: '#0f172a',
+              colorLight: '#ffffff',
+              correctLevel: QRCode.CorrectLevel.M
+            });
+          } catch(e) {
+            qrContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=105x105&data=${encodeURIComponent(scanUrl)}" class="w-full h-full object-contain" alt="QR Code" />`;
+          }
+        } else {
+          qrContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=105x105&data=${encodeURIComponent(scanUrl)}" class="w-full h-full object-contain" alt="QR Code" />`;
+        }
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeShelfTagModal() {
+      document.getElementById('modalShelfTag')?.classList.add('hidden');
+    }
+
+    function copyShelfTagScanUrl() {
+      if (!currentShelfTagProduct) return;
+      const url = getProductScanUrl(currentShelfTagProduct);
+      navigator.clipboard?.writeText(url).then(() => {
+        showAlert('✓ คัดลอกลิงก์สแกนสำหรับสินค้านี้เรียบร้อยแล้ว', 'success');
+      }).catch(() => {
+        prompt('คัดลอกลิงก์สำหรับสแกน:', url);
+      });
+    }
+
+    async function downloadShelfTagImage() {
+      const card = document.getElementById('shelfTagCard');
+      if (!card || typeof html2canvas === 'undefined') {
+        alert('กำลังเตรียมความพร้อมของรูปภาพ กรุณาลองใหม่อีกครั้ง');
+        return;
+      }
+
+      const btn = document.getElementById('btnDownloadTagImg');
+      const oldHtml = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="animate-pulse">กำลังบันทึกรูป...</span>';
+
+      try {
+        const canvas = await html2canvas(card, {
+          scale: 3,
+          useCORS: true,
+          backgroundColor: '#ffffff'
+        });
+
+        const link = document.createElement('a');
+        link.download = `ShelfTag_${(currentShelfTagProduct?.name || 'SKU').replace(/[^a-zA-Z0-9ก-๙]/g, '_')}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        showAlert('✓ ดาวน์โหลดรูปป้ายสำหรับพิมพ์เรียบร้อยแล้ว', 'success');
+      } catch(err) {
+        console.warn('Tag export error:', err);
+        alert('เกิดข้อผิดพลาดในการดาวน์โหลดรูปภาพ กรุณาลองใช้ปุ่มสั่งพิมพ์แทน');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = oldHtml;
+      }
+    }
+
+    function printShelfTag() {
+      window.print();
+    }
+
+    // ฟังก์ชันตรวจสอบ Deep-linking จาก URL เมื่อสแกนด้วยกล้องมือถือทั่วไป
+    function checkUrlQueryParams() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const skuParam = params.get('sku') || params.get('scan') || params.get('id');
+        if (skuParam && state.products.length > 0) {
+          const decoded = decodeURIComponent(skuParam).trim().toLowerCase();
+          const matched = state.products.find(p => 
+            p.name.toLowerCase() === decoded || 
+            (p.id && p.id.toLowerCase() === decoded) ||
+            (p.barcode && p.barcode.toLowerCase() === decoded)
+          );
+          if (matched) {
+            setTimeout(() => {
+              openQuickModal(matched.name, 'OUT');
+              showAlert(`📷 สแกนพบสินค้าจากป้ายเชลฟ์: ${matched.name}`, 'success');
+            }, 350);
+          }
+        }
+      } catch(e) {}
+    }
+
+    // เรียกตรวจจับ URL parameters เมื่อโหลดหน้าเว็บเสร็จ
+    window.addEventListener('load', checkUrlQueryParams);
 
 </script>
 </body>
