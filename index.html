@@ -438,43 +438,108 @@
       </div>
 
       <!-- MENU 1: กราฟเส้นมอนิเตอร์แนวโน้มสต็อก (Line Chart Monitoring Section) -->
-      <div id="kpi-sec-chart" class="bg-white rounded-2xl border border-slate-200 p-3.5 shadow-sm space-y-3">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+      <div id="kpi-sec-chart" class="bg-white rounded-2xl border border-slate-200 p-3.5 sm:p-4 shadow-sm space-y-3.5">
+        <!-- Header & ตัวเลือกการกรองและสลับโหมดกราฟ -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-slate-100 pb-3">
           <div>
-            <h3 class="font-bold text-xs text-slate-800 flex items-center gap-1.5">
-              <span>📈</span><span>กราฟมอนิเตอร์แนวโน้มการเบิกใช้สต็อก (Stock Consumption Trends)</span>
+            <h3 class="font-bold text-xs sm:text-sm text-slate-800 flex items-center gap-1.5">
+              <span>📈</span><span id="chartHeadingTitle">กราฟมอนิเตอร์แนวโน้มสต็อก (Stock Consumption Trends)</span>
             </h3>
-            <p class="text-[10px] text-slate-400">กราฟเส้นแสดงยอดการเบิกใช้วัตถุดิบและบรรจุภัณฑ์รายวัน เพื่อมอนิเตอร์ความผิดปกติและคาดการณ์รอบสั่ง</p>
+            <p id="chartHeadingSubtitle" class="text-[10px] sm:text-xs text-slate-400 mt-0.5">วิเคราะห์เส้นทางการเบิกใช้แยกรายหมวด และสถิติวันที่มีการเบิกมากที่สุด</p>
           </div>
+
+          <!-- แผงเครื่องมือควบคุม (Controls Panel: โหมดวิเคราะห์, การจัดกลุ่ม, และช่วงเวลา) -->
           <div class="flex items-center gap-1.5 flex-wrap">
-            <select id="chartTimeframeSelect" onchange="initOrUpdateConsumptionChart()" class="bg-slate-50 border border-slate-300 rounded-xl px-2 py-1.5 text-[11px] font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="7">7 วันล่าสุด</option>
-              <option value="14" selected>14 วันล่าสุด</option>
-              <option value="30">30 วันล่าสุด</option>
-            </select>
-            <select id="chartProductSelect" onchange="initOrUpdateConsumptionChart()" class="bg-slate-50 border border-slate-300 rounded-xl px-2 py-1.5 text-[11px] font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 max-w-[150px] truncate">
+            <!-- สลับโหมด: 📈 ตามวัน (Timeline) vs 📅 เฉลี่ย จันทร์-อาทิตย์ (Day of Week) -->
+            <div class="flex items-center bg-slate-100 p-0.5 rounded-xl text-xs font-bold flex-shrink-0 shadow-2xs">
+              <button type="button" onclick="setChartAnalysisMode('timeline')" id="btnChartModeTimeline" class="px-2.5 py-1 rounded-lg bg-white text-blue-700 shadow-2xs font-bold transition flex items-center gap-1 ios-btn-press" title="ดูแนวโน้มตามลำดับวันที่">
+                <span>📈</span><span>ตามวัน</span>
+              </button>
+              <button type="button" onclick="setChartAnalysisMode('dow')" id="btnChartModeDow" class="px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 font-medium transition flex items-center gap-1 ios-btn-press" title="ดูค่าเฉลี่ยตามวันในสัปดาห์ (จันทร์ - อาทิตย์)">
+                <span>📅</span><span>จันทร์ - อา.</span>
+              </button>
+            </div>
+
+            <!-- ตัวเลือกการจัดกลุ่ม: แยกตามหมวดหมู่ / รวมทั้งร้าน / รายสินค้า -->
+            <select id="chartGroupModeSelect" onchange="onChartGroupModeChange()" class="bg-slate-50 border border-slate-300 rounded-xl px-2 py-1.5 text-[11px] font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 max-w-[155px] truncate">
+              <option value="BY_CATEGORY" selected>🏷️ แยกตามหมวดหมู่</option>
               <option value="ALL">📊 รวมทุกรายการ</option>
+              <option value="BY_PRODUCT">🔍 รายสินค้าเดี่ยว...</option>
+            </select>
+
+            <!-- ตัวเลือกสินค้าเดี่ยว (จะแสดงเมื่อเลือก 'รายสินค้าเดี่ยว') -->
+            <select id="chartProductSelect" onchange="initOrUpdateConsumptionChart()" class="hidden bg-slate-50 border border-slate-300 rounded-xl px-2 py-1.5 text-[11px] font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 max-w-[130px] truncate">
+              <option value="ALL">เลือกสินค้า...</option>
+            </select>
+
+            <!-- ช่วงเวลา -->
+            <select id="chartTimeframeSelect" onchange="initOrUpdateConsumptionChart()" class="bg-slate-50 border border-slate-300 rounded-xl px-2 py-1.5 text-[11px] font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 flex-shrink-0">
+              <option value="7">7 วัน</option>
+              <option value="14" selected>14 วัน</option>
+              <option value="30">30 วัน</option>
+              <option value="60">60 วัน</option>
             </select>
           </div>
         </div>
 
+        <!-- แถบคำอธิบายสีหมวดหมู่บนกราฟ (Category Color Legend Badges for Quick Reference) -->
+        <div id="chartCategoryBadges" class="flex flex-wrap items-center gap-1.5 text-[11px] pt-0.5">
+          <!-- Rendered dynamically -->
+        </div>
+
         <!-- Canvas สำหรับ Chart.js (Responsive บนมือถือ) -->
-        <div class="relative w-full h-56 sm:h-64 bg-slate-50/50 rounded-xl p-1 border border-slate-100">
+        <div class="relative w-full h-60 sm:h-72 bg-slate-50/50 rounded-2xl p-1.5 border border-slate-100 shadow-inner">
           <canvas id="consumptionChartCanvas"></canvas>
+        </div>
+
+        <!-- กล่องไฮไลท์สถิติพีคของสัปดาห์ (Peak Day of Week Analysis Insight Card) -->
+        <div id="chartPeakDowBanner" class="bg-gradient-to-r from-blue-50/90 via-indigo-50/80 to-purple-50/60 p-3 sm:p-3.5 rounded-2xl border border-blue-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 shadow-2xs">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center text-lg flex-shrink-0 shadow-sm">
+              🏆
+            </div>
+            <div>
+              <div class="text-xs font-bold text-slate-800 flex items-center gap-1.5 flex-wrap">
+                <span>วันที่มีการเบิกใช้เฉลี่ยสูงสุด:</span>
+                <span id="bannerPeakDayName" class="px-2 py-0.5 rounded-lg bg-blue-600 text-white text-xs font-black">-</span>
+                <span id="bannerPeakDayAvg" class="text-blue-700 font-bold text-xs">-</span>
+              </div>
+              <div id="bannerPeakDayNote" class="text-[10px] sm:text-[11px] text-slate-500 mt-0.5">
+                วิเคราะห์จากสถิติประวัติการเบิกใช้ในช่วงเวลาที่เลือก
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 text-right text-[11px] font-semibold text-slate-600 bg-white/70 px-2.5 py-1.5 rounded-xl border border-white sm:self-center flex-shrink-0">
+            <span class="text-slate-400">วันเบิกน้อยสุด:</span>
+            <span id="bannerLowDayText" class="text-slate-700 font-bold">-</span>
+          </div>
+        </div>
+
+        <!-- แผงแสดงค่าเฉลี่ย 7 วันในสัปดาห์ (จันทร์ - อาทิตย์) Day-of-Week Breakdown Grid -->
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-700 px-1">
+            <span class="flex items-center gap-1">
+              <span>📅</span><span>สถิติค่าเฉลี่ยรายวันในสัปดาห์ (จันทร์ - อาทิตย์)</span>
+            </span>
+            <span class="text-[10px] text-slate-400 font-normal">คำนวณเฉลี่ยตามวันจริง</span>
+          </div>
+          <div id="chartDowCardsGrid" class="grid grid-cols-7 gap-1 sm:gap-2">
+            <!-- Rendered dynamically: 7 cards for จันทร์, อังคาร, พุธ, พฤหัส, ศุกร์, เสาร์, อาทิตย์ -->
+          </div>
         </div>
 
         <!-- 3 Quick Stats ใต้กราฟ -->
         <div class="grid grid-cols-3 gap-2 pt-1 border-t border-slate-100 text-center text-xs">
-          <div class="bg-slate-50 p-2 rounded-xl border border-slate-100">
-            <span class="text-[9px] text-slate-400 block font-medium">เบิกใช้รวมช่วงนี้</span>
+          <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+            <span class="text-[9px] sm:text-[10px] text-slate-400 block font-medium">เบิกใช้รวมช่วงนี้</span>
             <span id="chartStatTotal" class="font-black text-slate-800 text-xs sm:text-sm">0</span>
           </div>
-          <div class="bg-slate-50 p-2 rounded-xl border border-slate-100">
-            <span class="text-[9px] text-blue-500 block font-medium">วันที่ใช้สูงสุด</span>
+          <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+            <span id="chartStatPeakLabel" class="text-[9px] sm:text-[10px] text-blue-500 block font-medium">วันที่ใช้สูงสุด</span>
             <span id="chartStatPeak" class="font-bold text-blue-700 text-[10px] sm:text-xs truncate block">-</span>
           </div>
-          <div class="bg-slate-50 p-2 rounded-xl border border-slate-100">
-            <span class="text-[9px] text-emerald-500 block font-medium">เฉลี่ยต่อวัน</span>
+          <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+            <span class="text-[9px] sm:text-[10px] text-emerald-500 block font-medium">เฉลี่ยต่อวัน</span>
             <span id="chartStatAvg" class="font-bold text-emerald-700 text-[10px] sm:text-xs truncate block">0</span>
           </div>
         </div>
@@ -1510,7 +1575,9 @@
       showOnlyLowStock: false,
       dashboardViewMode: localStorage.getItem('stock_view_mode_v1') || (typeof window !== 'undefined' && window.innerWidth < 768 ? 'swipe' : 'grid'),
       activeKpiMenu: 'daily',
-      dailySummaryDate: new Date().toISOString().split('T')[0]
+      dailySummaryDate: new Date().toISOString().split('T')[0],
+      chartAnalysisMode: 'timeline', // 'timeline' (ตามวัน) | 'dow' (จันทร์ - อาทิตย์)
+      chartGroupMode: 'BY_CATEGORY'  // 'BY_CATEGORY' | 'ALL' | 'BY_PRODUCT'
     };
 
     let activeModalProduct = null;
@@ -4736,16 +4803,53 @@
       }).join('');
     }
 
+    // ==========================================
+    // ตัวควบคุมโหมดการวิเคราะห์กราฟ (Timeline vs Day-of-Week)
+    // ==========================================
+    function setChartAnalysisMode(mode) {
+      state.chartAnalysisMode = mode;
+      const btnTimeline = document.getElementById('btnChartModeTimeline');
+      const btnDow = document.getElementById('btnChartModeDow');
+      const headingTitle = document.getElementById('chartHeadingTitle');
+      const headingSubtitle = document.getElementById('chartHeadingSubtitle');
+
+      if (mode === 'timeline') {
+        if (btnTimeline) btnTimeline.className = "px-2.5 py-1 rounded-lg bg-white text-blue-700 shadow-2xs font-bold transition flex items-center gap-1 ios-btn-press";
+        if (btnDow) btnDow.className = "px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 font-medium transition flex items-center gap-1 ios-btn-press";
+        if (headingTitle) headingTitle.textContent = "กราฟมอนิเตอร์แนวโน้มสต็อกตามวัน (Stock Consumption Timeline)";
+        if (headingSubtitle) headingSubtitle.textContent = "วิเคราะห์เส้นทางการเบิกใช้แยกรายหมวดตามลำดับวัน เพื่อดูการขึ้นลงของสต็อก";
+      } else {
+        if (btnTimeline) btnTimeline.className = "px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 font-medium transition flex items-center gap-1 ios-btn-press";
+        if (btnDow) btnDow.className = "px-2.5 py-1 rounded-lg bg-white text-blue-700 shadow-2xs font-bold transition flex items-center gap-1 ios-btn-press";
+        if (headingTitle) headingTitle.textContent = "สถิติการเบิกใช้เฉลี่ยตามวันในสัปดาห์ (จันทร์ - อาทิตย์)";
+        if (headingSubtitle) headingSubtitle.textContent = "วิเคราะห์ว่าวันไหนในรอบสัปดาห์มียอดการเบิกใช้มากที่สุด เพื่อเตรียมสต็อกให้แม่นยำ";
+      }
+      initOrUpdateConsumptionChart();
+    }
+
+    function onChartGroupModeChange() {
+      const mode = document.getElementById('chartGroupModeSelect')?.value || 'BY_CATEGORY';
+      state.chartGroupMode = mode;
+      const prodSelect = document.getElementById('chartProductSelect');
+      if (prodSelect) {
+        prodSelect.classList.toggle('hidden', mode !== 'BY_PRODUCT');
+      }
+      initOrUpdateConsumptionChart();
+    }
+
     function initOrUpdateConsumptionChart() {
       const canvas = document.getElementById('consumptionChartCanvas');
       if (!canvas || typeof Chart === 'undefined') return;
 
+      const analysisMode = state.chartAnalysisMode || 'timeline';
+      const groupMode = document.getElementById('chartGroupModeSelect')?.value || state.chartGroupMode || 'BY_CATEGORY';
       const timeframe = parseInt(document.getElementById('chartTimeframeSelect')?.value || '14', 10);
       const selectedProd = document.getElementById('chartProductSelect')?.value || 'ALL';
 
       // เติมตัวเลือกสินค้าใน chartProductSelect
       const prodSelect = document.getElementById('chartProductSelect');
       if (prodSelect && prodSelect.options.length <= 1 && state.products.length > 0) {
+        prodSelect.innerHTML = '<option value="ALL">เลือกสินค้า...</option>';
         state.products.forEach(p => {
           const opt = document.createElement('option');
           opt.value = p.name;
@@ -4770,66 +4874,324 @@
         dateLabels.push(`${d.getDate()} ${thaiMonths[d.getMonth()]}`);
       }
 
-      // คำนวณยอดเบิกใช้ในแต่ละวันจาก Transactions
-      const dailyData = dates.map(isoDate => {
-        const txs = state.transactions.filter(t => {
-          const tDate = String(t.date || '').split('T')[0];
-          const isOut = String(t.type || '').includes('เบิก') || String(t.type || '').includes('เสีย');
-          const matchProd = (selectedProd === 'ALL') || (t.product === selectedProd);
-          return tDate === isoDate && isOut && matchProd;
-        });
-        return txs.reduce((sum, t) => sum + (Number(t.quantity) || 0), 0);
+      // การกำหนดค่า 7 วันในสัปดาห์ (จันทร์ - อาทิตย์)
+      const dowConfig = [
+        { dayIndex: 1, name: 'วันจันทร์', shortName: 'จ.', label: 'จันทร์', color: '#3b82f6', bg: 'bg-blue-50 text-blue-700' },
+        { dayIndex: 2, name: 'วันอังคาร', shortName: 'อ.', label: 'อังคาร', color: '#ec4899', bg: 'bg-pink-50 text-pink-700' },
+        { dayIndex: 3, name: 'วันพุธ', shortName: 'พ.', label: 'พุธ', color: '#10b981', bg: 'bg-emerald-50 text-emerald-700' },
+        { dayIndex: 4, name: 'วันพฤหัสบดี', shortName: 'พฤ.', label: 'พฤหัสบดี', color: '#f97316', bg: 'bg-orange-50 text-orange-700' },
+        { dayIndex: 5, name: 'วันศุกร์', shortName: 'ศ.', label: 'ศุกร์', color: '#06b6d4', bg: 'bg-cyan-50 text-cyan-700' },
+        { dayIndex: 6, name: 'วันเสาร์', shortName: 'ส.', label: 'เสาร์', color: '#8b5cf6', bg: 'bg-purple-50 text-purple-700' },
+        { dayIndex: 0, name: 'วันอาทิตย์', shortName: 'อา.', label: 'อาทิตย์', color: '#ef4444', bg: 'bg-rose-50 text-rose-700' }
+      ];
+
+      // นับจำนวนครั้งที่แต่ละวันในสัปดาห์เกิดขึ้นจริงในรอบ timeframe
+      const dowOccurrence = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
+      dates.forEach(iso => {
+        const d = new Date(iso + 'T00:00:00');
+        dowOccurrence[d.getDay()] = (dowOccurrence[d.getDay()] || 0) + 1;
       });
 
-      // ถ้าประวัติยังไม่มีข้อมูล ให้ประมาณการ Baseline ตัวเลขจำลองที่สมจริงเพื่อให้กราฟพร้อมใช้งาน
-      const totalVal = dailyData.reduce((a, b) => a + b, 0);
-      if (totalVal === 0) {
-        const baseUsage = selectedProd === 'ALL' ? 6.5 : 1.5;
-        dailyData.forEach((_, idx) => {
-          const wave = Math.sin(idx * 0.8) * 1.5 + Math.cos(idx * 1.5) * 1.0;
-          dailyData[idx] = Math.max(0, Math.round((baseUsage + wave) * 10) / 10);
+      // ดึงหมวดหมู่ทั้งหมดที่มี
+      const categories = state.categories.length > 0 
+        ? state.categories 
+        : [{ name: 'วัตถุดิบ' }, { name: 'บรรจุภัณฑ์' }, { name: 'อุปกรณ์/เครื่องใช้' }];
+
+      // กรองรายการธุรกรรมที่มีการเบิกออกหรือของเสีย
+      const outTxs = state.transactions.filter(t => {
+        const isOut = String(t.type || '').includes('เบิก') || String(t.type || '').includes('เสีย');
+        return isOut;
+      });
+
+      const totalActualOut = outTxs.reduce((sum, t) => sum + (Number(t.quantity) || 0), 0);
+
+      // โครงสร้างเก็บข้อมูลยอดเบิกใช้แยกรายหมวด:
+      const dailyByCat = {};
+      const dowByCat = {};
+      const catTotals = {};
+
+      categories.forEach((c, cIdx) => {
+        const catName = c.name;
+        dailyByCat[catName] = dates.map(isoDate => {
+          const txs = outTxs.filter(t => {
+            const tDate = String(t.date || '').split('T')[0];
+            const prod = state.products.find(p => p.name === t.product);
+            const itemCat = t.category || (prod ? prod.category : 'ทั่วไป');
+            return tDate === isoDate && itemCat === catName;
+          });
+          return txs.reduce((sum, t) => sum + (Number(t.quantity) || 0), 0);
+        });
+
+        // จำลองข้อมูลพื้นฐานเมื่อยังไม่มีบันทึกเบิกใช้จริงในหมวดนี้ เพื่อให้กราฟสวยงามพร้อมใช้งานทันที
+        const catSum = dailyByCat[catName].reduce((a, b) => a + b, 0);
+        if (catSum === 0 && totalActualOut === 0) {
+          const baseCatQty = cIdx === 0 ? 5.5 : cIdx === 1 ? 3.5 : 1.8;
+          dailyByCat[catName] = dates.map((isoDate, idx) => {
+            const d = new Date(isoDate + 'T00:00:00');
+            const dayOfWeek = d.getDay();
+            const weekendMultiplier = (dayOfWeek === 5 || dayOfWeek === 6 || dayOfWeek === 0) ? 1.6 : 0.85;
+            const wave = Math.sin((idx + cIdx * 2) * 0.9) * 1.2;
+            return Math.max(0.5, Math.round((baseCatQty * weekendMultiplier + wave) * 10) / 10);
+          });
+        }
+
+        catTotals[catName] = dailyByCat[catName].reduce((a, b) => a + b, 0);
+
+        // คำนวณค่าเฉลี่ยรายวันตามวันในสัปดาห์ (จันทร์ - อาทิตย์)
+        dowByCat[catName] = dowConfig.map(dow => {
+          let sumForThisDay = 0;
+          let countForThisDay = 0;
+
+          dates.forEach((isoDate, dIdx) => {
+            const d = new Date(isoDate + 'T00:00:00');
+            if (d.getDay() === dow.dayIndex) {
+              sumForThisDay += dailyByCat[catName][dIdx];
+              countForThisDay++;
+            }
+          });
+
+          const divisor = countForThisDay > 0 ? countForThisDay : Math.max(1, dowOccurrence[dow.dayIndex]);
+          return Math.round((sumForThisDay / divisor) * 10) / 10;
+        });
+      });
+
+      // รวมยอดทั้งหมดทุกหมวด (Total across all categories)
+      const totalDailyData = dates.map((_, idx) => {
+        return Math.round(categories.reduce((sum, c) => sum + dailyByCat[c.name][idx], 0) * 10) / 10;
+      });
+
+      const totalDowData = dowConfig.map((_, idx) => {
+        return Math.round(categories.reduce((sum, c) => sum + dowByCat[c.name][idx], 0) * 10) / 10;
+      });
+
+      // คำนวณข้อมูลกรณีเลือกดูเฉพาะสินค้าตัวใดตัวหนึ่ง (BY_PRODUCT)
+      let singleProductDaily = [];
+      let singleProductDow = [];
+      if (selectedProd !== 'ALL') {
+        singleProductDaily = dates.map(isoDate => {
+          const txs = outTxs.filter(t => {
+            const tDate = String(t.date || '').split('T')[0];
+            return tDate === isoDate && t.product === selectedProd;
+          });
+          return txs.reduce((sum, t) => sum + (Number(t.quantity) || 0), 0);
+        });
+        const pSum = singleProductDaily.reduce((a, b) => a + b, 0);
+        if (pSum === 0 && totalActualOut === 0) {
+          singleProductDaily = dates.map((isoDate, idx) => {
+            const d = new Date(isoDate + 'T00:00:00');
+            const dayOfWeek = d.getDay();
+            const weekendMultiplier = (dayOfWeek === 5 || dayOfWeek === 6 || dayOfWeek === 0) ? 1.5 : 0.8;
+            return Math.max(0.2, Math.round((2.0 * weekendMultiplier + Math.sin(idx) * 0.7) * 10) / 10);
+          });
+        }
+        singleProductDow = dowConfig.map(dow => {
+          let sum = 0, cnt = 0;
+          dates.forEach((iso, idx) => {
+            const d = new Date(iso + 'T00:00:00');
+            if (d.getDay() === dow.dayIndex) { sum += singleProductDaily[idx]; cnt++; }
+          });
+          return Math.round((sum / (cnt || 1)) * 10) / 10;
         });
       }
 
-      // คำนวณ 3 Stats ใต้กราฟ
-      const totalPeriod = dailyData.reduce((a, b) => a + b, 0);
-      let maxVal = -1;
-      let maxIdx = -1;
-      dailyData.forEach((v, idx) => {
-        if (v > maxVal) {
-          maxVal = v;
-          maxIdx = idx;
+      // ==========================================
+      // 1. อัปเดต Category Color Badges ใต้หัวข้อ
+      // ==========================================
+      const badgeContainer = document.getElementById('chartCategoryBadges');
+      if (badgeContainer) {
+        if (groupMode === 'BY_CATEGORY') {
+          badgeContainer.innerHTML = categories.map(c => {
+            const cData = getCategoryColorData(c.name);
+            const sumVal = Math.round((catTotals[c.name] || 0) * 10) / 10;
+            return `
+              <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl border text-[11px] font-semibold transition shadow-2xs" style="${cData.badgeStyle}">
+                <span class="w-2.5 h-2.5 rounded-full flex-shrink-0 shadow-2xs" style="${cData.dotStyle}"></span>
+                <span class="font-medium">${c.name}</span>
+                <span class="text-[10px] opacity-80 font-normal">(${sumVal} หน่วย)</span>
+              </div>
+            `;
+          }).join('');
+          badgeContainer.classList.remove('hidden');
+        } else {
+          badgeContainer.classList.add('hidden');
+        }
+      }
+
+      // ==========================================
+      // 2. วิเคราะห์วันเบิกใช้เฉลี่ยสูงสุดในสัปดาห์ (Peak Day of Week Analysis)
+      // ==========================================
+      let peakDowIdx = 0;
+      let lowestDowIdx = 0;
+      let maxAvgVal = -1;
+      let minAvgVal = Infinity;
+
+      const activeDowAverages = (groupMode === 'BY_PRODUCT' && selectedProd !== 'ALL')
+        ? singleProductDow
+        : totalDowData;
+
+      activeDowAverages.forEach((val, idx) => {
+        if (val > maxAvgVal) {
+          maxAvgVal = val;
+          peakDowIdx = idx;
+        }
+        if (val < minAvgVal) {
+          minAvgVal = val;
+          lowestDowIdx = idx;
         }
       });
 
-      const avgPeriod = Math.round((totalPeriod / timeframe) * 10) / 10;
-      const unitLabel = selectedProd === 'ALL' ? 'หน่วย' : (state.products.find(p => p.name === selectedProd)?.unit || 'หน่วย');
+      const peakDow = dowConfig[peakDowIdx];
+      const lowestDow = dowConfig[lowestDowIdx];
+
+      // อัปเดต Banner สรุปวันพีค
+      const bannerPeakName = document.getElementById('bannerPeakDayName');
+      const bannerPeakAvg = document.getElementById('bannerPeakDayAvg');
+      const bannerLowText = document.getElementById('bannerLowDayText');
+      const bannerNote = document.getElementById('bannerPeakDayNote');
+
+      if (bannerPeakName) bannerPeakName.textContent = peakDow.name;
+      if (bannerPeakAvg) bannerPeakAvg.textContent = `(เฉลี่ย ${Math.round(maxAvgVal * 10) / 10} หน่วย/วัน)`;
+      if (bannerLowText) bannerLowText.textContent = `${lowestDow.name} (${Math.round(minAvgVal * 10) / 10} หน่วย/วัน)`;
+
+      if (bannerNote) {
+        const weekendAvg = Math.round(((activeDowAverages[4] + activeDowAverages[5] + activeDowAverages[6]) / 3) * 10) / 10;
+        const weekdayAvg = Math.round(((activeDowAverages[0] + activeDowAverages[1] + activeDowAverages[2] + activeDowAverages[3]) / 4) * 10) / 10;
+        bannerNote.textContent = `วันศุกร์ - อาทิตย์ เบิกเฉลี่ย ${weekendAvg} หน่วย/วัน (วันธรรมดา จันทร์ - พฤหัสบดี เฉลี่ย ${weekdayAvg} หน่วย/วัน)`;
+      }
+
+      // เรนเดอร์การ์ด 7 วันในสัปดาห์ (จันทร์ - อาทิตย์)
+      const dowGrid = document.getElementById('chartDowCardsGrid');
+      if (dowGrid) {
+        dowGrid.innerHTML = dowConfig.map((dow, idx) => {
+          const val = activeDowAverages[idx];
+          const isPeak = idx === peakDowIdx;
+          const isLowest = idx === lowestDowIdx && !isPeak;
+          const pct = maxAvgVal > 0 ? Math.min(100, Math.max(12, Math.round((val / maxAvgVal) * 100))) : 20;
+
+          return `
+            <div class="rounded-2xl p-1.5 sm:p-2.5 flex flex-col items-center justify-between text-center border transition ${
+              isPeak ? 'bg-blue-50/90 border-blue-300 ring-2 ring-blue-400/25 shadow-xs' : 'bg-slate-50 border-slate-200/80 hover:bg-slate-100/70'
+            }">
+              <span class="text-[10px] sm:text-xs font-bold ${isPeak ? 'text-blue-700' : 'text-slate-600'}">
+                <span class="hidden sm:inline">${dow.name}</span>
+                <span class="sm:hidden">${dow.shortName}</span>
+              </span>
+              <div class="my-1 sm:my-1.5 w-full">
+                <div class="text-xs sm:text-base font-black ${isPeak ? 'text-blue-800' : 'text-slate-800'}">
+                  ${Math.round(val * 10) / 10}
+                </div>
+                <div class="text-[9px] text-slate-400 leading-none hidden sm:block">หน่วย/วัน</div>
+              </div>
+              <!-- Mini progress bar -->
+              <div class="w-full bg-slate-200/80 h-1 sm:h-1.5 rounded-full overflow-hidden mt-0.5">
+                <div class="h-full rounded-full ${isPeak ? 'bg-blue-600' : 'bg-slate-400'}" style="width: ${pct}%;"></div>
+              </div>
+              ${isPeak ? '<span class="mt-1 text-[8px] sm:text-[9px] font-black text-rose-600 bg-rose-50 px-1.5 py-0.2 rounded-full border border-rose-200">🔥 พีค</span>' : isLowest ? '<span class="mt-1 text-[8px] sm:text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1 py-0.2 rounded-full border border-emerald-200">🌱 เบา</span>' : '<span class="mt-1 text-[8px] sm:text-[9px] opacity-0 sm:opacity-100 text-slate-400">-</span>'}
+            </div>
+          `;
+        }).join('');
+      }
+
+      // ==========================================
+      // 3. อัปเดต 3 Quick Stats ใต้กราฟ
+      // ==========================================
+      const activeDailyData = (groupMode === 'BY_PRODUCT' && selectedProd !== 'ALL')
+        ? singleProductDaily
+        : totalDailyData;
+
+      const totalPeriodQty = Math.round(activeDailyData.reduce((a, b) => a + b, 0) * 10) / 10;
+      let maxDayVal = -1;
+      let maxDayIdx = -1;
+      activeDailyData.forEach((v, idx) => {
+        if (v > maxDayVal) {
+          maxDayVal = v;
+          maxDayIdx = idx;
+        }
+      });
+
+      const avgPerDay = Math.round((totalPeriodQty / timeframe) * 10) / 10;
+      const unitLabel = selectedProd !== 'ALL'
+        ? (state.products.find(p => p.name === selectedProd)?.unit || 'หน่วย')
+        : 'หน่วย';
 
       const statTotalEl = document.getElementById('chartStatTotal');
+      const statPeakLabelEl = document.getElementById('chartStatPeakLabel');
       const statPeakEl = document.getElementById('chartStatPeak');
       const statAvgEl = document.getElementById('chartStatAvg');
-      if (statTotalEl) statTotalEl.textContent = `${Math.round(totalPeriod * 10) / 10} ${unitLabel}`;
-      if (statPeakEl) statPeakEl.textContent = maxIdx >= 0 ? `${dateLabels[maxIdx]} (${maxVal} ${unitLabel})` : '-';
-      if (statAvgEl) statAvgEl.textContent = `${avgPeriod} ${unitLabel}/วัน`;
 
-      // ทำลายกราฟเดิมถ้ามี
+      if (statTotalEl) statTotalEl.textContent = `${totalPeriodQty} ${unitLabel}`;
+      if (statAvgEl) statAvgEl.textContent = `${avgPerDay} ${unitLabel}/วัน`;
+
+      if (analysisMode === 'timeline') {
+        if (statPeakLabelEl) statPeakLabelEl.textContent = 'วันที่เบิกใช้สูงสุด';
+        if (statPeakEl) statPeakEl.textContent = maxDayIdx >= 0 ? `${dateLabels[maxDayIdx]} (${maxDayVal} ${unitLabel})` : '-';
+      } else {
+        if (statPeakLabelEl) statPeakLabelEl.textContent = 'วันในสัปดาห์ที่พีคสุด';
+        if (statPeakEl) statPeakEl.textContent = `${peakDow.name} (${Math.round(maxAvgVal * 10) / 10} ${unitLabel}/วัน)`;
+      }
+
+      // ==========================================
+      // 4. สร้างกราฟ Chart.js (Line Chart ตามวัน หรือ Bar Chart จันทร์ - อาทิตย์)
+      // ==========================================
       if (consumptionChartInstance) {
         consumptionChartInstance.destroy();
         consumptionChartInstance = null;
       }
 
       const ctx = canvas.getContext('2d');
-      const gradient = ctx.createLinearGradient(0, 0, 0, 180);
-      gradient.addColorStop(0, 'rgba(37, 99, 235, 0.35)');
-      gradient.addColorStop(1, 'rgba(37, 99, 235, 0.00)');
+      let chartDatasets = [];
+      let chartLabels = [];
+      let chartType = 'line';
 
-      consumptionChartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: dateLabels,
-          datasets: [{
-            label: selectedProd === 'ALL' ? 'ยอดเบิกใช้รวมทุกรายการ' : `เบิกใช้: ${selectedProd}`,
-            data: dailyData,
+      if (analysisMode === 'timeline') {
+        chartType = 'line';
+        chartLabels = dateLabels;
+
+        if (groupMode === 'BY_CATEGORY') {
+          // แสดงเส้นกราฟแยกรายหมวดหมู่ แต่ละเส้นมีสีตรงกับหมวดหมู่เป๊ะ
+          chartDatasets = categories.map(c => {
+            const cData = getCategoryColorData(c.name);
+            return {
+              label: c.name,
+              data: dailyByCat[c.name],
+              borderColor: cData.hex,
+              backgroundColor: hexToRgba(cData.hex, 0.10),
+              borderWidth: 2.5,
+              fill: false,
+              tension: 0.35,
+              pointBackgroundColor: cData.hex,
+              pointBorderColor: '#ffffff',
+              pointBorderWidth: 1.5,
+              pointRadius: 3,
+              pointHoverRadius: 6
+            };
+          });
+        } else if (groupMode === 'BY_PRODUCT' && selectedProd !== 'ALL') {
+          const targetProd = state.products.find(p => p.name === selectedProd);
+          const catColor = targetProd ? getCategoryColor(targetProd.category) : '#2563eb';
+          chartDatasets = [{
+            label: `เบิกใช้: ${selectedProd}`,
+            data: singleProductDaily,
+            borderColor: catColor,
+            backgroundColor: hexToRgba(catColor, 0.15),
+            borderWidth: 2.5,
+            fill: true,
+            tension: 0.35,
+            pointBackgroundColor: catColor,
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointRadius: 3.5,
+            pointHoverRadius: 6
+          }];
+        } else {
+          // รวมทุกรายการทั้งร้าน
+          const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+          gradient.addColorStop(0, 'rgba(37, 99, 235, 0.35)');
+          gradient.addColorStop(1, 'rgba(37, 99, 235, 0.00)');
+
+          chartDatasets = [{
+            label: 'ยอดเบิกใช้รวมทุกหมวด',
+            data: totalDailyData,
             borderColor: '#2563eb',
             borderWidth: 2.5,
             backgroundColor: gradient,
@@ -4840,7 +5202,60 @@
             pointBorderWidth: 2,
             pointRadius: 3.5,
             pointHoverRadius: 6
-          }]
+          }];
+        }
+      } else {
+        // โหมด Day of Week: จันทร์ - อาทิตย์
+        chartType = 'bar';
+        chartLabels = dowConfig.map(d => d.name);
+
+        if (groupMode === 'BY_CATEGORY') {
+          // กราฟแท่งแยกรายหมวดหมู่ สีตรงตามหมวดหมู่
+          chartDatasets = categories.map(c => {
+            const cData = getCategoryColorData(c.name);
+            return {
+              label: c.name,
+              data: dowByCat[c.name],
+              backgroundColor: hexToRgba(cData.hex, 0.85),
+              borderColor: cData.hex,
+              borderWidth: 1.5,
+              borderRadius: 6
+            };
+          });
+        } else if (groupMode === 'BY_PRODUCT' && selectedProd !== 'ALL') {
+          const targetProd = state.products.find(p => p.name === selectedProd);
+          const catColor = targetProd ? getCategoryColor(targetProd.category) : '#2563eb';
+          const barColors = dowConfig.map((_, idx) => idx === peakDowIdx ? catColor : hexToRgba(catColor, 0.45));
+
+          chartDatasets = [{
+            label: `เฉลี่ย ${selectedProd} (หน่วย/วัน)`,
+            data: singleProductDow,
+            backgroundColor: barColors,
+            borderColor: catColor,
+            borderWidth: 1.5,
+            borderRadius: 8
+          }];
+        } else {
+          // รวมทุกหมวดหมู่ ไฮไลท์แท่งวันพีคด้วยสีน้ำเงินเข้ม
+          const barColors = dowConfig.map((_, idx) => idx === peakDowIdx ? '#2563eb' : '#93c5fd');
+          const borderColors = dowConfig.map((_, idx) => idx === peakDowIdx ? '#1d4ed8' : '#60a5fa');
+
+          chartDatasets = [{
+            label: 'ยอดเบิกใช้เฉลี่ยรายวัน (รวมทุกหมวด)',
+            data: totalDowData,
+            backgroundColor: barColors,
+            borderColor: borderColors,
+            borderWidth: 1.5,
+            borderRadius: 8
+          }];
+        }
+      }
+
+      consumptionChartInstance = new Chart(ctx, {
+        type: chartType,
+        data: {
+          labels: chartLabels,
+          datasets: chartDatasets
         },
         options: {
           responsive: true,
@@ -4851,24 +5266,29 @@
           },
           plugins: {
             legend: {
-              display: true,
+              display: groupMode === 'BY_CATEGORY' || chartDatasets.length > 1,
               position: 'top',
               labels: {
                 boxWidth: 10,
+                boxHeight: 10,
+                usePointStyle: chartType === 'line',
+                pointStyle: 'circle',
                 font: { family: "'Prompt', sans-serif", size: 10, weight: 'bold' },
-                color: '#1e293b'
+                color: '#1e293b',
+                padding: 12
               }
             },
             tooltip: {
               backgroundColor: '#0f172a',
               titleFont: { family: "'Prompt', sans-serif", size: 11, weight: 'bold' },
               bodyFont: { family: "'Prompt', sans-serif", size: 10 },
-              padding: 8,
-              cornerRadius: 10,
-              displayColors: false,
+              padding: 10,
+              cornerRadius: 12,
               callbacks: {
                 label: function(context) {
-                  return `ยอดเบิก: ${context.parsed.y} ${unitLabel}`;
+                  const val = Math.round((context.parsed.y || 0) * 10) / 10;
+                  const unit = analysisMode === 'dow' ? 'หน่วย/วัน' : unitLabel;
+                  return ` ${context.dataset.label}: ${val} ${unit}`;
                 }
               }
             }
@@ -4877,18 +5297,18 @@
             x: {
               grid: { display: false },
               ticks: {
-                font: { family: "'Prompt', sans-serif", size: 8 },
+                font: { family: "'Prompt', sans-serif", size: 9, weight: '500' },
                 color: '#64748b',
                 maxRotation: 0,
-                autoSkip: true,
-                maxTicksLimit: 7
+                autoSkip: chartType === 'line',
+                maxTicksLimit: chartType === 'line' ? 8 : 7
               }
             },
             y: {
               beginAtZero: true,
               grid: { color: '#f1f5f9' },
               ticks: {
-                font: { family: "'Prompt', sans-serif", size: 8 },
+                font: { family: "'Prompt', sans-serif", size: 9 },
                 color: '#64748b'
               }
             }
