@@ -633,15 +633,34 @@
 
   </main>
 
-  <!-- FIXED BOTTOM FOOTER BAR (ตรึงแถบหมวดหมู่เต็มความกว้างด้านล่าง สไลด์ซ้าย-ขวาได้อย่างสบายตา ไม่โดนเบียด) -->
+  <!-- FIXED BOTTOM FOOTER BAR (ตรึงแถบหมวดหมู่เต็มความกว้างด้านล่าง สไลด์ซ้าย-ขวาได้อย่างสบายตา พร้อม Scroll Affordance สไตล์ iOS) -->
   <footer id="dashboardStickyFooter" class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] transition-all duration-300">
     <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2 sm:py-2.5 flex items-center gap-2">
       <div class="text-[11px] sm:text-xs font-bold text-slate-500 flex items-center gap-1 flex-shrink-0">
         <span>🏷️</span><span class="hidden sm:inline">หมวดหมู่:</span>
       </div>
-      <!-- หมวดหมู่สินค้าแบบเต็มความกว้าง เลื่อนสไลด์ซ้าย-ขวาด้วยนิ้วโป้งได้อย่างเต็มตา ไม่โดนเบียด -->
-      <div id="categoryChips" class="flex-1 flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5 text-xs">
-        <!-- Category Chips rendered dynamically across full width -->
+
+      <!-- แถบหมวดหมู่สินค้าแบบเต็มความกว้าง พร้อม Scroll Affordance (เงาเฟด + ปุ่มเลื่อน ‹ › สไตล์เดียวกับเมนูด้านบน) -->
+      <div class="relative flex-1 min-w-0 flex items-center">
+        <!-- เงาเฟดขอบซ้าย + ปุ่มเลื่อนซ้าย (แสดงเมื่อมีการเลื่อนไปทางขวา) -->
+        <div id="catFadeLeft" class="hidden absolute left-0 top-0 bottom-0 z-20 flex items-center pl-0.5 pr-6 bg-gradient-to-r from-white via-white/95 to-transparent pointer-events-none transition-opacity duration-200">
+          <button type="button" onclick="scrollCatBar(-140)" class="pointer-events-auto w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200/90 backdrop-blur-md flex items-center justify-center text-xs font-bold shadow-xs active:scale-90 transition ios-btn-press" title="เลื่อนหมวดหมู่ไปทางซ้าย">
+            ‹
+          </button>
+        </div>
+
+        <!-- รายการชิปหมวดหมู่ เลื่อนสไลด์ซ้าย-ขวาได้อย่างลื่นไหล -->
+        <div id="categoryChips" onscroll="updateCatScrollIndicators()" class="flex-1 flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5 text-xs scroll-smooth">
+          <!-- Category Chips rendered dynamically across full width -->
+        </div>
+
+        <!-- เงาเฟดขอบขวา + ปุ่มบอกว่าเลื่อนขวาได้ (แสดงเมื่อมีหมวดหมู่ทางขวาที่ถูกบังอยู่) -->
+        <div id="catFadeRight" class="hidden absolute right-0 top-0 bottom-0 z-20 flex items-center pr-0.5 pl-6 bg-gradient-to-l from-white via-white/95 to-transparent pointer-events-none transition-opacity duration-200">
+          <button type="button" onclick="scrollCatBar(140)" class="pointer-events-auto px-2 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200/90 backdrop-blur-md flex items-center gap-0.5 text-[11px] font-bold shadow-xs active:scale-90 transition ios-btn-press" title="เลื่อนดูหมวดหมู่เพิ่มเติม">
+            <span class="text-[9px] font-medium text-slate-500 hidden sm:inline">เพิ่มเติม</span>
+            <span class="text-xs font-bold animate-pulse text-blue-600">›</span>
+          </button>
+        </div>
       </div>
     </div>
   </footer>
@@ -1754,6 +1773,7 @@
       });
 
       container.innerHTML = html;
+      setTimeout(updateCatScrollIndicators, 60);
     }
 
     function setCategoryFilter(catName) {
@@ -1770,6 +1790,7 @@
         if (activeChip) {
           activeChip.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
         }
+        setTimeout(updateCatScrollIndicators, 250);
       }, 50);
     }
 
@@ -3449,9 +3470,44 @@
       }
     }
 
-    // เริ่มต้นตรวจจับสถานะ Scroll Affordance เมื่อโหลดหน้าเว็บและเมื่อย่อขยายหน้าจอ
-    window.addEventListener('resize', updateNavScrollIndicators);
-    setTimeout(updateNavScrollIndicators, 200);
+    // ==========================================
+    // ตัวควบคุมการเลื่อนและตัวช่วยแสดงผลแถบหมวดหมู่ด้านล่าง (Category Scroll Affordance)
+    // ==========================================
+    function scrollCatBar(amount) {
+      const container = document.getElementById('categoryChips');
+      if (container) {
+        container.scrollBy({ left: amount, behavior: 'smooth' });
+        setTimeout(updateCatScrollIndicators, 150);
+      }
+    }
+
+    function updateCatScrollIndicators() {
+      const container = document.getElementById('categoryChips');
+      const fadeLeft = document.getElementById('catFadeLeft');
+      const fadeRight = document.getElementById('catFadeRight');
+      if (!container) return;
+
+      const scrollLeft = container.scrollLeft;
+      const maxScroll = container.scrollWidth - container.clientWidth;
+
+      // แสดงหรือซ่อนเงาเฟดและปุ่มลูกศรหมวดหมู่
+      if (fadeLeft) {
+        fadeLeft.classList.toggle('hidden', scrollLeft <= 8);
+      }
+      if (fadeRight) {
+        fadeRight.classList.toggle('hidden', maxScroll <= 5 || scrollLeft >= maxScroll - 8);
+      }
+    }
+
+    // เริ่มต้นตรวจจับสถานะ Scroll Affordance ทั้งด้านบนและด้านล่าง เมื่อโหลดหน้าเว็บและเมื่อย่อขยายหน้าจอ
+    window.addEventListener('resize', () => {
+      updateNavScrollIndicators();
+      updateCatScrollIndicators();
+    });
+    setTimeout(() => {
+      updateNavScrollIndicators();
+      updateCatScrollIndicators();
+    }, 200);
 
     function switchTab(tab) {
       ['dashboard', 'lowstock', 'reports', 'suppliers', 'history'].forEach(t => {
@@ -3469,6 +3525,7 @@
 
       if (tab === 'dashboard') {
         renderDashboard();
+        setTimeout(updateCatScrollIndicators, 200);
       } else if (tab === 'lowstock') {
         renderLowStockView();
       } else if (tab === 'reports') {
@@ -3483,6 +3540,9 @@
       const stickyFooter = document.getElementById('dashboardStickyFooter');
       if (stickyFooter) {
         stickyFooter.classList.toggle('hidden', tab !== 'dashboard');
+        if (tab === 'dashboard') {
+          setTimeout(updateCatScrollIndicators, 150);
+        }
       }
 
       // ปรับตำแหน่งปุ่มตะกร้าลอย: ถ้าอยู่หน้าแดชบอร์ดให้ลอยเหนือแถบ Footer ถ้าอยู่แท็บอื่นให้ชิดล่างปกติ
@@ -3501,6 +3561,7 @@
         activeBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
       }
       setTimeout(updateNavScrollIndicators, 300);
+      setTimeout(updateCatScrollIndicators, 300);
     }
 
     function showAlert(msg, type) {
