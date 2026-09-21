@@ -251,7 +251,11 @@
         <div class="flex items-center gap-2 sm:gap-3">
           <div class="relative flex-1">
             <svg class="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 absolute left-3 sm:left-3.5 top-2.5 sm:top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-            <input type="text" id="searchBox" oninput="renderDashboard()" placeholder="ค้นหาชื่อสินค้าหรือหมวดหมู่..." class="w-full bg-white border border-slate-300 rounded-xl pl-9 sm:pl-10 pr-3 py-2 sm:py-2.5 text-xs sm:text-sm outline-none focus:ring-2 focus:ring-blue-500 shadow-xs" />
+            <input type="text" id="searchBox" oninput="renderDashboard()" placeholder="ค้นหาชื่อสินค้าหรือหมวดหมู่..." class="w-full bg-white border border-slate-300 rounded-xl pl-9 sm:pl-10 pr-10 py-2 sm:py-2.5 text-xs sm:text-sm outline-none focus:ring-2 focus:ring-blue-500 shadow-xs" />
+            <!-- ปุ่มสแกนบาร์โค้ด / QR Code ด้วยกล้องมือถือ -->
+            <button type="button" onclick="openBarcodeScannerModal()" class="absolute right-2 top-1.5 sm:top-2 p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition active:scale-95" title="สแกนบาร์โค้ด / QR Code ด้วยกล้องมือถือ">
+              <svg class="w-4 h-4 sm:w-4.5 sm:h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7V5a2 2 0 012-2h2m10 0h2a2 2 0 012 2v2m0 10v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2M7 12h10M12 7v10"/></svg>
+            </button>
           </div>
           <button type="button" onclick="openAddProductModal()" class="px-3 sm:px-4 py-2 sm:py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl text-xs sm:text-sm flex items-center gap-1.5 shadow-sm active:scale-95 transition flex-shrink-0" title="เพิ่มสินค้าใหม่ (SKU ใหม่)">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
@@ -260,10 +264,15 @@
           </button>
         </div>
 
-        <!-- แถวตัวเลือกปรับมุมมองแสดงผล (ตำแหน่งเดิมด้านบน ชัดเจน ไม่เบียดหมวดหมู่) -->
+        <!-- แถวตัวเลือกปรับมุมมองแสดงผล และ ปุ่มเดินตรวจนับสต็อกด่วน -->
         <div class="flex items-center justify-between gap-2 pt-0.5">
-          <div class="text-[11px] sm:text-xs font-semibold text-slate-500 flex items-center gap-1">
-            <span>มุมมองสต็อก:</span>
+          <div class="flex items-center gap-2">
+            <!-- ปุ่มเปิดโหมดเดินตรวจนับสต็อกจริงหน้างาน (Stock Take) -->
+            <button type="button" onclick="openStockTakeModal()" class="px-2.5 sm:px-3 py-1.5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 active:scale-95 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-xs transition ios-btn-press" title="เปิดโหมดเดินตรวจนับสต็อกจริงหน้าร้าน (Stock Take & Audit)">
+              <span>📋</span>
+              <span class="hidden sm:inline">เดินนับสต็อก</span>
+              <span class="sm:hidden">นับสต็อก</span>
+            </button>
           </div>
 
           <!-- ปุ่มสลับ 3 มุมมอง: 📱 ปัดหน้าจอ | 🔲 การ์ดตาราง | 📋 รายการแน่น -->
@@ -676,10 +685,15 @@
         </div>
 
         <!-- ปุ่ม Action รวดเร็ว: สั่งของที่ใกล้หมดทั้งหมดเข้าตะกร้าในคลิกเดียว! -->
-        <div>
-          <button type="button" onclick="addAllLowStockToCart()" class="w-full px-4 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:scale-95 text-white font-bold text-xs sm:text-sm rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 ios-btn-press" title="เพิ่มสินค้าที่ใกล้หมดทั้งหมดลงในตะกร้าสั่งซื้ออัตโนมัติ">
+        <div class="flex items-center gap-2 flex-wrap">
+          <button type="button" onclick="addAllLowStockToCart()" class="flex-1 min-w-[170px] px-4 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:scale-95 text-white font-bold text-xs sm:text-sm rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 ios-btn-press" title="เพิ่มสินค้าที่ใกล้หมดทั้งหมดลงในตะกร้าสั่งซื้ออัตโนมัติ">
             <span>🛒</span>
             <span>สั่งของใกล้หมดเข้าตะกร้าทั้งหมด</span>
+          </button>
+          <button type="button" onclick="addAllLowStockWithSmartReorder()" class="px-3.5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 active:scale-95 text-white font-bold text-xs sm:text-sm rounded-2xl shadow-md transition-all flex items-center justify-center gap-1.5 ios-btn-press flex-shrink-0" title="คำนวณยอดสั่งแนะนำอัจฉริยะตาม Lead Time และช่วงวันพีค">
+            <span>✨</span>
+            <span class="hidden sm:inline">คำนวณยอดสั่งอัจฉริยะ</span>
+            <span class="sm:hidden">ยอดสั่งอัจฉริยะ</span>
           </button>
         </div>
       </div>
@@ -954,8 +968,9 @@
 
       <!-- Navigation Tabs ใน Cart Modal -->
       <div class="flex border-b border-slate-200 bg-slate-50 text-xs">
-        <button onclick="switchCartTab('items')" id="cart-tab-items" class="flex-1 py-2.5 font-bold text-center border-b-2 border-orange-500 text-orange-600 bg-white">🛒 รายการในตะกร้า (<span id="cartTabCount">0</span>)</button>
-        <button onclick="switchCartTab('preview')" id="cart-tab-preview" class="flex-1 py-2.5 font-medium text-center border-b-2 border-transparent text-slate-500 hover:text-slate-700">📄 ใบสั่งซื้อ & ส่งออกรูป</button>
+        <button onclick="switchCartTab('items')" id="cart-tab-items" class="flex-1 py-2.5 font-bold text-center border-b-2 border-orange-500 text-orange-600 bg-white">🛒 ในตะกร้า (<span id="cartTabCount">0</span>)</button>
+        <button onclick="switchCartTab('preview')" id="cart-tab-preview" class="flex-1 py-2.5 font-medium text-center border-b-2 border-transparent text-slate-500 hover:text-slate-700">📄 ใบสั่งซื้อ & ส่งออก</button>
+        <button onclick="switchCartTab('history')" id="cart-tab-history" class="flex-1 py-2.5 font-medium text-center border-b-2 border-transparent text-slate-500 hover:text-slate-700">📦 ตรวจรับของ (PO) <span id="pendingPoBadge" class="hidden ml-1 px-1.5 py-0.2 rounded-full bg-amber-500 text-white text-[10px] font-black">0</span></button>
       </div>
 
       <!-- Modal Body -->
@@ -964,9 +979,14 @@
         <!-- VIEW 1: รายการในตะกร้า (Cart Items) -->
         <div id="cartViewItems" class="space-y-4">
           
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between gap-2 flex-wrap">
             <span class="font-bold text-slate-700 text-xs">สินค้าที่เลือกไว้</span>
-            <button onclick="clearCart()" class="text-[11px] text-rose-500 hover:text-rose-700 underline font-medium">ล้างตะกร้าทั้งหมด</button>
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="applySmartReorderToCart()" class="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1 rounded-lg transition active:scale-95 flex items-center gap-1" title="ปรับจำนวนสั่งซื้ออัตโนมัติตาม Lead Time และวันพีคสุดสัปดาห์">
+                <span>✨</span><span>คำนวณยอดสั่งอัจฉริยะ</span>
+              </button>
+              <button onclick="clearCart()" class="text-[11px] text-rose-500 hover:text-rose-700 underline font-medium">ล้างตะกร้า</button>
+            </div>
           </div>
 
           <!-- กล่องรายการสินค้าในตะกร้า -->
@@ -1146,6 +1166,25 @@
 
         </div>
 
+        </div>
+
+        <!-- VIEW 3: ประวัติใบสั่งซื้อ & ตรวจรับสินค้าเข้าสต็อกอัตโนมัติ (Goods Receipt Matching) -->
+        <div id="cartViewHistory" class="hidden space-y-3">
+          <div class="flex items-center justify-between pb-1 border-b border-slate-100">
+            <div>
+              <h4 class="font-bold text-slate-800 text-xs sm:text-sm flex items-center gap-1.5">
+                <span>📦</span><span>ประวัติใบสั่งซื้อ & ตรวจรับสินค้า (PO Receipts)</span>
+              </h4>
+              <p class="text-[10px] text-slate-400">เมื่อคู่ค้ามาส่งของ แตะปุ่มตรวจรับเพื่อเพิ่มสต็อกอัตโนมัติทันที</p>
+            </div>
+            <span id="poSummaryCountBadge" class="text-[11px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">0 ใบสั่งซื้อ</span>
+          </div>
+
+          <!-- รายการใบสั่งซื้อทั้งหมด -->
+          <div id="poHistoryListContainer" class="space-y-2.5">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1431,6 +1470,142 @@
     </div>
   </div>
 
+  <!-- MODAL ตรวจนับสต็อกจริงหน้างาน (Batch Stock Take & Audit Sheet) -->
+  <div id="modalStockTake" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[75] flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white w-full sm:max-w-2xl md:max-w-3xl rounded-t-[32px] sm:rounded-[28px] shadow-[0_25px_60px_rgba(0,0,0,0.22)] border border-slate-200/80 overflow-hidden max-h-[94vh] flex flex-col ios-sheet-anim">
+      <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto my-2 sm:hidden flex-shrink-0"></div>
+
+      <!-- Modal Header -->
+      <div class="bg-gradient-to-r from-indigo-600 via-blue-600 to-blue-700 text-white p-3.5 sm:p-4 flex items-center justify-between flex-shrink-0 shadow-xs">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-2xl bg-white/20 text-white flex items-center justify-center text-xl shadow-inner flex-shrink-0">
+            📋
+          </div>
+          <div>
+            <h3 class="font-bold text-sm sm:text-base text-white leading-tight">โหมดเดินตรวจนับสต็อกจริง (Physical Stock Take)</h3>
+            <p class="text-[10px] sm:text-xs text-blue-100">นับยอดจริงหน้าร้าน เทียบกับยอดในระบบ และปรับปรุงยอดในคลิกเดียว</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeStockTakeModal()" class="text-white/80 hover:text-white bg-white/10 p-1.5 rounded-full active:scale-90 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- แถบเครื่องมือ: ค้นหาด่วน & เลือกหมวดหมู่ -->
+      <div class="p-3 bg-slate-50 border-b border-slate-200 space-y-2 flex-shrink-0">
+        <div class="flex items-center gap-2">
+          <div class="relative flex-1">
+            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input type="text" id="stockTakeSearchInput" oninput="renderStockTakeList()" placeholder="ค้นหาสินค้าที่กำลังตรวจนับ..." class="w-full bg-white border border-slate-200 rounded-xl pl-9 pr-3 py-1.5 text-xs outline-none focus:ring-2 focus:ring-blue-500 shadow-2xs" />
+          </div>
+          <button type="button" onclick="setAllStockTakeExactMatch()" class="px-2.5 py-1.5 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl transition flex items-center gap-1 shadow-2xs flex-shrink-0" title="ตั้งค่ายอดนับจริงให้เท่ากับยอดระบบทุกรายการ">
+            <span>✓</span><span class="hidden sm:inline">ตรงกับระบบทั้งหมด</span><span class="sm:hidden">ตรงหมด</span>
+          </button>
+        </div>
+
+        <!-- แถบชิปหมวดหมู่ -->
+        <div id="stockTakeCategoryChips" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 text-xs">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- รายการสินค้าให้เดินตรวจนับ (Scrollable) -->
+      <div id="stockTakeItemsList" class="p-3 sm:p-4 overflow-y-auto space-y-2 flex-1 divide-y divide-slate-100">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- แถบสรุปผลและปุ่มบันทึกปรับยอดทั้งรอบ (Sticky Footer) -->
+      <div class="bg-slate-50/95 backdrop-blur-md p-3 sm:p-4 border-t border-slate-200 flex-shrink-0 space-y-2 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="font-bold text-slate-700">สรุปการนับ:</span>
+            <span id="stockTakeSummaryCount" class="font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-200">0 / 0 SKU</span>
+            <span id="stockTakeDiffBadge" class="font-bold text-slate-600 bg-white px-2 py-0.5 rounded-lg border border-slate-200">ยอดตรงทั้งหมด</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="text-slate-500 text-[11px]">ผู้ตรวจนับ:</span>
+            <input type="text" id="stockTakeAuditorName" placeholder="ชื่อผู้ตรวจนับ" value="ผู้จัดการ / บาริสต้า" class="bg-white border border-slate-300 rounded-lg px-2 py-1 text-xs outline-none focus:ring-1 focus:ring-blue-500 w-36" />
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="closeStockTakeModal()" class="w-1/3 py-2.5 rounded-xl border border-slate-300 text-slate-600 hover:bg-slate-100 text-xs font-bold transition active:scale-95">
+            ยกเลิก
+          </button>
+          <button type="button" onclick="submitStockTakeBatch()" id="btnSubmitStockTake" class="w-2/3 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs sm:text-sm font-black rounded-xl shadow-md transition active:scale-95 flex items-center justify-center gap-2 ios-btn-press">
+            <span>💾</span>
+            <span>บันทึกปรับยอดสต็อกทั้งรอบ</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL สแกนบาร์โค้ด / QR CODE ด้วยกล้องมือถือ (Live iOS Viewfinder Scanner) -->
+  <div id="modalBarcodeScanner" class="hidden fixed inset-0 bg-slate-950/85 backdrop-blur-md z-[80] flex items-center justify-center p-4">
+    <div class="bg-slate-900 text-white w-full max-w-sm rounded-[32px] border border-white/15 overflow-hidden shadow-2xl flex flex-col relative ios-sheet-anim">
+      <!-- Header -->
+      <div class="p-3.5 flex items-center justify-between border-b border-white/10">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-base">
+            📷
+          </div>
+          <div>
+            <h3 class="font-bold text-sm text-white">สแกนบาร์โค้ด / QR Code</h3>
+            <p class="text-[10px] text-slate-400">ส่องกล้องไปที่บาร์โค้ดสินค้าเพื่อค้นหาทันที</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeBarcodeScannerModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition active:scale-90">
+          &times;
+        </button>
+      </div>
+
+      <!-- Camera Viewfinder Box -->
+      <div class="relative w-full h-72 bg-black overflow-hidden flex items-center justify-center">
+        <!-- Live Video Element -->
+        <video id="barcodeScannerVideo" autoplay playsinline muted class="w-full h-full object-cover"></video>
+
+        <!-- Viewfinder Reticle Overlay (กรอบเล็งสไตล์ iOS 27) -->
+        <div class="absolute inset-0 pointer-events-none flex items-center justify-center p-8">
+          <div class="relative w-56 h-48 rounded-2xl border-2 border-white/40 shadow-[0_0_0_9999px_rgba(0,0,0,0.55)] flex items-center justify-center overflow-hidden">
+            <!-- 4 Corners Accents -->
+            <div class="absolute top-0 left-0 w-4 h-4 border-t-4 border-l-4 border-blue-500 rounded-tl-lg"></div>
+            <div class="absolute top-0 right-0 w-4 h-4 border-t-4 border-r-4 border-blue-500 rounded-tr-lg"></div>
+            <div class="absolute bottom-0 left-0 w-4 h-4 border-b-4 border-l-4 border-blue-500 rounded-bl-lg"></div>
+            <div class="absolute bottom-0 right-0 w-4 h-4 border-b-4 border-r-4 border-blue-500 rounded-br-lg"></div>
+            <!-- Animated Laser Scan Beam -->
+            <div class="w-full h-0.5 bg-gradient-to-r from-transparent via-blue-400 to-transparent shadow-[0_0_12px_#38bdf8] animate-pulse"></div>
+          </div>
+        </div>
+
+        <!-- Scanning Status Badge -->
+        <div class="absolute top-3 left-1/2 -translate-x-1/2 bg-slate-900/80 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-blue-300 border border-white/10 flex items-center gap-1.5 shadow-sm">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          <span>กำลังตรวจจับรหัสอัตโนมัติ...</span>
+        </div>
+      </div>
+
+      <!-- Manual Input & Camera Switch Controls -->
+      <div class="p-3.5 bg-slate-900 space-y-2.5">
+        <form onsubmit="handleManualBarcodeInput(event)" class="flex items-center gap-1.5">
+          <div class="relative flex-1">
+            <input type="text" id="manualBarcodeInput" placeholder="พิมพ์ชื่อ / รหัสบาร์โค้ดด้วยมือ..." class="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-400 outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <button type="submit" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold rounded-xl text-xs transition">
+            ค้นหา
+          </button>
+        </form>
+
+        <div class="flex items-center justify-between text-[11px] text-slate-400 px-1">
+          <span>💡 เคล็ดลับ: จัดบาร์โค้ดให้อยู่ในกรอบ หรือพิมพ์ค้นหา</span>
+          <button type="button" onclick="toggleCameraTorch()" id="btnToggleTorch" class="hover:text-amber-300 transition flex items-center gap-1">
+            <span>🔦</span><span>เปิดไฟฉาย</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- CATEGORY MANAGEMENT & COLOR PICKER MODAL: จัดการและเพิ่มหมวดหมู่พร้อมกำหนดสีเอง -->
   <div id="modalCategoryManage" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white w-full sm:max-w-xl md:max-w-2xl rounded-t-[32px] sm:rounded-[28px] shadow-[0_25px_60px_rgba(0,0,0,0.22)] border border-slate-200/80 overflow-hidden max-h-[90vh] flex flex-col ios-sheet-anim">
@@ -1577,7 +1752,9 @@
       activeKpiMenu: 'daily',
       dailySummaryDate: new Date().toISOString().split('T')[0],
       chartAnalysisMode: 'timeline', // 'timeline' (ตามวัน) | 'dow' (จันทร์ - อาทิตย์)
-      chartGroupMode: 'BY_CATEGORY'  // 'BY_CATEGORY' | 'ALL' | 'BY_PRODUCT'
+      chartGroupMode: 'BY_CATEGORY', // 'BY_CATEGORY' | 'ALL' | 'BY_PRODUCT'
+      purchaseOrders: getStoredPOs(), // รายการใบสั่งซื้อ & ตรวจรับของ
+      stockTakeState: {} // ชั่วคราวสำหรับโหมดตรวจนับสต็อกจริง
     };
 
     let activeModalProduct = null;
@@ -2887,19 +3064,38 @@
 
     function switchCartTab(tab) {
       const isItems = tab === 'items';
-      document.getElementById('cartViewItems').classList.toggle('hidden', !isItems);
-      document.getElementById('cartViewPreview').classList.toggle('hidden', isItems);
+      const isPreview = tab === 'preview';
+      const isHistory = tab === 'history';
 
-      document.getElementById('cart-tab-items').className = isItems 
-        ? 'flex-1 py-2.5 font-bold text-center border-b-2 border-orange-500 text-orange-600 bg-white'
-        : 'flex-1 py-2.5 font-medium text-center border-b-2 border-transparent text-slate-500 hover:text-slate-700';
+      document.getElementById('cartViewItems')?.classList.toggle('hidden', !isItems);
+      document.getElementById('cartViewPreview')?.classList.toggle('hidden', !isPreview);
+      document.getElementById('cartViewHistory')?.classList.toggle('hidden', !isHistory);
 
-      document.getElementById('cart-tab-preview').className = !isItems 
-        ? 'flex-1 py-2.5 font-bold text-center border-b-2 border-orange-500 text-orange-600 bg-white'
-        : 'flex-1 py-2.5 font-medium text-center border-b-2 border-transparent text-slate-500 hover:text-slate-700';
+      const tabItems = document.getElementById('cart-tab-items');
+      const tabPreview = document.getElementById('cart-tab-preview');
+      const tabHistory = document.getElementById('cart-tab-history');
 
-      if (!isItems) {
+      if (tabItems) {
+        tabItems.className = isItems 
+          ? 'flex-1 py-2.5 font-bold text-center border-b-2 border-orange-500 text-orange-600 bg-white'
+          : 'flex-1 py-2.5 font-medium text-center border-b-2 border-transparent text-slate-500 hover:text-slate-700';
+      }
+      if (tabPreview) {
+        tabPreview.className = isPreview 
+          ? 'flex-1 py-2.5 font-bold text-center border-b-2 border-orange-500 text-orange-600 bg-white'
+          : 'flex-1 py-2.5 font-medium text-center border-b-2 border-transparent text-slate-500 hover:text-slate-700';
+      }
+      if (tabHistory) {
+        tabHistory.className = isHistory 
+          ? 'flex-1 py-2.5 font-bold text-center border-b-2 border-orange-500 text-orange-600 bg-white'
+          : 'flex-1 py-2.5 font-medium text-center border-b-2 border-transparent text-slate-500 hover:text-slate-700';
+      }
+
+      if (isPreview) {
+        recordGeneratedPO();
         renderPurchaseOrderDocument();
+      } else if (isHistory) {
+        renderPOHistoryList();
       }
     }
 
@@ -5578,6 +5774,730 @@
 
     // เริ่มทำงาน
     fetchData();
-  </script>
+  
+    // ==========================================
+    // 1. ระบบจัดการใบสั่งซื้อ & ตรวจรับสินค้าเข้าสต็อก (PO GOODS RECEIPT)
+    // ==========================================
+    function getStoredPOs() {
+      try {
+        const saved = localStorage.getItem('stock_purchase_orders_v1');
+        return saved ? JSON.parse(saved) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function savePOs(pos) {
+      localStorage.setItem('stock_purchase_orders_v1', JSON.stringify(pos));
+      state.purchaseOrders = pos;
+      updatePendingPOBadge();
+    }
+
+    function updatePendingPOBadge() {
+      const badge = document.getElementById('pendingPoBadge');
+      const summaryBadge = document.getElementById('poSummaryCountBadge');
+      const pos = getStoredPOs();
+      const pending = pos.filter(p => p.status === 'PENDING').length;
+      if (badge) {
+        badge.textContent = pending;
+        badge.classList.toggle('hidden', pending === 0);
+      }
+      if (summaryBadge) {
+        summaryBadge.textContent = `${pos.length} ใบสั่งซื้อ (${pending} รอตรวจรับ)`;
+      }
+    }
+
+    function recordGeneratedPO() {
+      const cart = state.cart || [];
+      if (cart.length === 0) return null;
+      const vendor = document.getElementById('poVendor')?.value || 'ซัพพลายเออร์ทั่วไป';
+      const notes = document.getElementById('poNotes')?.value || '';
+      const poNum = 'PO-' + new Date().toISOString().slice(0, 10).replace(/-/g, '') + '-' + String(Math.floor(100 + Math.random() * 900));
+
+      const newPO = {
+        id: 'po_' + Date.now(),
+        number: poNum,
+        date: new Date().toISOString(),
+        supplier: vendor,
+        notes: notes,
+        status: 'PENDING', // 'PENDING' | 'RECEIVED'
+        items: cart.map(item => ({
+          name: item.name,
+          quantity: Number(item.quantity) || 1,
+          unit: item.unit || 'หน่วย',
+          category: item.category || 'ทั่วไป'
+        }))
+      };
+
+      const pos = getStoredPOs();
+      const existing = pos.find(p => p.status === 'PENDING' && p.supplier === vendor && JSON.stringify(p.items) === JSON.stringify(newPO.items));
+      if (!existing) {
+        pos.unshift(newPO);
+        savePOs(pos);
+      }
+      return newPO;
+    }
+
+    function renderPOHistoryList() {
+      const container = document.getElementById('poHistoryListContainer');
+      if (!container) return;
+      const pos = getStoredPOs();
+      updatePendingPOBadge();
+
+      if (pos.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center bg-slate-50 rounded-2xl border border-slate-200/80 text-slate-400 space-y-2">
+            <div class="text-3xl">📦</div>
+            <div class="font-bold text-slate-600 text-xs">ยังไม่มีประวัติใบสั่งซื้อ</div>
+            <div class="text-[10px]">เมื่อกดสร้างใบสั่งซื้อ ระบบจะบันทึก PO ไว้ที่นี่เพื่อให้คุณกดตรวจรับของเข้าสต็อกอัตโนมัติ</div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = pos.map(po => {
+        const isPending = po.status === 'PENDING';
+        const d = new Date(po.date);
+        const dateStr = d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+        return `
+          <div class="ios-card p-3.5 sm:p-4 rounded-2xl border ${isPending ? 'border-amber-200 bg-amber-50/20' : 'border-slate-200 bg-white'} space-y-2.5 shadow-2xs">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="font-black text-xs sm:text-sm text-slate-900">${po.number}</span>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isPending ? 'bg-amber-100 text-amber-800 border border-amber-300 animate-pulse' : 'bg-emerald-100 text-emerald-800 border border-emerald-300'}">
+                    ${isPending ? '🟡 รอตรวจรับของ' : '🟢 ตรวจรับเข้าสต็อกแล้ว'}
+                  </span>
+                </div>
+                <div class="text-[10px] sm:text-xs text-slate-500 mt-0.5">
+                  <span>🏢 ${po.supplier}</span> • <span>🕒 ${dateStr}</span>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-1">
+                <button type="button" onclick="deletePO('${po.id}')" class="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition" title="ลบประวัติ PO นี้">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="bg-white/90 p-2.5 rounded-xl border border-slate-200/70 text-xs space-y-1">
+              <div class="font-bold text-[11px] text-slate-600 border-b border-slate-100 pb-1">รายการสินค้า (${po.items.length} รายการ):</div>
+              <div class="space-y-1 pt-0.5">
+                ${po.items.map(it => `
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="font-medium text-slate-700">• ${it.name}</span>
+                    <span class="font-bold text-slate-900">${it.quantity} ${it.unit}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-1">
+              <div class="text-[10px] text-slate-400">
+                ${isPending ? 'ของมาส่งแล้ว กดรับของเพื่อเพิ่มสต็อก' : `ตรวจรับเรียบร้อยเมื่อ ${po.receivedAt ? new Date(po.receivedAt).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.' : ''}`}
+              </div>
+              ${isPending ? `
+                <button type="button" onclick="receivePurchaseOrder('${po.id}')" class="px-3.5 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 active:scale-95 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-sm transition ios-btn-press">
+                  <span>📦</span>
+                  <span>ตรวจรับของเข้าสต็อกทันที</span>
+                </button>
+              ` : `
+                <span class="text-xs font-bold text-emerald-600 flex items-center gap-1">
+                  <span>✓</span><span>เข้าสต็อกเรียบร้อย</span>
+                </span>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function receivePurchaseOrder(poId) {
+      const pos = getStoredPOs();
+      const po = pos.find(p => p.id === poId);
+      if (!po) return;
+
+      if (!confirm(`ยืนยันตรวจรับสินค้าตามใบสั่งซื้อ ${po.number} เข้าสต็อกทั้งหมดหรือไม่?\n\nระบบจะเพิ่มจำนวนสินค้าเข้าสต็อกทันที ${po.items.length} รายการ`)) {
+        return;
+      }
+
+      po.items.forEach(it => {
+        state.products = state.products.map(p => {
+          if (p.name === it.name) {
+            const cur = Number(p.currentBalance) || 0;
+            return { ...p, currentBalance: cur + it.quantity };
+          }
+          return p;
+        });
+
+        const newTx = {
+          date: new Date().toISOString(),
+          product: it.name,
+          type: 'รับเข้า (+)',
+          quantity: it.quantity,
+          user: 'ตรวจรับจาก PO',
+          notes: `[ตรวจรับจาก PO ${po.number}] ซัพพลายเออร์: ${po.supplier}`
+        };
+        state.transactions.unshift(newTx);
+      });
+
+      po.status = 'RECEIVED';
+      po.receivedAt = new Date().toISOString();
+      savePOs(pos);
+
+      localStorage.setItem('stock_app_cache_v4', JSON.stringify(state));
+      updateUI();
+      renderPOHistoryList();
+
+      if (navigator.vibrate) navigator.vibrate([60, 80, 60]);
+      showAlert(`✓ ตรวจรับสินค้าจากใบสั่งซื้อ ${po.number} เข้าสต็อกเรียบร้อยแล้ว`, 'success');
+
+      po.items.forEach(async it => {
+        try {
+          await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              action: 'recordTransaction',
+              date: new Date().toISOString(),
+              product: it.name,
+              type: 'รับเข้า (+)',
+              quantity: it.quantity,
+              user: 'ตรวจรับจาก PO',
+              notes: `[ตรวจรับจาก PO ${po.number}] ซัพพลายเออร์: ${po.supplier}`
+            })
+          });
+        } catch (e) {
+          console.warn('Backend sync error:', e);
+        }
+      });
+    }
+
+    function deletePO(poId) {
+      if (!confirm('ต้องการลบประวัติใบสั่งซื้อนี้ใช่หรือไม่?')) return;
+      let pos = getStoredPOs();
+      pos = pos.filter(p => p.id !== poId);
+      savePOs(pos);
+      renderPOHistoryList();
+    }
+
+
+    // ==========================================
+    // 2. คำนวณจำนวนสั่งซื้อแนะนำอัจฉริยะ (SMART REORDER CALCULATION)
+    // ==========================================
+    function calculateSmartReorderQty(product) {
+      const current = Number(product.currentBalance) || 0;
+      const min = Number(product.minStock) || 0;
+
+      const sup = state.suppliers.find(s => s.name === product.supplier);
+      let leadDays = 1;
+      if (sup && sup.leadTime) {
+        const matched = sup.leadTime.match(/(\d+)/);
+        if (matched) leadDays = Math.max(1, parseInt(matched[1], 10));
+      }
+
+      const metrics = calculateProductUsageMetrics(product);
+      const dailyUsage = metrics.dailyUsage > 0 ? metrics.dailyUsage : Math.max(1, min / 4);
+
+      const todayDay = new Date().getDay();
+      const isApproachingPeak = (todayDay >= 3 && todayDay <= 6);
+      const peakMultiplier = isApproachingPeak ? 1.4 : 1.15;
+
+      const usageDuringLead = dailyUsage * (leadDays + 1) * peakMultiplier;
+      const deficit = Math.max(0, min - current);
+      let suggested = Math.ceil(usageDuringLead + deficit);
+
+      if (suggested <= 0) suggested = Math.max(1, min);
+      return {
+        suggestedQty: suggested,
+        leadDays: leadDays,
+        dailyUsage: dailyUsage,
+        isPeakBuffer: isApproachingPeak
+      };
+    }
+
+    function applySmartReorderToCart() {
+      const cart = state.cart || [];
+      if (cart.length === 0) {
+        alert('ไม่มีสินค้าในตะกร้า');
+        return;
+      }
+
+      let countChanged = 0;
+      state.cart = cart.map(item => {
+        const prod = state.products.find(p => p.name === item.name);
+        if (prod) {
+          const smart = calculateSmartReorderQty(prod);
+          countChanged++;
+          return { ...item, quantity: smart.suggestedQty, isSmartSuggested: true };
+        }
+        return item;
+      });
+
+      saveCart(state.cart);
+      renderCartItemsList();
+      renderPurchaseOrderDocument();
+      showAlert(`✨ คำนวณยอดสั่งแนะนำอัจฉริยะตามรอบส่งและวันพีคสำเร็จ (${countChanged} รายการ)`, 'success');
+    }
+
+    function addAllLowStockWithSmartReorder() {
+      const lowItems = state.products.filter(p => Number(p.currentBalance) <= Number(p.minStock));
+      if (lowItems.length === 0) {
+        showAlert('สต็อกสินค้าพร้อมใช้งานทุกรายการ ไม่พบสินค้าใกล้หมด', 'success');
+        return;
+      }
+
+      let cart = getStoredCart();
+      lowItems.forEach(p => {
+        const smart = calculateSmartReorderQty(p);
+        const existingIndex = cart.findIndex(c => c.name === p.name);
+        if (existingIndex >= 0) {
+          cart[existingIndex].quantity = smart.suggestedQty;
+          cart[existingIndex].isSmartSuggested = true;
+        } else {
+          cart.push({
+            name: p.name,
+            category: p.category,
+            unit: p.unit,
+            quantity: smart.suggestedQty,
+            supplier: p.supplier || 'ซัพพลายเออร์ทั่วไป',
+            isSmartSuggested: true
+          });
+        }
+      });
+
+      saveCart(cart);
+      updateCartBadgeUI();
+      renderDashboard();
+      showAlert(`✨ เพิ่มสินค้าใกล้หมด ${lowItems.length} รายการลงในตะกร้าพร้อมยอดสั่งอัจฉริยะแล้ว`, 'success');
+      openPurchaseCartModal();
+    }
+
+
+    // ==========================================
+    // 3. โหมดเดินตรวจนับสต็อกจริงหน้างาน (BATCH STOCK TAKE & AUDIT)
+    // ==========================================
+    let stockTakeActiveCategory = 'ALL';
+
+    function openStockTakeModal() {
+      state.stockTakeState = {};
+      state.products.forEach(p => {
+        state.stockTakeState[p.name] = {
+          actual: Number(p.currentBalance) || 0,
+          touched: false
+        };
+      });
+      stockTakeActiveCategory = 'ALL';
+      renderStockTakeCategoryChips();
+      renderStockTakeList();
+      document.getElementById('modalStockTake').classList.remove('hidden');
+    }
+
+    function closeStockTakeModal() {
+      document.getElementById('modalStockTake').classList.add('hidden');
+    }
+
+    function renderStockTakeCategoryChips() {
+      const container = document.getElementById('stockTakeCategoryChips');
+      if (!container) return;
+
+      let html = `
+        <button type="button" onclick="filterStockTakeCategory('ALL')" class="px-2.5 py-1 rounded-xl font-bold whitespace-nowrap transition ${
+          stockTakeActiveCategory === 'ALL' ? 'bg-blue-600 text-white shadow-2xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
+        }">
+          ทั้งหมด (${state.products.length})
+        </button>
+      `;
+
+      state.categories.forEach(c => {
+        const cnt = state.products.filter(p => p.category === c.name).length;
+        const isActive = stockTakeActiveCategory === c.name;
+        const cData = getCategoryColorData(c.name);
+        html += `
+          <button type="button" onclick="filterStockTakeCategory('${c.name}')" class="px-2.5 py-1 rounded-xl font-medium whitespace-nowrap flex items-center gap-1.5 transition ${
+            isActive ? 'text-white font-bold shadow-2xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
+          }" style="${isActive ? `background-color: ${cData.hex}; border-color: ${cData.hex};` : ''}">
+            <span class="w-2 h-2 rounded-full" style="${cData.dotStyle}"></span>
+            <span>${c.name} (${cnt})</span>
+          </button>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function filterStockTakeCategory(cat) {
+      stockTakeActiveCategory = cat;
+      renderStockTakeCategoryChips();
+      renderStockTakeList();
+    }
+
+    function setAllStockTakeExactMatch() {
+      state.products.forEach(p => {
+        state.stockTakeState[p.name] = {
+          actual: Number(p.currentBalance) || 0,
+          touched: true
+        };
+      });
+      renderStockTakeList();
+      showAlert('ตั้งค่ายอดนับจริงให้ตรงกับระบบทุกรายการแล้ว', 'success');
+    }
+
+    function changeStockTakeQty(prodName, delta) {
+      if (!state.stockTakeState[prodName]) {
+        const p = state.products.find(x => x.name === prodName);
+        state.stockTakeState[prodName] = { actual: Number(p?.currentBalance) || 0, touched: true };
+      }
+      const cur = Number(state.stockTakeState[prodName].actual) || 0;
+      state.stockTakeState[prodName].actual = Math.max(0, cur + delta);
+      state.stockTakeState[prodName].touched = true;
+      renderStockTakeList(false);
+    }
+
+    function onStockTakeInput(prodName, val) {
+      if (!state.stockTakeState[prodName]) {
+        state.stockTakeState[prodName] = { actual: 0, touched: true };
+      }
+      state.stockTakeState[prodName].actual = Math.max(0, Number(val) || 0);
+      state.stockTakeState[prodName].touched = true;
+      updateStockTakeSummary();
+      updateStockTakeRowVariance(prodName);
+    }
+
+    function setStockTakeExact(prodName) {
+      const p = state.products.find(x => x.name === prodName);
+      if (!p) return;
+      state.stockTakeState[prodName] = {
+        actual: Number(p.currentBalance) || 0,
+        touched: true
+      };
+      renderStockTakeList(false);
+    }
+
+    function updateStockTakeRowVariance(prodName) {
+      const row = document.getElementById('st-row-' + prodName.replace(/[^a-zA-Z0-9]/g, '_'));
+      if (!row) return;
+      const p = state.products.find(x => x.name === prodName);
+      const sysBal = Number(p?.currentBalance) || 0;
+      const actual = Number(state.stockTakeState[prodName]?.actual) || 0;
+      const diff = actual - sysBal;
+
+      const badgeEl = row.querySelector('.st-variance-badge');
+      if (badgeEl) {
+        if (diff === 0) {
+          badgeEl.className = 'st-variance-badge px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200';
+          badgeEl.textContent = '✓ พอดี (0)';
+        } else if (diff > 0) {
+          badgeEl.className = 'st-variance-badge px-2 py-0.5 rounded-md text-[10px] font-black bg-blue-100 text-blue-700 border border-blue-200';
+          badgeEl.textContent = `+${diff} เกิน`;
+        } else {
+          badgeEl.className = 'st-variance-badge px-2 py-0.5 rounded-md text-[10px] font-black bg-rose-100 text-rose-700 border border-rose-200 animate-pulse';
+          badgeEl.textContent = `${diff} ขาด`;
+        }
+      }
+    }
+
+    function updateStockTakeSummary() {
+      let touchedCount = 0;
+      let diffCount = 0;
+      let totalExcess = 0;
+      let totalShortage = 0;
+
+      state.products.forEach(p => {
+        const st = state.stockTakeState[p.name];
+        if (st && st.touched) touchedCount++;
+        const sys = Number(p.currentBalance) || 0;
+        const act = st ? Number(st.actual) : sys;
+        const d = act - sys;
+        if (d !== 0) {
+          diffCount++;
+          if (d > 0) totalExcess += d;
+          else totalShortage += Math.abs(d);
+        }
+      });
+
+      const countEl = document.getElementById('stockTakeSummaryCount');
+      const diffEl = document.getElementById('stockTakeDiffBadge');
+      if (countEl) countEl.textContent = `${touchedCount} / ${state.products.length} SKU`;
+      if (diffEl) {
+        if (diffCount === 0) {
+          diffEl.className = 'font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200';
+          diffEl.textContent = '✓ ยอดตรงทั้งหมด';
+        } else {
+          diffEl.className = 'font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-lg border border-rose-200';
+          diffEl.textContent = `ต่าง ${diffCount} SKU (ขาด -${totalShortage}, เกิน +${totalExcess})`;
+        }
+      }
+    }
+
+    function renderStockTakeList(fullRerender = true) {
+      const container = document.getElementById('stockTakeItemsList');
+      if (!container) return;
+
+      const search = (document.getElementById('stockTakeSearchInput')?.value || '').toLowerCase().trim();
+      const filtered = state.products.filter(p => {
+        const matchCat = stockTakeActiveCategory === 'ALL' || p.category === stockTakeActiveCategory;
+        const matchSearch = !search || p.name.toLowerCase().includes(search) || (p.category && p.category.toLowerCase().includes(search));
+        return matchCat && matchSearch;
+      });
+
+      updateStockTakeSummary();
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div class="p-8 text-center text-slate-400 text-xs">ไม่พบสินค้าตามเงื่อนไขที่เลือก</div>';
+        return;
+      }
+
+      container.innerHTML = filtered.map(p => {
+        const rowId = 'st-row-' + p.name.replace(/[^a-zA-Z0-9]/g, '_');
+        const colorData = getCategoryColorData(p.category);
+        const sysBal = Number(p.currentBalance) || 0;
+        const curVal = state.stockTakeState[p.name] !== undefined ? state.stockTakeState[p.name].actual : sysBal;
+        const diff = curVal - sysBal;
+
+        let varBadge = `<span class="st-variance-badge px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200">✓ พอดี (0)</span>`;
+        if (diff > 0) {
+          varBadge = `<span class="st-variance-badge px-2 py-0.5 rounded-md text-[10px] font-black bg-blue-100 text-blue-700 border border-blue-200">+${diff} เกิน</span>`;
+        } else if (diff < 0) {
+          varBadge = `<span class="st-variance-badge px-2 py-0.5 rounded-md text-[10px] font-black bg-rose-100 text-rose-700 border border-rose-200 animate-pulse">${diff} ขาด</span>`;
+        }
+
+        return `
+          <div id="${rowId}" class="py-2.5 flex items-center justify-between gap-2.5">
+            <div class="flex items-center gap-2.5 min-w-0 flex-1">
+              <div class="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center flex-shrink-0 shadow-2xs">
+                ${p.imageUrl ? `<img src="${p.imageUrl}" class="w-full h-full object-cover" alt="" />` : `<span class="text-base font-bold text-slate-400">${p.name.slice(0, 1)}</span>`}
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <h4 class="font-bold text-xs sm:text-sm text-slate-900 truncate">${p.name}</h4>
+                  <span class="px-1.5 py-0.2 rounded text-[9px] font-bold" style="${colorData.badgeStyle}">${p.category}</span>
+                </div>
+                <div class="flex items-center gap-2 text-[10px] sm:text-xs text-slate-400 mt-0.5">
+                  <span>ระบบมี: <strong class="text-slate-700 font-bold">${sysBal}</strong> ${p.unit}</span>
+                  <span>•</span>
+                  ${varBadge}
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-1 flex-shrink-0">
+              <button type="button" onclick="changeStockTakeQty('${p.name}', -1)" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-sm flex items-center justify-center active:scale-90 transition ios-btn-press">
+                -
+              </button>
+              <input type="number" step="any" value="${curVal}" oninput="onStockTakeInput('${p.name}', this.value)" class="w-14 sm:w-16 h-7 sm:h-8 bg-white border border-slate-300 rounded-lg text-center font-black text-xs sm:text-sm text-slate-900 outline-none focus:ring-2 focus:ring-blue-500 shadow-inner" />
+              <button type="button" onclick="changeStockTakeQty('${p.name}', 1)" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-sm flex items-center justify-center active:scale-90 transition ios-btn-press">
+                +
+              </button>
+              <button type="button" onclick="setStockTakeExact('${p.name}')" class="hidden sm:flex px-1.5 py-1 text-[10px] font-bold text-slate-500 hover:text-blue-600 bg-slate-50 hover:bg-blue-50 rounded-lg border border-slate-200 transition" title="ตั้งค่าให้นับได้ตรงกับระบบ">
+                = ตรง
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function submitStockTakeBatch() {
+      const auditor = (document.getElementById('stockTakeAuditorName')?.value || 'ผู้จัดการ/บาริสต้า').trim();
+      const changedItems = [];
+
+      state.products.forEach(p => {
+        const st = state.stockTakeState[p.name];
+        if (!st) return;
+        const sys = Number(p.currentBalance) || 0;
+        const act = Number(st.actual);
+        if (act !== sys) {
+          changedItems.push({
+            product: p.name,
+            oldBalance: sys,
+            newBalance: act,
+            diff: act - sys,
+            unit: p.unit
+          });
+        }
+      });
+
+      if (changedItems.length === 0) {
+        if (confirm('ผลการตรวจนับ: ทุกรายการตรงกับระบบ 100% ไม่มียอดที่ต้องปรับ\n\nต้องการบันทึกประวัติว่าตรวจนับเรียบร้อยใช่หรือไม่?')) {
+          closeStockTakeModal();
+          showAlert('✓ ยืนยันผลตรวจนับสต็อก: ข้อมูลตรงกับระบบ 100%', 'success');
+        }
+        return;
+      }
+
+      const btn = document.getElementById('btnSubmitStockTake');
+      const oldBtnHtml = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="animate-pulse">กำลังบันทึกปรับยอดทั้งระบบ...</span>';
+
+      changedItems.forEach(item => {
+        state.products = state.products.map(p => {
+          if (p.name === item.product) return { ...p, currentBalance: item.newBalance };
+          return p;
+        });
+
+        const newTx = {
+          date: new Date().toISOString(),
+          product: item.product,
+          type: 'ปรับยอดสต็อก',
+          quantity: item.newBalance,
+          user: auditor,
+          notes: `[ตรวจนับสต็อกจริง] นับได้ ${item.newBalance} (เดิม ${item.oldBalance} ${item.unit}, ผลต่าง ${item.diff > 0 ? '+' : ''}${item.diff} ${item.unit})`
+        };
+        state.transactions.unshift(newTx);
+      });
+
+      localStorage.setItem('stock_app_cache_v4', JSON.stringify(state));
+      updateUI();
+      closeStockTakeModal();
+      btn.disabled = false;
+      btn.innerHTML = oldBtnHtml;
+
+      if (navigator.vibrate) navigator.vibrate([80, 100, 80]);
+      showAlert(`✓ บันทึกผลตรวจนับสำเร็จ ปรับยอดสต็อกแล้ว ${changedItems.length} รายการ`, 'success');
+
+      changedItems.forEach(async item => {
+        try {
+          await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              action: 'recordTransaction',
+              date: new Date().toISOString(),
+              product: item.product,
+              type: 'ปรับยอดสต็อก',
+              quantity: item.newBalance,
+              user: auditor,
+              notes: `[ตรวจนับสต็อกจริง] นับได้ ${item.newBalance} (เดิม ${item.oldBalance} ${item.unit}, ผลต่าง ${item.diff > 0 ? '+' : ''}${item.diff} ${item.unit})`
+            })
+          });
+        } catch (e) {
+          console.warn('Stock take backend sync error:', e);
+        }
+      });
+    }
+
+
+    // ==========================================
+    // 4. กล้องสแกนบาร์โค้ด / QR CODE ด้วยกล้องมือถือ (LIVE BARCODE SCANNER)
+    // ==========================================
+    let barcodeScannerStream = null;
+    let barcodeScannerTimer = null;
+    let barcodeScannerTorchActive = false;
+
+    async function openBarcodeScannerModal() {
+      document.getElementById('modalBarcodeScanner').classList.remove('hidden');
+      const input = document.getElementById('manualBarcodeInput');
+      if (input) {
+        input.value = '';
+        setTimeout(() => input.focus(), 300);
+      }
+      await startBarcodeCamera();
+    }
+
+    function closeBarcodeScannerModal() {
+      stopBarcodeCamera();
+      document.getElementById('modalBarcodeScanner').classList.add('hidden');
+    }
+
+    async function startBarcodeCamera() {
+      const video = document.getElementById('barcodeScannerVideo');
+      if (!video || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+        });
+        barcodeScannerStream = stream;
+        video.srcObject = stream;
+        await video.play();
+
+        if ('BarcodeDetector' in window) {
+          const barcodeDetector = new BarcodeDetector({
+            formats: ['qr_code', 'ean_13', 'ean_8', 'code_128', 'code_39', 'upc_a', 'upc_e']
+          });
+
+          barcodeScannerTimer = setInterval(async () => {
+            try {
+              if (video.readyState >= 2) {
+                const barcodes = await barcodeDetector.detect(video);
+                if (barcodes && barcodes.length > 0) {
+                  const code = barcodes[0].rawValue;
+                  onBarcodeDetected(code);
+                }
+              }
+            } catch (e) {}
+          }, 250);
+        }
+      } catch (err) {
+        console.warn('Camera access denied or unavailable:', err);
+      }
+    }
+
+    function stopBarcodeCamera() {
+      if (barcodeScannerTimer) {
+        clearInterval(barcodeScannerTimer);
+        barcodeScannerTimer = null;
+      }
+      if (barcodeScannerStream) {
+        barcodeScannerStream.getTracks().forEach(track => track.stop());
+        barcodeScannerStream = null;
+      }
+    }
+
+    async function toggleCameraTorch() {
+      if (!barcodeScannerStream) return;
+      const track = barcodeScannerStream.getVideoTracks()[0];
+      if (!track) return;
+      try {
+        barcodeScannerTorchActive = !barcodeScannerTorchActive;
+        await track.applyConstraints({
+          advanced: [{ torch: barcodeScannerTorchActive }]
+        });
+        const btn = document.getElementById('btnToggleTorch');
+        if (btn) btn.innerHTML = barcodeScannerTorchActive ? '<span>⚡</span><span>ปิดไฟฉาย</span>' : '<span>🔦</span><span>เปิดไฟฉาย</span>';
+      } catch (e) {}
+    }
+
+    function onBarcodeDetected(code) {
+      if (!code) return;
+      stopBarcodeCamera();
+      closeBarcodeScannerModal();
+
+      if (navigator.vibrate) navigator.vibrate([50, 70, 50]);
+
+      const cleanCode = String(code).trim().toLowerCase();
+      const matched = state.products.find(p => {
+        return (p.barcode && String(p.barcode).trim().toLowerCase() === cleanCode) ||
+               (p.id && String(p.id).trim().toLowerCase() === cleanCode) ||
+               p.name.toLowerCase() === cleanCode ||
+               p.name.toLowerCase().includes(cleanCode);
+      });
+
+      if (matched) {
+        showAlert(`📷 สแกนพบสินค้า: ${matched.name}`, 'success');
+        openQuickModal(matched.name, 'OUT');
+      } else {
+        const searchBox = document.getElementById('searchBox');
+        if (searchBox) {
+          searchBox.value = code;
+          renderDashboard();
+        }
+        showAlert(`สแกนรหัส: "${code}" แต่ไม่พบในระบบ (ใส่ลงในช่องค้นหาแล้ว)`, 'error');
+      }
+    }
+
+    function handleManualBarcodeInput(e) {
+      e.preventDefault();
+      const input = document.getElementById('manualBarcodeInput');
+      if (input && input.value.trim()) {
+        onBarcodeDetected(input.value.trim());
+      }
+    }
+
+</script>
 </body>
 </html>
