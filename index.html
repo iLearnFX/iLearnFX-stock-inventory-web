@@ -22,6 +22,100 @@
       #poPrintArea { position: absolute; left: 0; top: 0; width: 100%; }
     }
   </style>
+  <!-- Apple iOS Modern Design System & Spring Animations -->
+  <style>
+    :root {
+      --ios-blue: #007aff;
+      --ios-green: #34c759;
+      --ios-red: #ff3b30;
+      --ios-amber: #ff9500;
+      --ios-purple: #af52de;
+      --ios-bg: #f2f2f7;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Prompt", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      background-color: #f8fafc;
+    }
+
+    /* iOS Spring Transitions */
+    @keyframes iosSpringFadeIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.97) translateY(4px);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    @keyframes iosSheetSlideUp {
+      0% {
+        opacity: 0;
+        transform: translateY(24px) scale(0.98);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes iosBadgePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+
+    .ios-spring {
+      animation: iosSpringFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .ios-sheet-anim {
+      animation: iosSheetSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .ios-btn-press {
+      transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.16s ease, filter 0.16s ease;
+    }
+    .ios-btn-press:active {
+      transform: scale(0.95);
+      opacity: 0.88;
+    }
+
+    .ios-card {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03);
+      transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .ios-card:hover {
+      box-shadow: 0 10px 30px -4px rgba(0, 0, 0, 0.06);
+      border-color: rgba(203, 213, 225, 1);
+    }
+
+    .ios-glass-bar {
+      background: rgba(37, 99, 235, 0.92);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+
+    .ios-segmented-control {
+      background: rgba(226, 232, 240, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(203, 213, 225, 0.5);
+    }
+
+    /* iOS smooth custom scrollbar */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen pb-28">
 
@@ -52,21 +146,22 @@
       </div>
     </div>
 
-    <!-- Navigation Tabs (5 แท็บหลัก ออกแบบเลื่อนได้แนวนอนบนมือถือ) -->
-    <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 flex border-t border-blue-500 text-xs sm:text-sm overflow-x-auto no-scrollbar whitespace-nowrap">
-      <button onclick="switchTab('dashboard')" id="tab-dashboard" class="flex-1 min-w-[5.2rem] py-2.5 px-2 font-bold text-center border-b-2 border-white text-white transition flex items-center justify-center gap-1">
-        <span>📊</span><span>สต็อก</span>
+    <!-- Navigation Tabs (iOS 27 Segmented Tab Bar แบบโมเดิร์นคลีน) -->
+    <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-2 flex items-center gap-1.5 text-xs sm:text-sm overflow-x-auto no-scrollbar whitespace-nowrap border-t border-white/15">
+      <button onclick="switchTab('dashboard')" id="tab-dashboard" class="py-2 px-3 sm:px-4 rounded-xl font-bold transition-all duration-200 flex items-center justify-center gap-1.5 ios-btn-press bg-white text-blue-700 shadow-sm">
+        <span>📊</span><span>สต็อกทั้งหมด</span>
       </button>
-      <button onclick="switchTab('reports')" id="tab-reports" class="flex-1 min-w-[6.2rem] py-2.5 px-2 font-medium text-center border-b-2 border-transparent text-blue-100 hover:text-white transition flex items-center justify-center gap-1">
-        <span>📈</span><span>รายงาน & KPI</span>
+      <button onclick="switchTab('lowstock')" id="tab-lowstock" class="relative py-2 px-3 sm:px-4 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-1.5 ios-btn-press text-blue-100 hover:text-white hover:bg-white/10">
+        <span>⚠️</span><span>สินค้าใกล้หมด</span>
+        <span id="navLowBadge" class="hidden ml-0.5 px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-500 text-white shadow-xs" style="animation: iosBadgePulse 2s infinite ease-in-out;">0</span>
       </button>
-      <button onclick="switchTab('suppliers')" id="tab-suppliers" class="flex-1 min-w-[6.2rem] py-2.5 px-2 font-medium text-center border-b-2 border-transparent text-blue-100 hover:text-white transition flex items-center justify-center gap-1">
+      <button onclick="switchTab('reports')" id="tab-reports" class="py-2 px-3 sm:px-4 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-1.5 ios-btn-press text-blue-100 hover:text-white hover:bg-white/10">
+        <span>📈</span><span>รายงาน & สรุปวัน</span>
+      </button>
+      <button onclick="switchTab('suppliers')" id="tab-suppliers" class="py-2 px-3 sm:px-4 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-1.5 ios-btn-press text-blue-100 hover:text-white hover:bg-white/10">
         <span>🏢</span><span>ซัพพลายเออร์</span>
       </button>
-      <button onclick="switchTab('entry')" id="tab-entry" class="flex-1 min-w-[4.8rem] py-2.5 px-2 font-medium text-center border-b-2 border-transparent text-blue-100 hover:text-white transition flex items-center justify-center gap-1">
-        <span>📝</span><span>บันทึก</span>
-      </button>
-      <button onclick="switchTab('history')" id="tab-history" class="flex-1 min-w-[4.8rem] py-2.5 px-2 font-medium text-center border-b-2 border-transparent text-blue-100 hover:text-white transition flex items-center justify-center gap-1">
+      <button onclick="switchTab('history')" id="tab-history" class="py-2 px-3 sm:px-4 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-1.5 ios-btn-press text-blue-100 hover:text-white hover:bg-white/10">
         <span>🕒</span><span>ประวัติ</span>
       </button>
     </div>
@@ -199,21 +294,120 @@
         </div>
       </div>
 
-      <!-- Segmented Menu Bar สำหรับมือถือ (แตะสลับดูได้หลายเมนูอย่างรวดเร็ว) -->
-      <div class="bg-slate-200/80 p-1 rounded-2xl shadow-inner">
-        <div class="grid grid-cols-4 gap-1 text-[11px] font-bold text-center">
-          <button type="button" onclick="switchKpiMenu('chart')" id="kpi-menu-chart" class="py-2 px-1 rounded-xl transition bg-white text-blue-700 shadow-xs flex items-center justify-center gap-1">
+      <!-- iOS 27 Segmented Menu Bar (แตะสลับดูได้ 5 เมนูพร้อมสรุปประจำวัน) -->
+      <div class="ios-segmented-control p-1 rounded-2xl shadow-inner">
+        <div class="grid grid-cols-5 gap-1 text-[11px] sm:text-xs font-bold text-center">
+          <button type="button" onclick="switchKpiMenu('daily')" id="kpi-menu-daily" class="py-2 px-1 rounded-xl transition-all duration-200 bg-white text-blue-700 shadow-xs flex items-center justify-center gap-1 font-bold ios-btn-press">
+            <span>📅</span><span class="hidden sm:inline">สรุปประจำวัน</span><span class="sm:hidden">สรุปวัน</span>
+          </button>
+          <button type="button" onclick="switchKpiMenu('chart')" id="kpi-menu-chart" class="py-2 px-1 rounded-xl transition-all duration-200 text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1 font-medium ios-btn-press">
             <span>📈</span><span>กราฟ</span>
           </button>
-          <button type="button" onclick="switchKpiMenu('calendar')" id="kpi-menu-calendar" class="py-2 px-1 rounded-xl transition text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1">
-            <span>📅</span><span>ปฏิทินสั่ง</span>
+          <button type="button" onclick="switchKpiMenu('calendar')" id="kpi-menu-calendar" class="py-2 px-1 rounded-xl transition-all duration-200 text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1 font-medium ios-btn-press">
+            <span>🛒</span><span class="hidden sm:inline">ปฏิทินสั่งซื้อ</span><span class="sm:hidden">รอบสั่ง</span>
           </button>
-          <button type="button" onclick="switchKpiMenu('table')" id="kpi-menu-table" class="py-2 px-1 rounded-xl transition text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1">
-            <span>📋</span><span>วิเคราะห์</span>
+          <button type="button" onclick="switchKpiMenu('table')" id="kpi-menu-table" class="py-2 px-1 rounded-xl transition-all duration-200 text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1 font-medium ios-btn-press">
+            <span>📋</span><span class="hidden sm:inline">วิเคราะห์ SKU</span><span class="sm:hidden">วิเคราะห์</span>
           </button>
-          <button type="button" onclick="switchKpiMenu('vendor')" id="kpi-menu-vendor" class="py-2 px-1 rounded-xl transition text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1">
+          <button type="button" onclick="switchKpiMenu('vendor')" id="kpi-menu-vendor" class="py-2 px-1 rounded-xl transition-all duration-200 text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1 font-medium ios-btn-press">
             <span>🏢</span><span>คู่ค้า</span>
           </button>
+        </div>
+      </div>
+
+      <!-- MENU 0: สรุปความเคลื่อนไหวประจำวัน (Daily Stock Movement Summary) -->
+      <div id="kpi-sec-daily" class="ios-card rounded-3xl p-4 sm:p-5 shadow-xs space-y-4 ios-spring">
+        <!-- แถบเลือกวันที่สไตล์ iOS -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl flex-shrink-0 shadow-2xs">
+              📅
+            </div>
+            <div>
+              <h3 class="font-bold text-xs sm:text-sm text-slate-800 flex items-center gap-1.5">
+                <span>สรุปการเคลื่อนไหวสต็อกประจำวัน</span>
+                <span id="dailySummarySelectedDateLabel" class="text-blue-600 font-black">วันนี้</span>
+              </h3>
+              <p class="text-[10px] sm:text-xs text-slate-400">สรุปยอดเบิกใช้หน้าร้าน ยอดรับของเข้าสต็อก และยอดของเสียแยกตามวัน</p>
+            </div>
+          </div>
+
+          <!-- ตัวเลือกวันที่แบบเร็ว: [ วันนี้ ] [ เมื่อวาน ] และ ปฏิทิน DatePicker -->
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <button type="button" onclick="setDailySummaryDateQuick(0)" class="px-2.5 py-1.5 rounded-xl bg-blue-50 text-blue-700 font-bold text-xs hover:bg-blue-100 transition ios-btn-press">
+              วันนี้
+            </button>
+            <button type="button" onclick="setDailySummaryDateQuick(-1)" class="px-2.5 py-1.5 rounded-xl bg-slate-100 text-slate-600 font-bold text-xs hover:bg-slate-200 transition ios-btn-press">
+              เมื่อวาน
+            </button>
+            <input type="date" id="dailySummaryDatePicker" onchange="onDailySummaryDateChange()" class="bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+        </div>
+
+        <!-- สรุป 3 กล่องสถานะ: 🔴 เบิกออก | 🟢 รับเข้า | 🟡 ของเสีย | 🔄 ปรับยอด -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3.5">
+          <!-- เบิกออก -->
+          <div class="bg-rose-50/70 border border-rose-200/80 p-3 rounded-2xl flex flex-col justify-between shadow-2xs">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] sm:text-xs font-bold text-rose-700">🔴 เบิกออก (-)</span>
+              <span id="dailyOutTxCount" class="text-[10px] font-semibold text-rose-500 bg-white/80 px-1.5 py-0.2 rounded-full">0 ครั้ง</span>
+            </div>
+            <div class="my-1">
+              <span id="dailyOutTotalQty" class="text-lg sm:text-2xl font-black text-rose-700">0</span>
+              <span class="text-[10px] sm:text-xs text-rose-600 font-medium">หน่วยรวม</span>
+            </div>
+            <div id="dailyOutSkuCount" class="text-[10px] text-rose-500 truncate">0 รายการ SKU</div>
+          </div>
+
+          <!-- รับเข้า -->
+          <div class="bg-emerald-50/70 border border-emerald-200/80 p-3 rounded-2xl flex flex-col justify-between shadow-2xs">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] sm:text-xs font-bold text-emerald-700">🟢 รับเข้า (+)</span>
+              <span id="dailyInTxCount" class="text-[10px] font-semibold text-emerald-500 bg-white/80 px-1.5 py-0.2 rounded-full">0 ครั้ง</span>
+            </div>
+            <div class="my-1">
+              <span id="dailyInTotalQty" class="text-lg sm:text-2xl font-black text-emerald-700">0</span>
+              <span class="text-[10px] sm:text-xs text-emerald-600 font-medium">หน่วยรวม</span>
+            </div>
+            <div id="dailyInSkuCount" class="text-[10px] text-emerald-500 truncate">0 รายการ SKU</div>
+          </div>
+
+          <!-- ของเสีย -->
+          <div class="bg-amber-50/70 border border-amber-200/80 p-3 rounded-2xl flex flex-col justify-between shadow-2xs">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] sm:text-xs font-bold text-amber-700">🟡 ของเสีย (x)</span>
+              <span id="dailyWasteTxCount" class="text-[10px] font-semibold text-amber-500 bg-white/80 px-1.5 py-0.2 rounded-full">0 ครั้ง</span>
+            </div>
+            <div class="my-1">
+              <span id="dailyWasteTotalQty" class="text-lg sm:text-2xl font-black text-amber-700">0</span>
+              <span class="text-[10px] sm:text-xs text-amber-600 font-medium">หน่วยรวม</span>
+            </div>
+            <div id="dailyWasteSkuCount" class="text-[10px] text-amber-500 truncate">0 รายการ SKU</div>
+          </div>
+
+          <!-- ปรับยอดสต็อก -->
+          <div class="bg-slate-50 border border-slate-200 p-3 rounded-2xl flex flex-col justify-between shadow-2xs">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] sm:text-xs font-bold text-slate-700">🔄 ปรับยอดสต็อก</span>
+              <span id="dailyAdjustTxCount" class="text-[10px] font-semibold text-slate-500 bg-white px-1.5 py-0.2 rounded-full">0 ครั้ง</span>
+            </div>
+            <div class="my-1">
+              <span id="dailyAdjustTotalCount" class="text-lg sm:text-2xl font-black text-slate-800">0</span>
+              <span class="text-[10px] sm:text-xs text-slate-500 font-medium">รายการ</span>
+            </div>
+            <div class="text-[10px] text-slate-400">ตรวจนับสต็อกจริง</div>
+          </div>
+        </div>
+
+        <!-- รายการแจกแจงความเคลื่อนไหวประจำวัน -->
+        <div class="space-y-2 pt-1 border-t border-slate-100">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-700 px-1">
+            <span>📋 รายการที่มีการเคลื่อนไหวในวันดังกล่าว</span>
+            <span id="dailyTxTotalCountLabel" class="text-[11px] font-medium text-slate-400">0 รายการ</span>
+          </div>
+          <div id="dailyTransactionsListContainer" class="space-y-1.5">
+            <!-- เรนเดอร์ด้วย renderDailySummary() -->
+          </div>
         </div>
       </div>
 
@@ -366,80 +560,36 @@
     </section>
 
         <!-- TAB 2: บันทึกข้อมูลรายวัน (Full Daily Form) -->
-    <section id="view-entry" class="hidden space-y-4">
-      <form id="stockForm" onsubmit="submitForm(event)" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 space-y-3.5">
-        <h3 class="font-bold text-sm text-slate-800 flex items-center gap-2">
-          <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-          บันทึกการเคลื่อนไหวสต็อกประจำวัน
-        </h3>
-
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">วันที่บันทึก</label>
-          <input type="date" id="inputDate" required class="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none" />
-        </div>
-
-        <div>
-          <div class="flex items-center justify-between mb-1">
-            <label class="block text-xs font-semibold text-slate-600">หมวดหมู่สินค้า</label>
-            <button type="button" onclick="openCategoryModal()" class="text-[11px] text-blue-600 font-bold hover:underline">+ เพิ่มหมวดหมู่ใหม่</button>
+        <!-- TAB: สินค้าใกล้หมด & ต้องสั่งซื้อด่วน (Dedicated Low Stock Tab) -->
+    <section id="view-lowstock" class="hidden space-y-4 ios-spring">
+      <!-- iOS Banner หัวข้อแจ้งเตือนสินค้าใกล้หมด -->
+      <div class="ios-card p-4 sm:p-5 rounded-3xl flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-500 to-amber-500 text-white flex items-center justify-center text-2xl shadow-md flex-shrink-0">
+            ⚠️
           </div>
-          <select id="inputCategory" onchange="onCategoryChange()" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-            <option value="">-- เลือกหมวดหมู่ (ทั้งหมด) --</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">รายการสินค้า *</label>
-          <select id="inputProduct" onchange="onProductChange()" required class="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-            <option value="">-- เลือกสินค้า --</option>
-          </select>
-          
-          <!-- พรีวิวสินค้าที่เลือก -->
-          <div id="productInfo" class="hidden mt-2 p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center gap-3">
-            <div id="prodImgPreview" class="w-12 h-12 rounded-lg bg-slate-200 flex-shrink-0 flex items-center justify-center overflow-hidden border border-slate-200"></div>
-            <div class="flex-1 text-xs">
-              <div class="text-slate-500 flex justify-between">
-                <span>คงเหลือปัจจุบัน:</span>
-                <span class="font-bold text-blue-600 text-sm"><span id="currentStockVal">0</span> <span id="currentUnit"></span></span>
-              </div>
-              <div class="text-slate-400 flex justify-between mt-0.5 text-[11px]">
-                <span>จุดสั่งซื้อขั้นต่ำ:</span>
-                <span id="minStockVal">0</span>
-              </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 class="font-bold text-sm sm:text-base text-slate-900">สินค้าใกล้หมด & ต้องสั่งซื้อด่วน (Low Stock Alerts)</h2>
+              <span id="lowStockHeaderCountBadge" class="px-2 py-0.5 rounded-full text-[11px] font-black bg-rose-100 text-rose-700 border border-rose-200">0 รายการ</span>
             </div>
+            <p class="text-xs text-slate-500 mt-0.5">แสดงเฉพาะ SKU ที่คงเหลือต่ำกว่าหรือเท่ากับจุดสั่งซื้อขั้นต่ำ (Par Level)</p>
           </div>
         </div>
 
-        <!-- ปุ่มเลือกประเภท -->
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">ประเภทการเคลื่อนไหว</label>
-          <div class="grid grid-cols-3 gap-2">
-            <button type="button" onclick="setType('เบิกออก (-)')" id="type-out" class="type-btn py-2 text-xs font-medium rounded-xl border border-blue-500 bg-blue-50 text-blue-700 font-bold ring-2 ring-blue-300">เบิกออก (-)</button>
-            <button type="button" onclick="setType('รับเข้า (+)')" id="type-in" class="type-btn py-2 text-xs font-medium rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50">รับเข้า (+)</button>
-            <button type="button" onclick="setType('ของเสีย (x)')" id="type-waste" class="type-btn py-2 text-xs font-medium rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50">ของเสีย (x)</button>
-          </div>
+        <!-- ปุ่ม Action รวดเร็ว: สั่งของที่ใกล้หมดทั้งหมดเข้าตะกร้าในคลิกเดียว! -->
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <button type="button" onclick="addAllLowStockToCart()" class="w-full sm:w-auto px-4 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:scale-95 text-white font-bold text-xs sm:text-sm rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 ios-btn-press" title="เพิ่มสินค้าที่ใกล้หมดทั้งหมดลงในตะกร้าสั่งซื้ออัตโนมัติ">
+            <span>🛒</span>
+            <span>สั่งของใกล้หมดเข้าตะกร้าทั้งหมด</span>
+          </button>
         </div>
+      </div>
 
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">จำนวน <span id="labelUnit"></span> *</label>
-          <input type="number" step="any" min="0.01" id="inputQty" required placeholder="ระบุจำนวนตัวเลข" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none" />
-        </div>
-
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">ผู้ทำรายการ</label>
-            <input type="text" id="inputUser" placeholder="ชื่อผู้บันทึก" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs outline-none focus:ring-2 focus:ring-blue-500" />
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">หมายเหตุ</label>
-            <input type="text" id="inputNotes" placeholder="เช่น ใช้งานหน้าร้าน" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs outline-none focus:ring-2 focus:ring-blue-500" />
-          </div>
-        </div>
-
-        <button type="submit" id="btnSubmit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold rounded-xl shadow transition disabled:opacity-50 text-xs">
-          บันทึกข้อมูล
-        </button>
-      </form>
+      <!-- คอนเทนเนอร์แสดงการ์ดสินค้าใกล้หมด -->
+      <div id="lowStockItemsContainer" class="space-y-3">
+        <!-- เรนเดอร์ด้วยฟังก์ชัน renderLowStockView() -->
+      </div>
     </section>
 
     <!-- TAB 3: ประวัติและ Audit Log -->
@@ -475,7 +625,9 @@
 
   <!-- QUICK ACTION MODAL: คลิกที่การ์ดแล้ว Popup ขึ้นมาจัดการได้ทันที -->
   <div id="modalCardAction" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-white w-full sm:max-w-xl md:max-w-2xl rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden max-h-[92vh] flex flex-col animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
+    <div class="bg-white w-full sm:max-w-xl md:max-w-2xl rounded-t-[32px] sm:rounded-[28px] shadow-[0_25px_60px_rgba(0,0,0,0.22)] border border-slate-200/80 overflow-hidden max-h-[92vh] flex flex-col ios-sheet-anim">
+      <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto my-2 sm:hidden flex-shrink-0"></div>
+
       
       <!-- Modal Header พร้อมรูปภาพ/แถบสี -->
       <div class="relative bg-slate-900 text-white p-4 flex items-center justify-between overflow-hidden">
@@ -650,7 +802,9 @@
 
   <!-- PURCHASE ORDER CART & EXPORT MODAL: ตะกร้าสั่งซื้อ และ สร้างใบสั่งซื้อเป็นรูปภาพ -->
   <div id="modalPurchaseCart" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-white w-full sm:max-w-2xl md:max-w-3xl rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden max-h-[92vh] flex flex-col animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
+    <div class="bg-white w-full sm:max-w-2xl md:max-w-3xl rounded-t-[32px] sm:rounded-[28px] shadow-[0_25px_60px_rgba(0,0,0,0.22)] border border-slate-200/80 overflow-hidden max-h-[92vh] flex flex-col ios-sheet-anim">
+      <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto my-2 sm:hidden flex-shrink-0"></div>
+
       
       <!-- Modal Header -->
       <div class="bg-gradient-to-r from-amber-500 to-orange-500 text-white p-4 flex items-center justify-between">
@@ -870,7 +1024,9 @@
   
   <!-- MODAL เพิ่มสินค้าใหม่: ถ่ายรูป/อัปโหลดรูปจากมือถือ ตั้งชื่อ และบันทึกลง Google Sheet -->
   <div id="modalAddProduct" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-white w-full sm:max-w-xl md:max-w-2xl rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden max-h-[92vh] flex flex-col animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
+    <div class="bg-white w-full sm:max-w-xl md:max-w-2xl rounded-t-[32px] sm:rounded-[28px] shadow-[0_25px_60px_rgba(0,0,0,0.22)] border border-slate-200/80 overflow-hidden max-h-[92vh] flex flex-col ios-sheet-anim">
+      <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto my-2 sm:hidden flex-shrink-0"></div>
+
       
       <!-- Modal Header -->
       <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 flex items-center justify-between">
@@ -974,7 +1130,9 @@
 
   <!-- MODAL แก้ไข SKU: แก้ไขชื่อ และ อัปโหลดรูปภาพจากอุปกรณ์ บันทึกลง Google Sheet -->
   <div id="modalEditSku" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-white w-full sm:max-w-xl md:max-w-2xl rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden max-h-[92vh] flex flex-col animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
+    <div class="bg-white w-full sm:max-w-xl md:max-w-2xl rounded-t-[32px] sm:rounded-[28px] shadow-[0_25px_60px_rgba(0,0,0,0.22)] border border-slate-200/80 overflow-hidden max-h-[92vh] flex flex-col ios-sheet-anim">
+      <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto my-2 sm:hidden flex-shrink-0"></div>
+
       
       <!-- Modal Header -->
       <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 flex items-center justify-between">
@@ -1074,7 +1232,9 @@
   
   <!-- MODAL จัดการซัพพลายเออร์: เพิ่ม / แก้ไข รายชื่อ ข้อมูลติดต่อ และรอบการจัดส่ง -->
   <div id="modalSupplierEdit" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-white w-full sm:max-w-xl md:max-w-2xl rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden max-h-[92vh] flex flex-col animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
+    <div class="bg-white w-full sm:max-w-xl md:max-w-2xl rounded-t-[32px] sm:rounded-[28px] shadow-[0_25px_60px_rgba(0,0,0,0.22)] border border-slate-200/80 overflow-hidden max-h-[92vh] flex flex-col ios-sheet-anim">
+      <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto my-2 sm:hidden flex-shrink-0"></div>
+
       
       <!-- Modal Header -->
       <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 flex items-center justify-between">
@@ -1143,7 +1303,9 @@
 
   <!-- CATEGORY MANAGEMENT & COLOR PICKER MODAL: จัดการและเพิ่มหมวดหมู่พร้อมกำหนดสีเอง -->
   <div id="modalCategoryManage" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-white w-full sm:max-w-xl md:max-w-2xl rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden max-h-[90vh] flex flex-col animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
+    <div class="bg-white w-full sm:max-w-xl md:max-w-2xl rounded-t-[32px] sm:rounded-[28px] shadow-[0_25px_60px_rgba(0,0,0,0.22)] border border-slate-200/80 overflow-hidden max-h-[90vh] flex flex-col ios-sheet-anim">
+      <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto my-2 sm:hidden flex-shrink-0"></div>
+
       
       <!-- Modal Header -->
       <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 flex items-center justify-between">
@@ -1282,7 +1444,8 @@
       activeCategoryFilter: 'ALL',
       showOnlyLowStock: false,
       dashboardViewMode: localStorage.getItem('stock_view_mode_v1') || (typeof window !== 'undefined' && window.innerWidth < 768 ? 'swipe' : 'grid'),
-      activeKpiMenu: 'chart'
+      activeKpiMenu: 'daily',
+      dailySummaryDate: new Date().toISOString().split('T')[0]
     };
 
     let activeModalProduct = null;
@@ -1440,16 +1603,20 @@
       renderDashboard();
       renderHistoryList();
       updateCartBadgeUI();
+      renderLowStockView();
+      renderDailySummary();
 
-      // ฟอร์มบันทึกรายวัน
+      // ฟอร์มบันทึกรายวัน (ถ้ามี)
       const catSelect = document.getElementById('inputCategory');
-      const currentCatVal = catSelect.value;
-      catSelect.innerHTML = '<option value="">-- เลือกหมวดหมู่ (ทั้งหมด) --</option>';
-      state.categories.forEach(c => {
-        catSelect.innerHTML += `<option value="${c.name}">${c.name}</option>`;
-      });
-      catSelect.value = currentCatVal;
-      onCategoryChange();
+      if (catSelect) {
+        const currentCatVal = catSelect.value;
+        catSelect.innerHTML = '<option value="">-- เลือกหมวดหมู่ (ทั้งหมด) --</option>';
+        state.categories.forEach(c => {
+          catSelect.innerHTML += `<option value="${c.name}">${c.name}</option>`;
+        });
+        catSelect.value = currentCatVal;
+        if (typeof onCategoryChange === 'function') onCategoryChange();
+      }
     }
 
     // อัปเดตสถิติตะกร้าสินค้า (Badge & FAB)
@@ -1559,13 +1726,7 @@
     }
 
     function toggleLowStockFilter() {
-      state.showOnlyLowStock = !state.showOnlyLowStock;
-      if (state.showOnlyLowStock) {
-        state.activeCategoryFilter = 'ALL';
-      }
-      renderCategoryLegend();
-      renderCategoryChips();
-      renderDashboard();
+      switchTab('lowstock');
     }
 
     // 3. เรนเดอร์ แดชบอร์ดการ์ดสินค้าทั้งหมด
@@ -1778,6 +1939,12 @@
       document.getElementById('kpiTotal').textContent = state.products.length;
       document.getElementById('kpiNormal').textContent = state.products.length - lowCount;
       document.getElementById('kpiLow').textContent = lowCount;
+      
+      const navBadge = document.getElementById('navLowBadge');
+      if (navBadge) {
+        navBadge.textContent = lowCount;
+        navBadge.classList.toggle('hidden', lowCount === 0);
+      }
 
       let filtered = state.products.filter(p => {
         const matchCat = state.activeCategoryFilter === 'ALL' || p.category === state.activeCategoryFilter;
@@ -3294,23 +3461,29 @@
     }
 
     function switchTab(tab) {
-      ['dashboard', 'reports', 'suppliers', 'entry', 'history'].forEach(t => {
+      ['dashboard', 'lowstock', 'reports', 'suppliers', 'history'].forEach(t => {
         const view = document.getElementById('view-' + t);
         if (view) view.classList.toggle('hidden', t !== tab);
         const tabBtn = document.getElementById('tab-' + t);
         if (tabBtn) {
           if (t === tab) {
-            tabBtn.className = "flex-1 min-w-[5.2rem] py-2.5 px-2 font-bold text-center border-b-2 border-white text-white transition flex items-center justify-center gap-1";
+            tabBtn.className = "py-2 px-3 sm:px-4 rounded-xl font-bold transition-all duration-200 flex items-center justify-center gap-1.5 ios-btn-press bg-white text-blue-700 shadow-sm";
           } else {
-            tabBtn.className = "flex-1 min-w-[5.2rem] py-2.5 px-2 font-medium text-center border-b-2 border-transparent text-blue-100 hover:text-white transition flex items-center justify-center gap-1";
+            tabBtn.className = "relative py-2 px-3 sm:px-4 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-1.5 ios-btn-press text-blue-100 hover:text-white hover:bg-white/10";
           }
         }
       });
 
-      if (tab === 'reports') {
+      if (tab === 'dashboard') {
+        renderDashboard();
+      } else if (tab === 'lowstock') {
+        renderLowStockView();
+      } else if (tab === 'reports') {
         renderReportsAndAnalytics();
       } else if (tab === 'suppliers') {
         renderSuppliersView();
+      } else if (tab === 'history') {
+        renderHistory();
       }
     }
 
@@ -3811,6 +3984,153 @@
     // ==========================================
     // ระบบจัดการซัพพลายเออร์ (SUPPLIERS MANAGEMENT)
     // ==========================================
+
+    // ==========================================
+    // แท็บสินค้าใกล้หมด (Dedicated Low Stock View & 1-Click Order All)
+    // ==========================================
+    function renderLowStockView() {
+      const container = document.getElementById('lowStockItemsContainer');
+      const headerBadge = document.getElementById('lowStockHeaderCountBadge');
+      const navBadge = document.getElementById('navLowBadge');
+
+      const lowItems = state.products.filter(p => Number(p.currentBalance) <= Number(p.minStock));
+
+      // อัปเดตตัวเลขแจ้งเตือน
+      if (headerBadge) headerBadge.textContent = `${lowItems.length} รายการ`;
+      if (navBadge) {
+        navBadge.textContent = lowItems.length;
+        navBadge.classList.toggle('hidden', lowItems.length === 0);
+      }
+
+      if (!container) return;
+
+      if (lowItems.length === 0) {
+        container.innerHTML = `
+          <div class="ios-card p-10 text-center rounded-3xl space-y-3 bg-white">
+            <div class="w-16 h-16 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center text-3xl mx-auto shadow-sm">
+              ✓
+            </div>
+            <h3 class="font-bold text-base text-slate-900">สต็อกสินค้าพร้อมใช้งาน 100%</h3>
+            <p class="text-xs text-slate-500 max-w-sm mx-auto">ยอดเยี่ยมมาก! ไม่มีสินค้าใดที่คงเหลือต่ำกว่าเกณฑ์ Par/Min Stock ในขณะนี้ ทุกรายการมีสต็อกเพียงพอสำหรับการขาย</p>
+            <div class="pt-2">
+              <button type="button" onclick="switchTab('dashboard')" class="px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm transition ios-btn-press">
+                📊 ดูสต็อกสินค้าทั้งหมด
+              </button>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      // เรนเดอร์การ์ดสินค้าใกล้หมดสไตล์ iOS 27
+      container.innerHTML = `
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          ${lowItems.map(p => {
+            const isOut = Number(p.currentBalance) <= 0;
+            const colorData = getCategoryColorData(p.category);
+            const inCartItem = (state.cart || []).find(item => item.productName === p.name);
+            const minStockNum = Number(p.minStock) || 1;
+            const balanceNum = Math.max(0, Number(p.currentBalance));
+            const stockRatio = Math.min(100, Math.round((balanceNum / minStockNum) * 100));
+            const deficit = Math.max(0, minStockNum - balanceNum);
+            const suggestedOrder = Math.max(1, (minStockNum * 2) - balanceNum);
+
+            return `
+              <div class="ios-card rounded-3xl p-3.5 sm:p-4 flex flex-col justify-between space-y-3 border-2 ${isOut ? 'border-rose-400 bg-rose-50/15' : 'border-amber-300 bg-amber-50/10'} shadow-sm">
+                
+                <!-- หัวการ์ด: รูปภาพ หรือ สัญลักษณ์สี + ข้อมูล -->
+                <div class="flex items-start gap-3">
+                  <div class="w-14 h-14 rounded-2xl bg-slate-100 overflow-hidden flex-shrink-0 border border-slate-200 flex items-center justify-center relative shadow-2xs">
+                    ${p.imageUrl ? `<img src="${p.imageUrl}" class="w-full h-full object-cover">` : `<span class="text-xl">📦</span>`}
+                    <span class="absolute bottom-0 left-0 right-0 h-1" style="background-color: ${colorData.hex};"></span>
+                  </div>
+
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-1.5 justify-between">
+                      <span class="px-2 py-0.5 rounded-md text-[9px] font-bold" style="${colorData.badgeStyle}">${p.category}</span>
+                      ${isOut ? '<span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-rose-600 text-white shadow-2xs">หมดเกลี้ยง</span>' : '<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-rose-100 text-rose-700 border border-rose-200">ต่ำกว่าเกณฑ์</span>'}
+                    </div>
+                    <h4 class="font-bold text-xs sm:text-sm text-slate-900 truncate mt-1">${p.name}</h4>
+                    <div class="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5">
+                      <span class="truncate">🏢 ${p.supplier || 'ทั่วไป'}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- เกจวัดสต็อก iOS Gauge Bar -->
+                <div class="bg-white/80 p-2.5 rounded-2xl border border-slate-100 space-y-1.5">
+                  <div class="flex items-baseline justify-between text-xs font-semibold">
+                    <span class="text-slate-500">คงเหลือ:</span>
+                    <div class="text-right">
+                      <span class="text-base sm:text-lg font-black ${isOut ? 'text-rose-600' : 'text-amber-600'}">${p.currentBalance}</span>
+                      <span class="text-[10px] text-slate-500">${p.unit}</span>
+                      <span class="text-[10px] text-slate-400 font-normal">(เกณฑ์ต่ำ: ${p.minStock})</span>
+                    </div>
+                  </div>
+
+                  <!-- Progress Bar -->
+                  <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden relative">
+                    <div class="h-full rounded-full transition-all duration-500 ${isOut ? 'bg-rose-500 w-0' : 'bg-amber-500'}" style="width: ${stockRatio}%;"></div>
+                  </div>
+
+                  <div class="flex items-center justify-between text-[10px] text-slate-400 pt-0.5">
+                    <span>ขาดอีก: <strong>${deficit} ${p.unit}</strong></span>
+                    <span class="text-blue-600 font-semibold">แนะนำสั่ง: <strong>${suggestedOrder} ${p.unit}</strong></span>
+                  </div>
+                </div>
+
+                <!-- ปุ่ม Action สั่งซื้อด่วน & จัดการสต็อก -->
+                <div class="flex items-center gap-2 pt-1 border-t border-slate-100">
+                  <button type="button" onclick="openCardActionModal('${p.name}')" class="flex-1 py-2 px-2 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-700 text-xs font-bold rounded-xl transition text-center ios-btn-press">
+                    ⚙️ จัดการสต็อก
+                  </button>
+                  <button type="button" onclick="quickAddToCart('${p.name}')" class="flex-1 py-2 px-3 ${inCartItem ? 'bg-orange-600 text-white ring-2 ring-orange-400 font-black' : 'bg-amber-500 text-white font-bold'} text-xs rounded-xl shadow-xs transition active:scale-95 flex items-center justify-center gap-1.5 ios-btn-press">
+                    <span>🛒</span>
+                    <span>${inCartItem ? `ในตะกร้า (${inCartItem.quantity})` : 'สั่งซื้อด่วน'}</span>
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    // 1-Click Order All: สั่งสินค้าใกล้หมดทั้งหมดเข้าตะกร้าในคลิกเดียว
+    function addAllLowStockToCart() {
+      const lowItems = state.products.filter(p => Number(p.currentBalance) <= Number(p.minStock));
+      if (lowItems.length === 0) {
+        showAlert('ไม่มีสินค้าที่ใกล้หมดในขณะนี้', 'info');
+        return;
+      }
+
+      let addedCount = 0;
+      lowItems.forEach(p => {
+        const minStockNum = Number(p.minStock) || 1;
+        const balanceNum = Math.max(0, Number(p.currentBalance));
+        const suggestedQty = Math.max(1, (minStockNum * 2) - balanceNum);
+
+        const existing = (state.cart || []).find(item => item.productName === p.name);
+        if (existing) {
+          existing.quantity = Math.max(existing.quantity, suggestedQty);
+        } else {
+          state.cart.push({
+            productName: p.name,
+            quantity: suggestedQty,
+            unit: p.unit || 'หน่วย',
+            supplier: p.supplier || 'ทั่วไป',
+            category: p.category || 'ทั่วไป'
+          });
+          addedCount++;
+        }
+      });
+
+      saveCart(state.cart);
+      updateCartBadge();
+      showAlert(`เพิ่มสินค้าใกล้หมด ${lowItems.length} รายการลงตะกร้าเรียบร้อยแล้ว`, 'success');
+      openPurchaseCartModal();
+    }
+
     function renderSuppliersView() {
       const container = document.getElementById('supplierCardsContainer');
       if (!container) return;
@@ -4121,26 +4441,209 @@
     // ==========================================
     let consumptionChartInstance = null;
 
+    // ==========================================
+    // ระบบเมนูย่อย KPI สไตล์ iOS 27 (Daily Summary, Chart, Calendar, SKU, Vendor)
+    // ==========================================
     function switchKpiMenu(menu) {
       state.activeKpiMenu = menu;
-      ['chart', 'calendar', 'table', 'vendor'].forEach(m => {
+      ['daily', 'chart', 'calendar', 'table', 'vendor'].forEach(m => {
         const sec = document.getElementById('kpi-sec-' + m);
         const btn = document.getElementById('kpi-menu-' + m);
         if (sec) sec.classList.toggle('hidden', m !== menu);
         if (btn) {
           if (m === menu) {
-            btn.className = "py-2 px-1 rounded-xl transition bg-white text-blue-700 shadow-xs flex items-center justify-center gap-1 font-bold";
+            btn.className = "py-2 px-1 rounded-xl transition-all duration-200 bg-white text-blue-700 shadow-xs flex items-center justify-center gap-1 font-bold ios-btn-press";
           } else {
-            btn.className = "py-2 px-1 rounded-xl transition text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1 font-medium";
+            btn.className = "py-2 px-1 rounded-xl transition-all duration-200 text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1 font-medium ios-btn-press";
           }
         }
       });
 
-      if (menu === 'chart') {
-        setTimeout(initOrUpdateConsumptionChart, 50);
+      if (menu === 'daily') {
+        renderDailySummary();
+      } else if (menu === 'chart') {
+        setTimeout(initOrUpdateConsumptionChart, 60);
       } else if (menu === 'vendor') {
         renderKpiVendorBreakdown();
       }
+    }
+
+    // ฟังก์ชันจัดการสรุปความเคลื่อนไหวประจำวัน (Daily Stock Movement Engine)
+    function setDailySummaryDateQuick(offsetDays) {
+      const d = new Date();
+      d.setDate(d.getDate() + offsetDays);
+      const iso = d.toISOString().split('T')[0];
+      state.dailySummaryDate = iso;
+      const picker = document.getElementById('dailySummaryDatePicker');
+      if (picker) picker.value = iso;
+      renderDailySummary();
+    }
+
+    function onDailySummaryDateChange() {
+      const picker = document.getElementById('dailySummaryDatePicker');
+      if (picker && picker.value) {
+        state.dailySummaryDate = picker.value;
+        renderDailySummary();
+      }
+    }
+
+    function renderDailySummary() {
+      const selectedDate = state.dailySummaryDate || new Date().toISOString().split('T')[0];
+      
+      const picker = document.getElementById('dailySummaryDatePicker');
+      if (picker) picker.value = selectedDate;
+
+      // ป้ายแสดงวันที่ภาษาไทย
+      const labelEl = document.getElementById('dailySummarySelectedDateLabel');
+      const todayIso = new Date().toISOString().split('T')[0];
+      const yesterdayObj = new Date();
+      yesterdayObj.setDate(yesterdayObj.getDate() - 1);
+      const yesterdayIso = yesterdayObj.toISOString().split('T')[0];
+
+      const thaiMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+      const dateParts = selectedDate.split('-');
+      const dNum = parseInt(dateParts[2], 10);
+      const mNum = parseInt(dateParts[1], 10) - 1;
+      const formattedDate = `${dNum} ${thaiMonths[mNum]} ${parseInt(dateParts[0], 10) + 543}`;
+
+      if (labelEl) {
+        if (selectedDate === todayIso) {
+          labelEl.textContent = `(วันนี้ • ${formattedDate})`;
+        } else if (selectedDate === yesterdayIso) {
+          labelEl.textContent = `(เมื่อวาน • ${formattedDate})`;
+        } else {
+          labelEl.textContent = `(${formattedDate})`;
+        }
+      }
+
+      // กรอง transactions ในวันที่เลือก
+      const dayTxs = (state.transactions || []).filter(t => {
+        const tDate = String(t.date || '').split('T')[0];
+        return tDate === selectedDate;
+      });
+
+      // จำแนกประเภท
+      const outTxs = dayTxs.filter(t => String(t.type || '').includes('เบิก'));
+      const inTxs = dayTxs.filter(t => String(t.type || '').includes('รับ'));
+      const wasteTxs = dayTxs.filter(t => String(t.type || '').includes('ของเสีย') || String(t.type || '').includes('เสีย'));
+      const adjustTxs = dayTxs.filter(t => String(t.type || '').includes('ปรับ'));
+
+      // คำนวณยอดรวม
+      const outTotalQty = outTxs.reduce((sum, t) => sum + (Number(t.quantity) || 0), 0);
+      const inTotalQty = inTxs.reduce((sum, t) => sum + (Number(t.quantity) || 0), 0);
+      const wasteTotalQty = wasteTxs.reduce((sum, t) => sum + (Number(t.quantity) || 0), 0);
+
+      const outSkus = new Set(outTxs.map(t => t.product)).size;
+      const inSkus = new Set(inTxs.map(t => t.product)).size;
+      const wasteSkus = new Set(wasteTxs.map(t => t.product)).size;
+
+      // อัปเดต UI 4 กล่อง
+      const elOutCount = document.getElementById('dailyOutTxCount');
+      const elOutQty = document.getElementById('dailyOutTotalQty');
+      const elOutSku = document.getElementById('dailyOutSkuCount');
+      if (elOutCount) elOutCount.textContent = `${outTxs.length} ครั้ง`;
+      if (elOutQty) elOutQty.textContent = Math.round(outTotalQty * 100) / 100;
+      if (elOutSku) elOutSku.textContent = `${outSkus} รายการ SKU`;
+
+      const elInCount = document.getElementById('dailyInTxCount');
+      const elInQty = document.getElementById('dailyInTotalQty');
+      const elInSku = document.getElementById('dailyInSkuCount');
+      if (elInCount) elInCount.textContent = `${inTxs.length} ครั้ง`;
+      if (elInQty) elInQty.textContent = Math.round(inTotalQty * 100) / 100;
+      if (elInSku) elInSku.textContent = `${inSkus} รายการ SKU`;
+
+      const elWasteCount = document.getElementById('dailyWasteTxCount');
+      const elWasteQty = document.getElementById('dailyWasteTotalQty');
+      const elWasteSku = document.getElementById('dailyWasteSkuCount');
+      if (elWasteCount) elWasteCount.textContent = `${wasteTxs.length} ครั้ง`;
+      if (elWasteQty) elWasteQty.textContent = Math.round(wasteTotalQty * 100) / 100;
+      if (elWasteSku) elWasteSku.textContent = `${wasteSkus} รายการ SKU`;
+
+      const elAdjCount = document.getElementById('dailyAdjustTxCount');
+      const elAdjTotal = document.getElementById('dailyAdjustTotalCount');
+      if (elAdjCount) elAdjCount.textContent = `${adjustTxs.length} ครั้ง`;
+      if (elAdjTotal) elAdjTotal.textContent = adjustTxs.length;
+
+      const totalLabel = document.getElementById('dailyTxTotalCountLabel');
+      if (totalLabel) totalLabel.textContent = `${dayTxs.length} รายการบันทึก`;
+
+      // แสดงรายการเคลื่อนไหว
+      const container = document.getElementById('dailyTransactionsListContainer');
+      if (!container) return;
+
+      if (dayTxs.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center bg-slate-50/70 rounded-2xl border border-dashed border-slate-200 text-slate-400 space-y-2">
+            <div class="text-3xl">☕</div>
+            <div class="text-xs font-medium">ยังไม่มีรายการเคลื่อนไหวสต็อกในวันที่เลือก</div>
+            <div class="text-[11px] text-slate-400">เมื่อมีการเบิก รับเข้า หรือบันทึกของเสีย ข้อมูลสรุปจะแสดงที่นี่โดยอัตโนมัติ</div>
+          </div>
+        `;
+        return;
+      }
+
+      // เรียงลำดับเวลาล่าสุดขึ้นก่อน
+      const sortedTxs = [...dayTxs].reverse();
+
+      container.innerHTML = sortedTxs.map(t => {
+        const isOut = String(t.type || '').includes('เบิก');
+        const isIn = String(t.type || '').includes('รับ');
+        const isWaste = String(t.type || '').includes('ของเสีย') || String(t.type || '').includes('เสีย');
+        
+        let typeBadgeClass = 'bg-slate-100 text-slate-700';
+        let typeIcon = '🔄';
+        let qtyColor = 'text-slate-800';
+        let sign = '';
+
+        if (isOut) {
+          typeBadgeClass = 'bg-rose-100 text-rose-700 border border-rose-200';
+          typeIcon = '🔴';
+          qtyColor = 'text-rose-600';
+          sign = '-';
+        } else if (isIn) {
+          typeBadgeClass = 'bg-emerald-100 text-emerald-700 border border-emerald-200';
+          typeIcon = '🟢';
+          qtyColor = 'text-emerald-600';
+          sign = '+';
+        } else if (isWaste) {
+          typeBadgeClass = 'bg-amber-100 text-amber-800 border border-amber-200';
+          typeIcon = '🟡';
+          qtyColor = 'text-amber-600';
+          sign = 'x';
+        }
+
+        const colorData = getCategoryColorData(t.category);
+        const timeStr = String(t.date || '').includes('T') ? String(t.date).split('T')[1].substring(0, 5) : '';
+
+        return `
+          <div class="ios-card p-2.5 sm:p-3 rounded-2xl flex items-center justify-between gap-3 hover:border-blue-300 transition">
+            <div class="flex items-center gap-2.5 min-w-0 flex-1">
+              <span class="w-8 h-8 rounded-xl flex items-center justify-center text-sm ${isOut ? 'bg-rose-50' : isIn ? 'bg-emerald-50' : 'bg-amber-50'} flex-shrink-0">
+                ${typeIcon}
+              </span>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2">
+                  <h4 class="font-bold text-xs sm:text-sm text-slate-900 truncate">${t.product}</h4>
+                  <span class="px-1.5 py-0.2 rounded text-[9px] font-bold" style="${colorData.badgeStyle}">${t.category || 'ทั่วไป'}</span>
+                </div>
+                <div class="flex items-center gap-2 text-[10px] text-slate-400 mt-0.5">
+                  ${timeStr ? `<span>🕒 ${timeStr} น.</span><span>•</span>` : ''}
+                  <span>👤 ${t.user || 'พนักงาน'}</span>
+                  ${t.notes ? `<span>• 📝 ${t.notes}</span>` : ''}
+                </div>
+              </div>
+            </div>
+
+            <!-- จำนวนที่เคลื่อนไหว -->
+            <div class="text-right flex-shrink-0 px-1">
+              <div class="font-black text-sm sm:text-base ${qtyColor}">
+                ${sign}${t.quantity} <span class="text-[10px] font-medium text-slate-500">${t.unit || ''}</span>
+              </div>
+              <span class="text-[9px] font-bold px-1.5 py-0.2 rounded-full ${typeBadgeClass}">${t.type}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     function initOrUpdateConsumptionChart() {
@@ -4378,8 +4881,11 @@
       // 4. เรนเดอร์ สรุปตามซัพพลายเออร์
       renderKpiVendorBreakdown();
 
-      // 5. เรนเดอร์หรืออัปเดตกราฟเส้น
-      setTimeout(initOrUpdateConsumptionChart, 50);
+      // 5. เรนเดอร์ สรุปความเคลื่อนไหวประจำวัน
+      renderDailySummary();
+
+      // 6. เรนเดอร์หรืออัปเดตกราฟเส้น
+      setTimeout(initOrUpdateConsumptionChart, 60);
     }
 
     function renderPurchasingSchedule(allMetrics) {
