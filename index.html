@@ -117,7 +117,7 @@
     }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen pb-28">
+<body class="bg-slate-100 text-slate-800 min-h-screen pb-32 sm:pb-36">
 
   <!-- Top App Bar -->
   <header class="bg-blue-600 text-white shadow-md sticky top-0 z-30">
@@ -259,29 +259,30 @@
           </button>
         </div>
 
-        <!-- แถว Filter Chips และ ปุ่มสลับมุมมอง การ์ด vs รายการแน่น -->
-        <div class="flex items-center justify-between gap-2">
-          <!-- Filter Chips หมวดหมู่ (แนวนอนเลื่อนได้) -->
-          <div id="categoryChips" class="flex-1 flex gap-1.5 overflow-x-auto no-scrollbar pb-0.5 text-xs">
-            <!-- Chips จะเรนเดอร์อัตโนมัติ -->
+        <!-- แถวตัวเลือกปรับมุมมองแสดงผล (ตำแหน่งเดิมด้านบน ชัดเจน ไม่เบียดหมวดหมู่) -->
+        <div class="flex items-center justify-between gap-2 pt-0.5">
+          <div class="text-[11px] sm:text-xs font-semibold text-slate-500 flex items-center gap-1">
+            <span>มุมมองสต็อก:</span>
           </div>
 
           <!-- ปุ่มสลับ 3 มุมมอง: 📱 ปัดหน้าจอ | 🔲 การ์ดตาราง | 📋 รายการแน่น -->
-          <div class="flex items-center bg-slate-200/80 p-0.5 rounded-xl flex-shrink-0 shadow-2xs">
-            <button type="button" onclick="setDashboardViewMode('swipe')" id="btnViewSwipe" class="py-1 px-2 sm:px-2.5 rounded-lg text-xs font-bold transition flex items-center gap-1" title="มุมมองปัดหน้าจอ ซ้าย-ขวา สไตล์แอปมือถือ">
+          <div class="flex items-center bg-slate-200/80 p-0.5 rounded-2xl flex-shrink-0 shadow-2xs">
+            <button type="button" onclick="setDashboardViewMode('swipe')" id="btnViewSwipe" class="py-1.5 px-2.5 sm:px-3 rounded-xl text-xs font-bold transition flex items-center gap-1 ios-btn-press" title="มุมมองปัดหน้าจอ ซ้าย-ขวา สไตล์แอปมือถือ">
               <span class="text-xs">📱</span>
               <span class="inline">ปัดหน้าจอ</span>
             </button>
-            <button type="button" onclick="setDashboardViewMode('grid')" id="btnViewGrid" class="py-1 px-2 sm:px-2.5 rounded-lg text-xs font-medium transition flex items-center gap-1" title="มุมมองการ์ดตาราง">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+            <button type="button" onclick="setDashboardViewMode('grid')" id="btnViewGrid" class="py-1.5 px-2.5 sm:px-3 rounded-xl text-xs font-medium transition flex items-center gap-1 ios-btn-press" title="มุมมองการ์ดตาราง">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
               <span class="inline">การ์ด</span>
             </button>
-            <button type="button" onclick="setDashboardViewMode('list')" id="btnViewList" class="py-1 px-2 sm:px-2.5 rounded-lg text-xs font-medium transition flex items-center gap-1" title="มุมมองรายการแน่น">
+            <button type="button" onclick="setDashboardViewMode('list')" id="btnViewList" class="py-1.5 px-2.5 sm:px-3 rounded-xl text-xs font-medium transition flex items-center gap-1 ios-btn-press" title="มุมมองรายการแน่น">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
               <span class="inline">รายการ</span>
             </button>
           </div>
         </div>
+
+
       </div>
 
       <!-- ส่วนแสดงการ์ดสินค้าทั้งหมดแยกตามหมวดหมู่ -->
@@ -632,8 +633,21 @@
 
   </main>
 
-  <!-- FLOATING CART BUTTON (มุมขวาล่างสำหรับเปิดดูตะกร้าสั่งซื้อได้ตลอดเวลา) -->
-  <div id="floatingCartBtn" onclick="openPurchaseCartModal()" class="hidden fixed bottom-5 right-4 z-40 cursor-pointer active:scale-95 transition">
+  <!-- FIXED BOTTOM FOOTER BAR (ตรึงแถบหมวดหมู่เต็มความกว้างด้านล่าง สไลด์ซ้าย-ขวาได้อย่างสบายตา ไม่โดนเบียด) -->
+  <footer id="dashboardStickyFooter" class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2 sm:py-2.5 flex items-center gap-2">
+      <div class="text-[11px] sm:text-xs font-bold text-slate-500 flex items-center gap-1 flex-shrink-0">
+        <span>🏷️</span><span class="hidden sm:inline">หมวดหมู่:</span>
+      </div>
+      <!-- หมวดหมู่สินค้าแบบเต็มความกว้าง เลื่อนสไลด์ซ้าย-ขวาด้วยนิ้วโป้งได้อย่างเต็มตา ไม่โดนเบียด -->
+      <div id="categoryChips" class="flex-1 flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5 text-xs">
+        <!-- Category Chips rendered dynamically across full width -->
+      </div>
+    </div>
+  </footer>
+
+  <!-- FLOATING CART BUTTON (มุมขวาล่างสำหรับเปิดดูตะกร้าสั่งซื้อได้ตลอดเวลา ลอยอยู่เหนือแถบเครื่องมือด้านล่าง) -->
+  <div id="floatingCartBtn" onclick="openPurchaseCartModal()" class="hidden fixed bottom-[4.8rem] sm:bottom-20 right-4 sm:right-6 z-40 cursor-pointer ios-btn-press transition-all duration-300">
     <div class="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-3 rounded-full shadow-2xl flex items-center gap-2.5 font-bold text-xs border-2 border-white hover:brightness-105">
       <div class="relative">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
@@ -1748,6 +1762,15 @@
       renderCategoryLegend();
       renderCategoryChips();
       renderDashboard();
+
+      // เลื่อนชิปหมวดหมู่ที่เลือกมาให้อยู่ในระยะสายตาพอดี
+      setTimeout(() => {
+        const container = document.getElementById('categoryChips');
+        const activeChip = container?.querySelector('.bg-blue-600, [style*="background-color:"]');
+        if (activeChip) {
+          activeChip.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }
+      }, 50);
     }
 
     function toggleLowStockFilter() {
@@ -3454,6 +3477,22 @@
         renderSuppliersView();
       } else if (tab === 'history') {
         renderHistory();
+      }
+
+      // จัดการแถบ Footer ด้านล่าง: ให้แสดงเฉพาะในหน้าแดชบอร์ดสต็อก (หรือซ่อนเมื่อดูแท็บอื่น)
+      const stickyFooter = document.getElementById('dashboardStickyFooter');
+      if (stickyFooter) {
+        stickyFooter.classList.toggle('hidden', tab !== 'dashboard');
+      }
+
+      // ปรับตำแหน่งปุ่มตะกร้าลอย: ถ้าอยู่หน้าแดชบอร์ดให้ลอยเหนือแถบ Footer ถ้าอยู่แท็บอื่นให้ชิดล่างปกติ
+      const floatingCart = document.getElementById('floatingCartBtn');
+      if (floatingCart) {
+        if (tab === 'dashboard') {
+          floatingCart.className = "hidden fixed bottom-[4.8rem] sm:bottom-20 right-4 sm:right-6 z-40 cursor-pointer ios-btn-press transition-all duration-300";
+        } else {
+          floatingCart.className = "hidden fixed bottom-5 right-4 sm:right-6 z-40 cursor-pointer ios-btn-press transition-all duration-300";
+        }
       }
 
       // เลื่อนแท็บที่กำลังเลือกมาอยู่กึ่งกลางจออย่างนุ่มนวลอัตโนมัติ (Auto Center Active Tab)
