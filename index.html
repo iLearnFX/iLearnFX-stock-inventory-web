@@ -4,23 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Ground Cafe - ระบบจัดการสต็อกและวัตถุดิบ</title>
-  <link rel="icon" id="appFavicon" type="image/png" href="logo.png" />
-  <script>
-    (function(){
-      const fav = document.getElementById('appFavicon');
-      if (fav) {
-        const testImg = new Image();
-        testImg.onload = () => { fav.href = '9184.jpg'; };
-        testImg.onerror = () => {
-          const testPng = new Image();
-          testPng.onload = () => { fav.href = 'logo.png'; };
-          testPng.onerror = () => { fav.href = 'logo.svg'; };
-          testPng.src = 'logo.png';
-        };
-        testImg.src = '9184.jpg';
-      }
-    })();
-  </script>
+  <link rel="icon" type="image/png" href="logo.png" />
   <!-- Tailwind CSS & Google Fonts -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -169,24 +153,9 @@
   <header class="bg-blue-600 text-white shadow-md sticky top-0 z-30">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
       <div class="flex items-center gap-2.5">
-        <!-- Ground Cafe Official Logo (Loads 9184.jpg / logo.png with fallback) -->
+        <!-- Ground Cafe Official Logo -->
         <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white p-0.5 shadow-md shadow-blue-900/30 flex-shrink-0 flex items-center justify-center overflow-hidden border-2 border-white/60 ring-2 ring-white/20 transition transform active:scale-95" title="Ground Cafe">
-          <img src="logo.png" 
-               onerror="if(!this.dataset.step){this.dataset.step='1';this.src='9184.jpg';}else if(this.dataset.step==='1'){this.dataset.step='2';this.src='logo.jpg';}else{this.style.display='none';const fb=this.nextElementSibling;if(fb)fb.classList.remove('hidden');}" 
-               class="w-full h-full object-cover rounded-full" 
-               alt="Ground Cafe" />
-          <div class="hidden w-full h-full flex items-center justify-center">
-            <svg class="w-full h-full" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="256" cy="256" r="236" fill="#FFFFFF"/>
-              <g fill="#18181B">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M 256,136 C 318,136 362,170 362,220 C 362,254 338,280 302,294 C 336,308 356,334 356,366 C 356,416 310,446 250,446 C 190,446 150,412 150,366 L 182,366 C 182,396 210,418 250,418 C 292,418 324,394 324,366 C 324,336 290,316 238,316 C 218,316 202,318 188,322 L 180,296 C 196,292 214,290 232,290 C 240,290 248,290 256,292 C 278,286 292,274 298,256 C 270,266 236,266 208,256 C 174,244 152,222 152,190 C 152,158 190,136 256,136 Z M 256,166 C 210,166 182,182 182,206 C 182,230 210,246 256,246 C 302,246 330,230 330,206 C 330,182 302,166 256,166 Z"/>
-                <g transform="translate(354, 130) rotate(42)">
-                  <path d="M 0,-30 C -20,-24 -26,-8 -26,0 C -26,12 -18,26 0,30 C -4,18 -7,6 -2,0 C 3,-6 5,-18 0,-30 Z"/>
-                  <path d="M 6,-28 C 11,-18 9,-6 4,0 C 0,6 3,18 6,28 C 22,24 30,12 30,0 C 30,-10 22,-24 6,-28 Z"/>
-                </g>
-              </g>
-            </svg>
-          </div>
+          <img src="logo.png" class="w-full h-full object-cover rounded-full" alt="Ground Cafe" />
         </div>
         <div>
           <h1 class="font-bold text-base sm:text-xl leading-tight flex items-center gap-1.5">
@@ -324,7 +293,7 @@
             <svg class="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 absolute left-3 sm:left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             <input type="text" id="searchBox" oninput="renderDashboard()" placeholder="ค้นหาชื่อสินค้าหรือหมวดหมู่..." class="w-full bg-white border border-slate-300 rounded-xl pl-9 sm:pl-10 pr-10 py-2 sm:py-2.5 text-xs sm:text-sm outline-none focus:ring-2 focus:ring-blue-500 shadow-xs" />
             <!-- ปุ่มสแกนบาร์โค้ด / QR Code ด้วยกล้องมือถือ (กึ่งกลางแนวตั้งสมบูรณ์แบบ) -->
-            <button type="button" onclick="openBarcodeScannerModal()" class="absolute right-1.5 sm:right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition active:scale-90" title="สแกนบาร์โค้ด / QR Code ด้วยกล้องมือถือ">
+            <button type="button" onclick="event.preventDefault(); event.stopPropagation(); if (document.activeElement) document.activeElement.blur(); openBarcodeScannerModal();" class="absolute right-1.5 sm:right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition active:scale-90" title="สแกนบาร์โค้ด / QR Code ด้วยกล้องมือถือ">
               <svg class="w-4 h-4 sm:w-4.5 sm:h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7V5a2 2 0 012-2h2m10 0h2a2 2 0 012 2v2m0 10v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2M7 12h10M12 7v10"/></svg>
             </button>
           </div>
@@ -824,7 +793,7 @@
   </footer>
 
   <!-- FLOATING QUICK SCAN BUTTON (ปุ่มสแกนด่วนลอยตัวมุมซ้ายล่าง เหนือ Footer สำหรับถือใช้งานด้วยมือเดียว) -->
-  <div id="floatingScanBtn" onclick="openBarcodeScannerModal()" class="fixed bottom-[4.8rem] sm:bottom-20 left-3.5 sm:left-6 z-40 cursor-pointer ios-btn-press transition-all duration-300">
+  <div id="floatingScanBtn" onclick="if (document.activeElement) document.activeElement.blur(); openBarcodeScannerModal()" class="fixed bottom-[4.8rem] sm:bottom-20 left-3.5 sm:left-6 z-40 cursor-pointer ios-btn-press transition-all duration-300">
     <div class="bg-slate-900/90 hover:bg-slate-950 text-white pl-2 pr-3 py-1.5 sm:pl-2.5 sm:pr-3.5 sm:py-2 rounded-full shadow-xl border border-white/25 flex items-center gap-2 text-xs font-bold active:scale-95 transition backdrop-blur-md hover:brightness-105" title="เปิดกล้องสแกนบาร์โค้ด / QR Code ด่วนด้วยมือเดียว">
       <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-500/25 text-blue-400 flex items-center justify-center flex-shrink-0 shadow-inner">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7V5a2 2 0 012-2h2m10 0h2a2 2 0 012 2v2m0 10v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2M7 12h10M12 7v10"/></svg>
@@ -1210,22 +1179,7 @@
               <div class="flex items-start justify-between border-b-2 border-slate-800 pb-3">
                 <div class="flex items-center gap-3">
                   <div class="w-12 h-12 rounded-full bg-white p-0.5 border-2 border-slate-800 flex items-center justify-center flex-shrink-0 shadow-xs overflow-hidden">
-                    <img src="logo.png" 
-                         onerror="if(!this.dataset.step){this.dataset.step='1';this.src='9184.jpg';}else if(this.dataset.step==='1'){this.dataset.step='2';this.src='logo.jpg';}else{this.style.display='none';const fb=this.nextElementSibling;if(fb)fb.classList.remove('hidden');}" 
-                         class="w-full h-full object-cover rounded-full" 
-                         alt="Ground Cafe" />
-                    <div class="hidden w-full h-full flex items-center justify-center">
-                      <svg class="w-full h-full" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="256" cy="256" r="236" fill="#FFFFFF"/>
-                        <g fill="#18181B">
-                          <path fill-rule="evenodd" clip-rule="evenodd" d="M 256,136 C 318,136 362,170 362,220 C 362,254 338,280 302,294 C 336,308 356,334 356,366 C 356,416 310,446 250,446 C 190,446 150,412 150,366 L 182,366 C 182,396 210,418 250,418 C 292,418 324,394 324,366 C 324,336 290,316 238,316 C 218,316 202,318 188,322 L 180,296 C 196,292 214,290 232,290 C 240,290 248,290 256,292 C 278,286 292,274 298,256 C 270,266 236,266 208,256 C 174,244 152,222 152,190 C 152,158 190,136 256,136 Z M 256,166 C 210,166 182,182 182,206 C 182,230 210,246 256,246 C 302,246 330,230 330,206 C 330,182 302,166 256,166 Z"/>
-                          <g transform="translate(354, 130) rotate(42)">
-                            <path d="M 0,-30 C -20,-24 -26,-8 -26,0 C -26,12 -18,26 0,30 C -4,18 -7,6 -2,0 C 3,-6 5,-18 0,-30 Z"/>
-                            <path d="M 6,-28 C 11,-18 9,-6 4,0 C 0,6 3,18 6,28 C 22,24 30,12 30,0 C 30,-10 22,-24 6,-28 Z"/>
-                          </g>
-                        </g>
-                      </svg>
-                    </div>
+                    <img src="logo.png" class="w-full h-full object-cover rounded-full" alt="Ground Cafe" />
                   </div>
                   <div>
                     <h2 class="text-lg font-black text-slate-900 tracking-tight leading-none">GROUND CAFE</h2>
@@ -1886,13 +1840,7 @@
             <div class="pt-1.5 border-t border-slate-100 flex items-center justify-between text-[9px] text-slate-400 font-medium">
               <span class="flex items-center gap-1.5 font-semibold text-slate-700">
                 <span class="w-4 h-4 inline-block rounded-full bg-white border border-slate-200 overflow-hidden shadow-2xs">
-                  <img src="logo.png" 
-                       onerror="if(!this.dataset.step){this.dataset.step='1';this.src='9184.jpg';}else if(this.dataset.step==='1'){this.dataset.step='2';this.src='logo.jpg';}else{this.style.display='none';const fb=this.nextElementSibling;if(fb)fb.classList.remove('hidden');}" 
-                       class="w-full h-full object-cover rounded-full" 
-                       alt="Ground Cafe" />
-                  <div class="hidden w-full h-full">
-                    <svg class="w-full h-full" viewBox="0 0 512 512" fill="none"><circle cx="256" cy="256" r="236" fill="#FFFFFF"/><g fill="#18181B"><path fill-rule="evenodd" clip-rule="evenodd" d="M 256,136 C 318,136 362,170 362,220 C 362,254 338,280 302,294 C 336,308 356,334 356,366 C 356,416 310,446 250,446 C 190,446 150,412 150,366 L 182,366 C 182,396 210,418 250,418 C 292,418 324,394 324,366 C 324,336 290,316 238,316 C 218,316 202,318 188,322 L 180,296 C 196,292 214,290 232,290 C 240,290 248,290 256,292 C 278,286 292,274 298,256 C 270,266 236,266 208,256 C 174,244 152,222 152,190 C 152,158 190,136 256,136 Z M 256,166 C 210,166 182,182 182,206 C 182,230 210,246 256,246 C 302,246 330,230 330,206 C 330,182 302,166 256,166 Z"/><g transform="translate(354, 130) rotate(42)"><path d="M 0,-30 C -20,-24 -26,-8 -26,0 C -26,12 -18,26 0,30 C -4,18 -7,6 -2,0 C 3,-6 5,-18 0,-30 Z"/><path d="M 6,-28 C 11,-18 9,-6 4,0 C 0,6 3,18 6,28 C 22,24 30,12 30,0 C 30,-10 22,-24 6,-28 Z"/></g></g></svg>
-                  </div>
+                  <img src="logo.png" class="w-full h-full object-cover rounded-full" alt="Ground Cafe" />
                 </span>
                 <span>Ground Cafe • Smart Inventory</span>
               </span>
@@ -2265,7 +2213,7 @@
         } catch(e) {}
       },
 
-      // 8. สลับแท็บ / เมนู: เสียง Velvet Warm Chime นุ่มนวล ละมุนหู สบายใจ ไม่บาด และไม่ซ้ำกับกลุ่มเดิม
+      // 8. สลับแท็บ / เมนู: เสียง "ตุบๆ" สองจังหวะนุ่มนวล สไตล์สัมผัสแป้นแทคไทล์ ฟังสบาย ไม่ซ้ำกับเลือกจำนวน
       playTab() {
         if (!this.enabled) return;
         try {
@@ -2273,37 +2221,35 @@
           if (!ctx) return;
           const t = ctx.currentTime;
 
-          // โน้ตฐานนุ่มนวล (Warm Mellow Tone) เฟดเข้า 12ms นุ่มนวล ไม่มีเสียงคลิกแหลมกระแทก
+          // จังหวะที่ 1 (ตุบแรก): โทนทุ้มนุ่ม ละมุนหู
           const osc1 = ctx.createOscillator();
           const gain1 = ctx.createGain();
-          osc1.type = 'sine';
-          osc1.frequency.setValueAtTime(480, t);
-          osc1.frequency.exponentialRampToValueAtTime(540, t + 0.08);
+          osc1.type = 'triangle';
+          osc1.frequency.setValueAtTime(260, t);
+          osc1.frequency.exponentialRampToValueAtTime(130, t + 0.035);
 
-          gain1.gain.setValueAtTime(0.001, t);
-          gain1.gain.linearRampToValueAtTime(0.18, t + 0.012);
-          gain1.gain.exponentialRampToValueAtTime(0.001, t + 0.11);
+          gain1.gain.setValueAtTime(0.18, t);
+          gain1.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
 
           osc1.connect(gain1);
           gain1.connect(ctx.destination);
           osc1.start(t);
-          osc1.stop(t + 0.12);
+          osc1.stop(t + 0.04);
 
-          // โน้ตคู่ 5 ละมุน (Harmonic Fifth Shimmer) เพิ่มมิติโปร่ง นุ่มละมุน
+          // จังหวะที่ 2 (ตุบสอง): โทนต่ำลงเล็กน้อย ตามหลัง 0.045 วินาที เป็นเสียง "ตุบๆ" อ่อนนุ่ม
           const osc2 = ctx.createOscillator();
           const gain2 = ctx.createGain();
-          osc2.type = 'sine';
-          osc2.frequency.setValueAtTime(720, t + 0.01);
-          osc2.frequency.exponentialRampToValueAtTime(810, t + 0.08);
+          osc2.type = 'triangle';
+          osc2.frequency.setValueAtTime(210, t + 0.045);
+          osc2.frequency.exponentialRampToValueAtTime(105, t + 0.08);
 
-          gain2.gain.setValueAtTime(0.001, t + 0.01);
-          gain2.gain.linearRampToValueAtTime(0.12, t + 0.022);
-          gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+          gain2.gain.setValueAtTime(0.15, t + 0.045);
+          gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.085);
 
           osc2.connect(gain2);
           gain2.connect(ctx.destination);
-          osc2.start(t + 0.01);
-          osc2.stop(t + 0.13);
+          osc2.start(t + 0.045);
+          osc2.stop(t + 0.085);
         } catch(e) {}
       },
 
@@ -7290,15 +7236,22 @@
       const statusText = document.getElementById('scannerStatusText');
       if (statusText) statusText.textContent = 'ออโต้โฟกัส';
 
+      // ปิด/ยุบแป้นพิมพ์มือถือทันทีเมื่อเปิดโหมดสแกน เพื่อไม่ให้แป้นพิมพ์เด้งขึ้นมาบังหน้ากล้อง
+      if (document.activeElement && typeof document.activeElement.blur === 'function') {
+        document.activeElement.blur();
+      }
       const input = document.getElementById('manualBarcodeInput');
       if (input) {
         input.value = '';
-        setTimeout(() => input.focus(), 300);
+        input.blur();
       }
       await startBarcodeCamera();
     }
 
     function closeBarcodeScannerModal() {
+      if (document.activeElement && typeof document.activeElement.blur === 'function') {
+        document.activeElement.blur();
+      }
       stopBarcodeCamera();
       document.getElementById('modalBarcodeScanner').classList.add('hidden');
     }
