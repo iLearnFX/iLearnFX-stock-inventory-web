@@ -22,10 +22,60 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     @media print {
+      @page {
+        size: A4 portrait;
+        margin: 8mm 10mm;
+      }
       body * { visibility: hidden; }
-      #poPrintArea, #poPrintArea *, #shelfTagPrintArea, #shelfTagPrintArea * { visibility: visible; }
+      #poPrintArea, #poPrintArea *, 
+      #shelfTagPrintArea, #shelfTagPrintArea *,
+      #shelfTagBatchPrintArea, #shelfTagBatchPrintArea * { visibility: visible; }
+      
       #poPrintArea { position: absolute; left: 0; top: 0; width: 100%; }
-      #shelfTagPrintArea { position: absolute; left: 0; top: 0; width: 100%; display: flex !important; justify-content: center; }
+
+      /* สำหรับพิมพ์ป้ายเดี่ยว (ขนาดนามบัตร 1 ใบ) */
+      #shelfTagPrintArea { 
+        position: absolute; 
+        left: 0; 
+        top: 0; 
+        width: 100%; 
+        display: flex !important; 
+        justify-content: flex-start;
+        padding: 10mm; 
+      }
+
+      /* สำหรับพิมพ์ชุดหลายป้ายลงกระดาษ A4 (ตารางนามบัตร 2 คอลัมน์ x 5 แถว = 10 ป้าย/แผ่น) */
+      #shelfTagBatchPrintArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        display: grid !important;
+        grid-template-columns: repeat(2, 88mm);
+        gap: 4mm 6mm;
+        justify-content: center;
+        margin: 0 auto;
+        page-break-inside: auto;
+      }
+
+      .shelf-tag-card {
+        width: 88mm !important;
+        height: 52mm !important;
+        min-width: 88mm !important;
+        max-width: 88mm !important;
+        min-height: 52mm !important;
+        max-height: 52mm !important;
+        box-sizing: border-box !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        border: 1px dashed #94a3b8 !important;
+        border-radius: 6px !important;
+        background: #ffffff !important;
+        color: #0f172a !important;
+        margin: 0 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
     }
   </style>
   <!-- Apple iOS Modern Design System & Spring Animations -->
@@ -312,6 +362,12 @@
               <span>📋</span>
               <span class="hidden sm:inline">เดินนับสต็อก</span>
               <span class="sm:hidden">นับสต็อก</span>
+            </button>
+            <!-- ปุ่มพิมพ์ป้ายติดเชลฟ์รวมหลายรายการ (Batch Shelf Tags Print) -->
+            <button type="button" onclick="openBatchShelfTagModal()" class="px-2.5 sm:px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 active:scale-95 font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-xs transition ios-btn-press" title="พิมพ์ป้ายติดเชลฟ์สินค้าขนาดนามบัตร รวมหลายรายการในแผ่น A4 (10 ป้าย/แผ่น)">
+              <span>🏷️</span>
+              <span class="hidden sm:inline">พิมพ์ป้ายเชลฟ์ (A4)</span>
+              <span class="sm:hidden">ป้ายเชลฟ์</span>
             </button>
           </div>
 
@@ -1785,72 +1841,82 @@
       </div>
 
       <!-- Modal Body (Preview & Controls) -->
-      <div class="p-4 overflow-y-auto space-y-4 flex-1 bg-slate-100/60 flex flex-col items-center">
-        <!-- ป้ายแท็กตัวจริงที่สั่งพิมพ์ได้ (Shelf Tag Print Area) -->
-        <div id="shelfTagPrintArea" class="w-full flex justify-center py-1">
-          <div id="shelfTagCard" class="w-full max-w-[340px] bg-white rounded-2xl border-2 border-slate-300 shadow-md p-3.5 space-y-2.5 transition-all text-slate-800 relative overflow-hidden">
-            <!-- แถบสีประจำหมวดหมู่ด้านบน -->
-            <div id="tagCategoryBar" class="h-1.5 -mx-3.5 -mt-3.5 mb-2 bg-blue-600"></div>
+      <div class="p-4 overflow-y-auto space-y-3.5 flex-1 bg-slate-100/60 flex flex-col items-center">
+        <!-- Toggle Bar between Single Card vs Batch A4 Sheet -->
+        <div class="w-full max-w-[340px] flex items-center justify-between p-1 bg-slate-200/80 rounded-2xl gap-1 text-xs font-bold shadow-2xs">
+          <button type="button" class="flex-1 py-1.5 px-2 rounded-xl bg-white text-blue-700 shadow-xs flex items-center justify-center gap-1">
+            <span>🏷️</span><span>ป้ายเดี่ยวนี้ (1 ใบ)</span>
+          </button>
+          <button type="button" onclick="closeShelfTagModal(); openBatchShelfTagModal();" class="flex-1 py-1.5 px-2 rounded-xl text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1 transition ios-btn-press">
+            <span>📑</span><span>พิมพ์รวม A4 (10 ป้าย)</span>
+          </button>
+        </div>
 
-            <!-- ส่วนหัวป้าย: ชื่อ และ หมวดหมู่ -->
-            <div class="flex items-start justify-between gap-2 border-b border-slate-100 pb-2">
-              <div class="min-w-0 flex-1">
-                <div class="flex items-center gap-1.5">
-                  <span id="tagCategoryBadge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">หมวดหมู่</span>
-                  <span id="tagSkuId" class="text-[10px] font-mono text-slate-400 font-semibold">SKU</span>
-                </div>
-                <h2 id="tagProductName" class="font-black text-base sm:text-lg text-slate-900 leading-tight mt-1 truncate">ชื่อสินค้า</h2>
+        <!-- ป้ายแท็กตัวจริงขนาดนามบัตร (88mm x 52mm) ที่สั่งพิมพ์ได้ -->
+        <div id="shelfTagPrintArea" class="w-full flex justify-center py-1">
+          <div id="shelfTagCard" class="shelf-tag-card relative bg-white p-2.5 rounded-xl border border-dashed border-slate-300 shadow-md flex flex-col justify-between overflow-hidden" style="width: 88mm; height: 52mm; min-width: 88mm; max-width: 88mm; min-height: 52mm; max-height: 52mm; box-sizing: border-box; font-family: 'Prompt', -apple-system, sans-serif;">
+            
+            <!-- แถบสีประจำหมวดหมู่ด้านบน -->
+            <div id="tagCategoryBar" class="h-1 -mx-2.5 -mt-2.5 mb-1.5 bg-blue-600"></div>
+
+            <!-- ส่วนหัวป้าย: หมวดหมู่ + SKU + โลโก้ Ground Cafe -->
+            <div class="flex items-center justify-between border-b border-slate-100 pb-1 -mt-0.5">
+              <div class="flex items-center gap-1 min-w-0">
+                <span id="tagCategoryBadge" class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-blue-50 text-blue-700 border border-blue-200 truncate max-w-[85px]">หมวดหมู่</span>
+                <span id="tagSkuId" class="text-[8.5px] font-mono text-slate-400 font-bold">#SKU</span>
               </div>
-              <div id="tagProductImgBox" class="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center flex-shrink-0 shadow-2xs">
-                <!-- Image or placeholder -->
+              <div class="flex items-center gap-1 flex-shrink-0">
+                <span class="text-[8px] font-bold text-slate-600">Ground Cafe</span>
+                <img src="logo.png" class="w-3.5 h-3.5 object-cover rounded-full" alt="" />
               </div>
             </div>
 
-            <!-- เนื้อหากลางป้าย: QR Code + ข้อมูลการเบิกและ Par -->
-            <div class="flex items-center gap-3 py-1">
-              <!-- กล่อง QR Code คมชัด -->
-              <div class="flex flex-col items-center justify-center p-1.5 bg-white border border-slate-200 rounded-xl shadow-inner flex-shrink-0">
-                <div id="tagQrCodeContainer" class="w-[105px] h-[105px] flex items-center justify-center">
-                  <!-- Generated QR Code Canvas / Image -->
+            <!-- เนื้อหากลางป้าย: รูปภาพสินค้า (22mm) + ข้อมูลชื่อและ Par + QR Code (21mm) -->
+            <div class="flex items-center gap-2 py-0.5 flex-1 min-h-0">
+              <!-- 1. รูปภาพสินค้า -->
+              <div class="flex flex-col items-center flex-shrink-0">
+                <div id="tagProductImgBox" class="w-[22mm] h-[22mm] rounded-lg bg-slate-50 border border-slate-200 overflow-hidden flex items-center justify-center shadow-2xs">
+                  <!-- Product Image -->
                 </div>
-                <span class="text-[8px] font-bold text-slate-500 mt-1 flex items-center gap-0.5">
-                  <span>📱</span><span>สแกนเบิก/รับของ</span>
-                </span>
+                <span class="text-[7.5px] font-bold text-slate-500 mt-0.5">หน่วย: <span id="tagUnitText">-</span></span>
               </div>
 
-              <!-- รายละเอียดการเบิกใช้ & ซัพพลายเออร์ -->
-              <div class="space-y-1.5 text-xs min-w-0 flex-1">
-                <div class="bg-slate-50 p-2 rounded-xl border border-slate-100">
-                  <div class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">หน่วยในการเบิก:</div>
-                  <div id="tagUnitText" class="font-black text-sm text-slate-800 mt-0.5">-</div>
+              <!-- 2. ข้อมูลสินค้า: ชื่อเด่นชัด + จุดสั่งซื้อ (Par) สีแดงเด่นชัด (ไม่แสดงยอดคงเหลือ) -->
+              <div class="flex-1 min-w-0 flex flex-col justify-between h-full py-0.5">
+                <div id="tagProductName" class="font-black text-xs text-slate-900 leading-tight line-clamp-2" title="">
+                  ชื่อสินค้า
                 </div>
 
-                <div class="bg-slate-50 p-2 rounded-xl border border-slate-100">
-                  <div class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">เกณฑ์สั่งซื้อขั้นต่ำ (Par):</div>
-                  <div id="tagMinStockText" class="font-black text-sm text-rose-600 mt-0.5">-</div>
+                <!-- กล่องจุดสั่งซื้อขั้นต่ำ (Par) -->
+                <div class="bg-rose-50 border border-rose-200 px-1.5 py-0.5 rounded flex items-center justify-between">
+                  <span class="text-[7.5px] font-bold text-rose-800 uppercase tracking-tight">เกณฑ์สั่งซื้อ (Par):</span>
+                  <span id="tagMinStockText" class="text-[10.5px] font-black text-rose-600">-</span>
                 </div>
 
-                <div class="text-[10px] text-slate-400 truncate">
-                  <span>🏢 ร้านค้า: </span><span id="tagSupplierText" class="font-semibold text-slate-700">-</span>
+                <div class="text-[7.5px] text-slate-400 truncate">
+                  <span>ร้าน: </span><span id="tagSupplierText" class="font-semibold text-slate-600">-</span>
                 </div>
+              </div>
+
+              <!-- 3. QR Code คมชัด -->
+              <div class="flex flex-col items-center flex-shrink-0">
+                <div class="w-[21mm] h-[21mm] bg-white border border-slate-200 rounded-lg p-0.5 shadow-2xs flex items-center justify-center overflow-hidden">
+                  <div id="tagQrCodeContainer" class="w-full h-full flex items-center justify-center"></div>
+                </div>
+                <span class="text-[7px] font-bold text-slate-500 mt-0.5">📱 สแกนเบิก/รับ</span>
               </div>
             </div>
 
             <!-- ท้ายป้าย: Footer ข้อความของร้าน -->
-            <div class="pt-1.5 border-t border-slate-100 flex items-center justify-between text-[9px] text-slate-400 font-medium">
-              <span class="flex items-center gap-1.5 font-semibold text-slate-700">
-                <span class="w-4 h-4 inline-block rounded-full bg-white border border-slate-200 overflow-hidden shadow-2xs">
-                  <img src="logo.png" class="w-full h-full object-cover rounded-full" alt="Ground Cafe" />
-                </span>
-                <span>Ground Cafe • Smart Inventory</span>
-              </span>
+            <div class="pt-1 border-t border-slate-100 flex items-center justify-between text-[7px] text-slate-400 font-medium">
+              <span>Ground Cafe • Shelf Tag</span>
               <span class="text-blue-600 font-bold">Scan to Action</span>
             </div>
           </div>
         </div>
 
         <div class="text-center text-[11px] text-slate-500 max-w-xs space-y-1">
-          <p>💡 <strong>วิธีใช้งาน:</strong> ปริ้นท์ป้ายนี้ไปแปะที่เชลฟ์วางของ พนักงานสามารถใช้<strong>กล้องสแกนในแอป</strong> หรือ <strong>กล้องมือถือทั่วไป</strong> ส่องป้ายแล้วจะเด้งเข้าหน้าเบิก/รับของตัวนี้ได้ทันที!</p>
+          <p>💡 ขนาดนามบัตรมาตรฐาน (88 x 52 มม.) ติดพอดีหน้าเชลฟ์ ไม่ระบุยอดคงเหลือเพื่อให้ป้ายไม่หมดอายุ และแสดงรูปภาพชัดเจน</p>
         </div>
       </div>
 
@@ -1875,6 +1941,87 @@
       </div>
     </div>
   </div>
+
+  <!-- MODAL พิมพ์ป้ายติดเชลฟ์สินค้าแบบรวมหลายรายการ (Batch Shelf Tags Print - 10 ป้าย/แผ่น A4) -->
+  <div id="modalBatchShelfTag" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[85] flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white w-full sm:max-w-2xl lg:max-w-3xl rounded-t-[32px] sm:rounded-[28px] shadow-2xl border border-slate-200/80 overflow-hidden max-h-[92vh] flex flex-col ios-sheet-anim">
+      <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto my-2 sm:hidden flex-shrink-0"></div>
+
+      <!-- Header -->
+      <div class="bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-700 text-white p-4 flex items-center justify-between flex-shrink-0">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-2xl bg-white/20 text-white flex items-center justify-center text-xl flex-shrink-0 shadow-inner">
+            🏷️
+          </div>
+          <div>
+            <h3 class="font-bold text-base sm:text-lg text-white leading-tight">พิมพ์ป้ายติดเชลฟ์สินค้า (ชุดรวมแผ่น A4)</h3>
+            <p class="text-[11px] text-blue-100">ขนาดนามบัตรมาตรฐาน (88 x 52 มม.) 10 ป้ายต่อแผ่น A4 พร้อมรูปภาพ เกณฑ์สั่งซื้อ (Par) และ QR Code</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeBatchShelfTagModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition active:scale-90">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Controls & Quick Filters -->
+      <div class="p-3 sm:p-4 bg-slate-50 border-b border-slate-200 space-y-2.5 flex-shrink-0">
+        <!-- แถวปุ่มเลือกด่วน -->
+        <div class="flex items-center justify-between gap-2 flex-wrap text-xs">
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <button type="button" onclick="selectAllBatchTags(true)" class="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold rounded-xl shadow-xs transition ios-btn-press">
+              ✓ เลือกทั้งหมด
+            </button>
+            <button type="button" onclick="selectLowStockBatchTags()" class="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold rounded-xl active:scale-95 transition ios-btn-press">
+              ⚠️ เฉพาะของใกล้หมด
+            </button>
+            <button type="button" onclick="selectAllBatchTags(false)" class="px-2.5 py-1.5 bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 font-medium rounded-xl active:scale-95 transition ios-btn-press">
+              ล้างการเลือก
+            </button>
+          </div>
+
+          <!-- ตัวกรองตามหมวดหมู่ -->
+          <div class="flex items-center gap-1.5">
+            <span class="text-slate-500 font-medium text-[11px] hidden sm:inline">หมวดหมู่:</span>
+            <select id="batchTagCategoryFilter" onchange="renderBatchTagProductList()" class="bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="ALL">ทุกหมวดหมู่</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- แถบสรุปจำนวนป้ายและจำนวนแผ่น A4 -->
+        <div class="flex items-center justify-between px-3 py-2 bg-blue-50/70 border border-blue-200/80 rounded-xl text-xs font-medium text-blue-900">
+          <div class="flex items-center gap-2">
+            <span>📊 กำลังเลือก:</span>
+            <strong id="batchTagSummaryText" class="font-black text-blue-700">0 รายการ</strong>
+          </div>
+          <div class="flex items-center gap-1.5 text-[11px] text-blue-800">
+            <span>📄 ใช้กระดาษ A4:</span>
+            <span id="batchTagSheetEstimate" class="font-bold bg-white px-2 py-0.5 rounded-full border border-blue-200 shadow-2xs">0 แผ่น</span>
+            <span class="text-slate-400 text-[10px] hidden sm:inline">(10 ป้าย / 1 แผ่น)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- รายการสินค้าให้ติ๊กเลือก (Grid รายการสินค้าพร้อมรูปภาพ) -->
+      <div id="batchTagProductList" class="p-3 sm:p-4 overflow-y-auto flex-1 max-h-[48vh] grid grid-cols-1 sm:grid-cols-2 gap-2 bg-slate-100/60">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Footer Buttons -->
+      <div class="p-3 sm:p-4 bg-white border-t border-slate-200 flex items-center justify-between gap-3 flex-shrink-0">
+        <button type="button" onclick="closeBatchShelfTagModal()" class="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-bold hover:bg-slate-50 transition active:scale-95">
+          ปิด
+        </button>
+        <button type="button" onclick="executeBatchShelfTagPrint()" id="btnExecuteBatchPrint" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-xs sm:text-sm font-bold shadow-md transition flex items-center gap-2 active:scale-95 ios-btn-press">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+          <span id="batchPrintBtnText">สั่งพิมพ์ป้ายเชลฟ์ (0 รายการ)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BATCH PRINT CONTAINER (สำหรับพิมพ์ลงกระดาษ A4 อัตโนมัติ - 10 ป้าย/แผ่น) -->
+  <div id="shelfTagBatchPrintArea" class="hidden"></div>
 
   <!-- CATEGORY MANAGEMENT & COLOR PICKER MODAL: จัดการและเพิ่มหมวดหมู่พร้อมกำหนดสีเอง -->
   <div id="modalCategoryManage" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
@@ -2213,7 +2360,7 @@
         } catch(e) {}
       },
 
-      // 8. สลับแท็บ / เมนู: เสียง "ตุบๆ" สองจังหวะนุ่มนวล สไตล์สัมผัสแป้นแทคไทล์ ฟังสบาย ไม่ซ้ำกับเลือกจำนวน
+      // 8. สลับแท็บ / เมนู: เสียงดีดสายกีตาร์โปร่ง (Acoustic Guitar String Pluck) สั้น นุ่มกระชับ ฟังสบาย
       playTab() {
         if (!this.enabled) return;
         try {
@@ -2221,35 +2368,55 @@
           if (!ctx) return;
           const t = ctx.currentTime;
 
-          // จังหวะที่ 1 (ตุบแรก): โทนทุ้มนุ่ม ละมุนหู
-          const osc1 = ctx.createOscillator();
-          const gain1 = ctx.createGain();
-          osc1.type = 'triangle';
-          osc1.frequency.setValueAtTime(260, t);
-          osc1.frequency.exponentialRampToValueAtTime(130, t + 0.035);
+          // 1. หัวเสียงการสะกิดสายกีตาร์ (Plectrum / Fingernail Attack) สั้นคม 8ms
+          const pickOsc = ctx.createOscillator();
+          const pickGain = ctx.createGain();
+          pickOsc.type = 'triangle';
+          pickOsc.frequency.setValueAtTime(1400, t);
+          pickOsc.frequency.exponentialRampToValueAtTime(380, t + 0.012);
+          pickGain.gain.setValueAtTime(0.12, t);
+          pickGain.gain.exponentialRampToValueAtTime(0.001, t + 0.015);
+          pickOsc.connect(pickGain);
+          pickGain.connect(ctx.destination);
+          pickOsc.start(t);
+          pickOsc.stop(t + 0.016);
 
-          gain1.gain.setValueAtTime(0.18, t);
-          gain1.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
+          // 2. โน้ตสายกีตาร์โปร่งหลัก (String Fundamental D4 ~294Hz) สั่นนุ่มกระชับ
+          const stringOsc = ctx.createOscillator();
+          const stringGain = ctx.createGain();
+          stringOsc.type = 'triangle';
+          stringOsc.frequency.setValueAtTime(294, t);
+          stringOsc.frequency.exponentialRampToValueAtTime(288, t + 0.09);
+          stringGain.gain.setValueAtTime(0.24, t);
+          stringGain.gain.exponentialRampToValueAtTime(0.001, t + 0.095);
+          stringOsc.connect(stringGain);
+          stringGain.connect(ctx.destination);
+          stringOsc.start(t);
+          stringOsc.stop(t + 0.10);
 
-          osc1.connect(gain1);
-          gain1.connect(ctx.destination);
-          osc1.start(t);
-          osc1.stop(t + 0.04);
+          // 3. ฮาร์โมนิกคู่แปดของสาย (Acoustic Overtones ~588Hz) เพิ่มความก้องกังวานแบบสายกีตาร์จริง
+          const harmOsc = ctx.createOscillator();
+          const harmGain = ctx.createGain();
+          harmOsc.type = 'sine';
+          harmOsc.frequency.setValueAtTime(588, t);
+          harmGain.gain.setValueAtTime(0.14, t);
+          harmGain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+          harmOsc.connect(harmGain);
+          harmGain.connect(ctx.destination);
+          harmOsc.start(t);
+          harmOsc.stop(t + 0.055);
 
-          // จังหวะที่ 2 (ตุบสอง): โทนต่ำลงเล็กน้อย ตามหลัง 0.045 วินาที เป็นเสียง "ตุบๆ" อ่อนนุ่ม
-          const osc2 = ctx.createOscillator();
-          const gain2 = ctx.createGain();
-          osc2.type = 'triangle';
-          osc2.frequency.setValueAtTime(210, t + 0.045);
-          osc2.frequency.exponentialRampToValueAtTime(105, t + 0.08);
-
-          gain2.gain.setValueAtTime(0.15, t + 0.045);
-          gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.085);
-
-          osc2.connect(gain2);
-          gain2.connect(ctx.destination);
-          osc2.start(t + 0.045);
-          osc2.stop(t + 0.085);
+          // 4. เสียงสะท้อนกล่องไม้ของตัวกีตาร์ (Wooden Soundboard Body Resonance ~145Hz)
+          const bodyOsc = ctx.createOscillator();
+          const bodyGain = ctx.createGain();
+          bodyOsc.type = 'sine';
+          bodyOsc.frequency.setValueAtTime(145, t);
+          bodyGain.gain.setValueAtTime(0.12, t);
+          bodyGain.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
+          bodyOsc.connect(bodyGain);
+          bodyGain.connect(ctx.destination);
+          bodyOsc.start(t);
+          bodyOsc.stop(t + 0.075);
         } catch(e) {}
       },
 
@@ -7791,19 +7958,20 @@
         catBar.style.backgroundColor = colorData.hex;
       }
       if (skuIdEl) skuIdEl.textContent = prod.id ? `#${prod.id}` : '#SKU';
-      if (unitEl) unitEl.textContent = `${prod.unit || 'หน่วย'} (คงเหลือปัจจุบัน ${prod.currentBalance} ${prod.unit || ''})`;
-      if (minStockEl) minStockEl.textContent = `${prod.minStock || 0} ${prod.unit || 'หน่วย'}`;
-      if (supEl) supEl.textContent = prod.supplier || 'ซัพพลายเออร์ทั่วไป';
+      // แสดงเฉพาะหน่วยนับ ไม่แสดงคงเหลือปัจจุบันตามคำขอ
+      if (unitEl) unitEl.textContent = prod.unit || '-';
+      if (minStockEl) minStockEl.textContent = `${prod.minStock || 0} ${prod.unit || ''}`;
+      if (supEl) supEl.textContent = prod.supplier || 'ทั่วไป';
 
       if (imgBox) {
         if (prod.imageUrl) {
           imgBox.innerHTML = `<img src="${prod.imageUrl}" class="w-full h-full object-cover" alt="" />`;
         } else {
-          imgBox.innerHTML = `<span class="text-xl font-bold text-slate-400">${prod.name.slice(0, 1)}</span>`;
+          imgBox.innerHTML = `<span class="text-xs font-bold text-slate-400">${prod.name.slice(0, 1)}</span>`;
         }
       }
 
-      // สร้าง QR Code ด้วย QRCode.js หรือ Fallback เป็น Google Chart QR API
+      // สร้าง QR Code ด้วย QRCode.js หรือ Fallback เป็น Google Chart QR API ขนาดพอดีนามบัตร (72x72)
       const qrContainer = document.getElementById('tagQrCodeContainer');
       if (qrContainer) {
         qrContainer.innerHTML = '';
@@ -7813,17 +7981,17 @@
           try {
             qrCodeInstance = new QRCode(qrContainer, {
               text: scanUrl,
-              width: 105,
-              height: 105,
+              width: 72,
+              height: 72,
               colorDark: '#0f172a',
               colorLight: '#ffffff',
               correctLevel: QRCode.CorrectLevel.M
             });
           } catch(e) {
-            qrContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=105x105&data=${encodeURIComponent(scanUrl)}" class="w-full h-full object-contain" alt="QR Code" />`;
+            qrContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=72x72&data=${encodeURIComponent(scanUrl)}" class="w-full h-full object-contain" alt="QR Code" />`;
           }
         } else {
-          qrContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=105x105&data=${encodeURIComponent(scanUrl)}" class="w-full h-full object-contain" alt="QR Code" />`;
+          qrContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=72x72&data=${encodeURIComponent(scanUrl)}" class="w-full h-full object-contain" alt="QR Code" />`;
         }
       }
 
@@ -7867,7 +8035,7 @@
         link.download = `ShelfTag_${(currentShelfTagProduct?.name || 'SKU').replace(/[^a-zA-Z0-9ก-๙]/g, '_')}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
-        showAlert('✓ ดาวน์โหลดรูปป้ายสำหรับพิมพ์เรียบร้อยแล้ว', 'success');
+        showAlert('✓ ดาวน์โหลดรูปป้ายขนาดนามบัตรเรียบร้อยแล้ว', 'success');
       } catch(err) {
         console.warn('Tag export error:', err);
         alert('เกิดข้อผิดพลาดในการดาวน์โหลดรูปภาพ กรุณาลองใช้ปุ่มสั่งพิมพ์แทน');
@@ -7878,8 +8046,266 @@
     }
 
     function printShelfTag() {
+      // ล้างพื้นที่พิมพ์ชุด เพื่อให้พิมพ์เฉพาะป้ายเดี่ยวใบนี้
+      const batchArea = document.getElementById('shelfTagBatchPrintArea');
+      if (batchArea) batchArea.innerHTML = '';
       window.print();
     }
+
+    // =========================================
+    // ระบบพิมพ์ป้ายติดเชลฟ์สินค้าแบบรวมหลายรายการลงแผ่น A4 (10 ป้าย/แผ่น)
+    // =========================================
+    let selectedBatchTagProducts = new Set();
+
+    function openBatchShelfTagModal() {
+      const modal = document.getElementById('modalBatchShelfTag');
+      if (!modal) return;
+
+      // เริ่มต้น: ติ๊กเลือกสินค้าทั้งหมด หรือคงค่าเดิมที่เลือกไว้
+      if (selectedBatchTagProducts.size === 0 && state.products.length > 0) {
+        state.products.forEach(p => selectedBatchTagProducts.add(p.name));
+      }
+
+      // อัปเดตตัวเลือกหมวดหมู่ใน Dropdown
+      const catSelect = document.getElementById('batchTagCategoryFilter');
+      if (catSelect) {
+        let optHtml = '<option value="ALL">ทุกหมวดหมู่ (ทั้งหมด)</option>';
+        state.categories.forEach(c => {
+          optHtml += `<option value="${c.name}">${c.name}</option>`;
+        });
+        catSelect.innerHTML = optHtml;
+      }
+
+      renderBatchTagProductList();
+      modal.classList.remove('hidden');
+    }
+
+    function closeBatchShelfTagModal() {
+      document.getElementById('modalBatchShelfTag')?.classList.add('hidden');
+    }
+
+    function selectAllBatchTags(selectAll = true) {
+      if (selectAll) {
+        const catFilter = document.getElementById('batchTagCategoryFilter')?.value || 'ALL';
+        const filteredProds = catFilter === 'ALL' ? state.products : state.products.filter(p => p.category === catFilter);
+        filteredProds.forEach(p => selectedBatchTagProducts.add(p.name));
+      } else {
+        selectedBatchTagProducts.clear();
+      }
+      renderBatchTagProductList();
+    }
+
+    function selectLowStockBatchTags() {
+      selectedBatchTagProducts.clear();
+      state.products.filter(p => Number(p.currentBalance) <= Number(p.minStock)).forEach(p => {
+        selectedBatchTagProducts.add(p.name);
+      });
+      renderBatchTagProductList();
+    }
+
+    function toggleBatchTagProduct(productName) {
+      if (selectedBatchTagProducts.has(productName)) {
+        selectedBatchTagProducts.delete(productName);
+      } else {
+        selectedBatchTagProducts.add(productName);
+      }
+      updateBatchTagSummary();
+    }
+
+    function updateBatchTagSummary() {
+      const totalCount = state.products.length;
+      const selCount = selectedBatchTagProducts.size;
+      const sheetEstimate = Math.ceil(selCount / 10);
+
+      const summaryText = document.getElementById('batchTagSummaryText');
+      if (summaryText) summaryText.textContent = `${selCount} / ${totalCount} รายการ`;
+
+      const sheetText = document.getElementById('batchTagSheetEstimate');
+      if (sheetText) sheetText.textContent = `${sheetEstimate} แผ่น`;
+
+      const btnText = document.getElementById('batchPrintBtnText');
+      if (btnText) btnText.textContent = `สั่งพิมพ์ป้ายเชลฟ์ (${selCount} รายการ / ${sheetEstimate} แผ่น A4)`;
+
+      const btn = document.getElementById('btnExecuteBatchPrint');
+      if (btn) {
+        btn.disabled = selCount === 0;
+        btn.classList.toggle('opacity-50', selCount === 0);
+      }
+    }
+
+    function renderBatchTagProductList() {
+      const container = document.getElementById('batchTagProductList');
+      if (!container) return;
+
+      const catFilter = document.getElementById('batchTagCategoryFilter')?.value || 'ALL';
+      const filtered = catFilter === 'ALL' ? state.products : state.products.filter(p => p.category === catFilter);
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="col-span-2 py-8 text-center text-xs text-slate-400">ไม่พบสินค้าในหมวดหมู่นี้</div>`;
+        updateBatchTagSummary();
+        return;
+      }
+
+      container.innerHTML = filtered.map(prod => {
+        const isChecked = selectedBatchTagProducts.has(prod.name);
+        const colorData = getCategoryColorData(prod.category);
+        const isLow = Number(prod.currentBalance) <= Number(prod.minStock);
+
+        return `
+          <div onclick="toggleBatchTagProduct('${prod.name.replace(/'/g, "\\'")}')" 
+               class="p-2.5 rounded-xl border transition cursor-pointer flex items-center gap-2.5 active:scale-98 select-none ${
+                 isChecked ? 'bg-white border-blue-500 ring-2 ring-blue-200 shadow-xs' : 'bg-white/80 border-slate-200 hover:border-slate-300 opacity-70'
+               }">
+            <input type="checkbox" ${isChecked ? 'checked' : ''} 
+                   onclick="event.stopPropagation(); toggleBatchTagProduct('${prod.name.replace(/'/g, "\\'")}')"
+                   class="w-4 h-4 text-blue-600 rounded cursor-pointer accent-blue-600 flex-shrink-0" />
+            
+            <div class="w-10 h-10 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center flex-shrink-0">
+              ${prod.imageUrl ? `<img src="${prod.imageUrl}" class="w-full h-full object-cover" alt="" />` : `<span class="text-xs font-bold text-slate-400">${prod.name.slice(0, 1)}</span>`}
+            </div>
+
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-1">
+                <span class="px-1.5 py-0.2 rounded text-[9px] font-bold truncate max-w-[80px]" style="${colorData.badgeStyle}">
+                  ${prod.category || 'ทั่วไป'}
+                </span>
+                ${isLow ? '<span class="text-[9px] font-bold text-rose-600 bg-rose-50 px-1 py-0.2 rounded">⚠️ ใกล้หมด</span>' : ''}
+              </div>
+              <div class="font-bold text-xs text-slate-800 truncate mt-0.5">${prod.name}</div>
+              <div class="text-[10px] text-slate-500 flex items-center gap-2 mt-0.5">
+                <span>เกณฑ์ Par: <strong class="text-rose-600">${prod.minStock || 0} ${prod.unit || ''}</strong></span>
+                <span class="text-slate-300">•</span>
+                <span class="truncate">${prod.supplier || 'ทั่วไป'}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      updateBatchTagSummary();
+    }
+
+    async function executeBatchShelfTagPrint() {
+      const selected = Array.from(selectedBatchTagProducts);
+      if (selected.length === 0) {
+        showAlert('กรุณาเลือกสินค้าอย่างน้อย 1 รายการเพื่อสั่งพิมพ์ป้าย', 'error');
+        return;
+      }
+
+      const productsToPrint = selected.map(name => state.products.find(p => p.name === name)).filter(Boolean);
+
+      const printArea = document.getElementById('shelfTagBatchPrintArea');
+      if (!printArea) return;
+      printArea.innerHTML = '';
+
+      productsToPrint.forEach((prod, idx) => {
+        const colorData = getCategoryColorData(prod.category);
+        const cardHtml = `
+          <div class="shelf-tag-card relative bg-white p-2.5 rounded-lg border border-dashed border-slate-400 flex flex-col justify-between overflow-hidden" 
+               style="width: 88mm; height: 52mm; min-width: 88mm; max-width: 88mm; min-height: 52mm; max-height: 52mm; box-sizing: border-box; font-family: 'Prompt', -apple-system, sans-serif;">
+            
+            <!-- Category Top Color Stripe -->
+            <div class="h-1 -mx-2.5 -mt-2.5 mb-1.5" style="background-color: ${colorData.hex};"></div>
+
+            <!-- Header: Category + SKU + Logo -->
+            <div class="flex items-center justify-between border-b border-slate-100 pb-1 -mt-0.5">
+              <div class="flex items-center gap-1 min-w-0">
+                <span class="px-1.5 py-0.2 rounded text-[8.5px] font-bold truncate max-w-[85px]" style="${colorData.badgeStyle}">
+                  ${prod.category || 'ทั่วไป'}
+                </span>
+                <span class="text-[8px] font-mono text-slate-400 font-bold">
+                  ${prod.id ? `#${prod.id}` : '#SKU'}
+                </span>
+              </div>
+              <div class="flex items-center gap-1 flex-shrink-0">
+                <span class="text-[7.5px] font-bold text-slate-600">Ground Cafe</span>
+                <img src="logo.png" class="w-3.5 h-3.5 object-cover rounded-full" alt="" />
+              </div>
+            </div>
+
+            <!-- Body: Product Photo + Info + QR Code -->
+            <div class="flex items-center gap-2 py-0.5 flex-1 min-h-0">
+              <!-- Photo -->
+              <div class="flex flex-col items-center flex-shrink-0">
+                <div class="w-[21mm] h-[21mm] rounded-lg bg-slate-50 border border-slate-200 overflow-hidden flex items-center justify-center shadow-2xs">
+                  ${prod.imageUrl ? `<img src="${prod.imageUrl}" class="w-full h-full object-cover" alt="" />` : `<span class="text-xs font-bold text-slate-400">${prod.name.slice(0, 1)}</span>`}
+                </div>
+                <span class="text-[7.5px] font-bold text-slate-600 mt-0.5 truncate max-w-[21mm]">หน่วย: ${prod.unit || '-'}</span>
+              </div>
+
+              <!-- Center Info: ไม่แสดงยอดคงเหลือ แสดงเฉพาะเกณฑ์ Par ที่จำเป็น -->
+              <div class="flex-1 min-w-0 flex flex-col justify-between h-full py-0.5">
+                <div class="font-black text-xs text-slate-900 leading-tight line-clamp-2" title="${prod.name}">
+                  ${prod.name}
+                </div>
+
+                <!-- Par Stock Box -->
+                <div class="bg-rose-50 border border-rose-200 px-1.5 py-0.5 rounded flex items-center justify-between">
+                  <span class="text-[7px] font-bold text-rose-800 uppercase tracking-tight">เกณฑ์สั่งซื้อ (Par):</span>
+                  <span class="text-[10.5px] font-black text-rose-600">${prod.minStock || 0} ${prod.unit || ''}</span>
+                </div>
+
+                <div class="text-[7px] text-slate-400 truncate">
+                  <span>ร้าน: </span><span class="font-semibold text-slate-600">${prod.supplier || 'ทั่วไป'}</span>
+                </div>
+              </div>
+
+              <!-- QR Code -->
+              <div class="flex flex-col items-center flex-shrink-0">
+                <div class="w-[21mm] h-[21mm] bg-white border border-slate-200 rounded-lg p-0.5 shadow-2xs flex items-center justify-center overflow-hidden">
+                  <div id="batchQr_${idx}" class="w-full h-full flex items-center justify-center"></div>
+                </div>
+                <span class="text-[6.5px] font-bold text-slate-500 mt-0.5">📱 สแกนเบิก/รับ</span>
+              </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="pt-0.5 border-t border-slate-100 flex items-center justify-between text-[6.5px] text-slate-400 font-medium">
+              <span>Ground Cafe • Shelf Tag</span>
+              <span class="text-blue-600 font-bold">Scan to Action</span>
+            </div>
+          </div>
+        `;
+
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = cardHtml;
+        printArea.appendChild(wrapper.firstElementChild);
+      });
+
+      // สร้าง QR Code ขนาดคมชัดสำหรับแต่ละป้าย
+      productsToPrint.forEach((prod, idx) => {
+        const qrEl = document.getElementById(`batchQr_${idx}`);
+        if (!qrEl) return;
+        const scanUrl = getProductScanUrl(prod);
+        qrEl.innerHTML = '';
+        if (typeof QRCode !== 'undefined') {
+          try {
+            new QRCode(qrEl, {
+              text: scanUrl,
+              width: 72,
+              height: 72,
+              colorDark: '#0f172a',
+              colorLight: '#ffffff',
+              correctLevel: QRCode.CorrectLevel.M
+            });
+          } catch(e) {
+            qrEl.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=72x72&data=${encodeURIComponent(scanUrl)}" class="w-full h-full object-contain" alt="QR" />`;
+          }
+        } else {
+          qrEl.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=72x72&data=${encodeURIComponent(scanUrl)}" class="w-full h-full object-contain" alt="QR" />`;
+        }
+      });
+
+      // ปิด Modal ทั้งสองตัวเพื่อไม่ให้บล็อกการแสดงผลหน้าต่าง Print ของเบราว์เซอร์
+      document.getElementById('modalBatchShelfTag')?.classList.add('hidden');
+      document.getElementById('modalShelfTag')?.classList.add('hidden');
+
+      // รอให้ QR Code เรนเดอร์ลงใน DOM เสร็จสิ้น 350ms แล้วเปิดกล่องสั่งพิมพ์
+      setTimeout(() => {
+        window.print();
+      }, 350);
+    }
+
 
     // ฟังก์ชันตรวจสอบ Deep-linking จาก URL เมื่อสแกนด้วยกล้องมือถือทั่วไป
     function checkUrlQueryParams() {
