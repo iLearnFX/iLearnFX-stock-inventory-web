@@ -4,7 +4,23 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Ground Cafe - ระบบจัดการสต็อกและวัตถุดิบ</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Ccircle cx='256' cy='256' r='236' fill='%23FFFFFF'/%3E%3Cg fill='%2318181B'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M 256,136 C 318,136 362,170 362,220 C 362,254 338,280 302,294 C 336,308 356,334 356,366 C 356,416 310,446 250,446 C 190,446 150,412 150,366 L 182,366 C 182,396 210,418 250,418 C 292,418 324,394 324,366 C 324,336 290,316 238,316 C 218,316 202,318 188,322 L 180,296 C 196,292 214,290 232,290 C 240,290 248,290 256,292 C 278,286 292,274 298,256 C 270,266 236,266 208,256 C 174,244 152,222 152,190 C 152,158 190,136 256,136 Z M 256,166 C 210,166 182,182 182,206 C 182,230 210,246 256,246 C 302,246 330,230 330,206 C 330,182 302,166 256,166 Z'/%3E%3Cg transform='translate(354, 130) rotate(42)'%3E%3Cpath d='M 0,-30 C -20,-24 -26,-8 -26,0 C -26,12 -18,26 0,30 C -4,18 -7,6 -2,0 C 3,-6 5,-18 0,-30 Z'/%3E%3Cpath d='M 6,-28 C 11,-18 9,-6 4,0 C 0,6 3,18 6,28 C 22,24 30,12 30,0 C 30,-10 22,-24 6,-28 Z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E" />
+  <link rel="icon" id="appFavicon" type="image/png" href="logo.png" />
+  <script>
+    (function(){
+      const fav = document.getElementById('appFavicon');
+      if (fav) {
+        const testImg = new Image();
+        testImg.onload = () => { fav.href = '9184.jpg'; };
+        testImg.onerror = () => {
+          const testPng = new Image();
+          testPng.onload = () => { fav.href = 'logo.png'; };
+          testPng.onerror = () => { fav.href = 'logo.svg'; };
+          testPng.src = 'logo.png';
+        };
+        testImg.src = '9184.jpg';
+      }
+    })();
+  </script>
   <!-- Tailwind CSS & Google Fonts -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -153,18 +169,24 @@
   <header class="bg-blue-600 text-white shadow-md sticky top-0 z-30">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
       <div class="flex items-center gap-2.5">
-        <!-- Ground Cafe Brand Logo (Vector SVG High-Def) -->
-        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-white p-0.5 shadow-md shadow-blue-900/30 flex-shrink-0 flex items-center justify-center overflow-hidden border border-white/50 ring-2 ring-white/20 transition transform active:scale-95" title="Ground Cafe">
-          <svg class="w-full h-full" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="256" cy="256" r="236" fill="#FFFFFF"/>
-            <g fill="#18181B">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M 256,136 C 318,136 362,170 362,220 C 362,254 338,280 302,294 C 336,308 356,334 356,366 C 356,416 310,446 250,446 C 190,446 150,412 150,366 L 182,366 C 182,396 210,418 250,418 C 292,418 324,394 324,366 C 324,336 290,316 238,316 C 218,316 202,318 188,322 L 180,296 C 196,292 214,290 232,290 C 240,290 248,290 256,292 C 278,286 292,274 298,256 C 270,266 236,266 208,256 C 174,244 152,222 152,190 C 152,158 190,136 256,136 Z M 256,166 C 210,166 182,182 182,206 C 182,230 210,246 256,246 C 302,246 330,230 330,206 C 330,182 302,166 256,166 Z"/>
-              <g transform="translate(354, 130) rotate(42)">
-                <path d="M 0,-30 C -20,-24 -26,-8 -26,0 C -26,12 -18,26 0,30 C -4,18 -7,6 -2,0 C 3,-6 5,-18 0,-30 Z"/>
-                <path d="M 6,-28 C 11,-18 9,-6 4,0 C 0,6 3,18 6,28 C 22,24 30,12 30,0 C 30,-10 22,-24 6,-28 Z"/>
+        <!-- Ground Cafe Official Logo (Loads 9184.jpg / logo.png with fallback) -->
+        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white p-0.5 shadow-md shadow-blue-900/30 flex-shrink-0 flex items-center justify-center overflow-hidden border-2 border-white/60 ring-2 ring-white/20 transition transform active:scale-95" title="Ground Cafe">
+          <img src="logo.png" 
+               onerror="if(!this.dataset.step){this.dataset.step='1';this.src='9184.jpg';}else if(this.dataset.step==='1'){this.dataset.step='2';this.src='logo.jpg';}else{this.style.display='none';const fb=this.nextElementSibling;if(fb)fb.classList.remove('hidden');}" 
+               class="w-full h-full object-cover rounded-full" 
+               alt="Ground Cafe" />
+          <div class="hidden w-full h-full flex items-center justify-center">
+            <svg class="w-full h-full" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="256" cy="256" r="236" fill="#FFFFFF"/>
+              <g fill="#18181B">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M 256,136 C 318,136 362,170 362,220 C 362,254 338,280 302,294 C 336,308 356,334 356,366 C 356,416 310,446 250,446 C 190,446 150,412 150,366 L 182,366 C 182,396 210,418 250,418 C 292,418 324,394 324,366 C 324,336 290,316 238,316 C 218,316 202,318 188,322 L 180,296 C 196,292 214,290 232,290 C 240,290 248,290 256,292 C 278,286 292,274 298,256 C 270,266 236,266 208,256 C 174,244 152,222 152,190 C 152,158 190,136 256,136 Z M 256,166 C 210,166 182,182 182,206 C 182,230 210,246 256,246 C 302,246 330,230 330,206 C 330,182 302,166 256,166 Z"/>
+                <g transform="translate(354, 130) rotate(42)">
+                  <path d="M 0,-30 C -20,-24 -26,-8 -26,0 C -26,12 -18,26 0,30 C -4,18 -7,6 -2,0 C 3,-6 5,-18 0,-30 Z"/>
+                  <path d="M 6,-28 C 11,-18 9,-6 4,0 C 0,6 3,18 6,28 C 22,24 30,12 30,0 C 30,-10 22,-24 6,-28 Z"/>
+                </g>
               </g>
-            </g>
-          </svg>
+            </svg>
+          </div>
         </div>
         <div>
           <h1 class="font-bold text-base sm:text-xl leading-tight flex items-center gap-1.5">
@@ -1187,17 +1209,23 @@
               <!-- PO Header -->
               <div class="flex items-start justify-between border-b-2 border-slate-800 pb-3">
                 <div class="flex items-center gap-3">
-                  <div class="w-12 h-12 rounded-2xl bg-white p-0.5 border-2 border-slate-800 flex items-center justify-center flex-shrink-0 shadow-xs overflow-hidden">
-                    <svg class="w-full h-full" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <circle cx="256" cy="256" r="236" fill="#FFFFFF"/>
-                      <g fill="#18181B">
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M 256,136 C 318,136 362,170 362,220 C 362,254 338,280 302,294 C 336,308 356,334 356,366 C 356,416 310,446 250,446 C 190,446 150,412 150,366 L 182,366 C 182,396 210,418 250,418 C 292,418 324,394 324,366 C 324,336 290,316 238,316 C 218,316 202,318 188,322 L 180,296 C 196,292 214,290 232,290 C 240,290 248,290 256,292 C 278,286 292,274 298,256 C 270,266 236,266 208,256 C 174,244 152,222 152,190 C 152,158 190,136 256,136 Z M 256,166 C 210,166 182,182 182,206 C 182,230 210,246 256,246 C 302,246 330,230 330,206 C 330,182 302,166 256,166 Z"/>
-                        <g transform="translate(354, 130) rotate(42)">
-                          <path d="M 0,-30 C -20,-24 -26,-8 -26,0 C -26,12 -18,26 0,30 C -4,18 -7,6 -2,0 C 3,-6 5,-18 0,-30 Z"/>
-                          <path d="M 6,-28 C 11,-18 9,-6 4,0 C 0,6 3,18 6,28 C 22,24 30,12 30,0 C 30,-10 22,-24 6,-28 Z"/>
+                  <div class="w-12 h-12 rounded-full bg-white p-0.5 border-2 border-slate-800 flex items-center justify-center flex-shrink-0 shadow-xs overflow-hidden">
+                    <img src="logo.png" 
+                         onerror="if(!this.dataset.step){this.dataset.step='1';this.src='9184.jpg';}else if(this.dataset.step==='1'){this.dataset.step='2';this.src='logo.jpg';}else{this.style.display='none';const fb=this.nextElementSibling;if(fb)fb.classList.remove('hidden');}" 
+                         class="w-full h-full object-cover rounded-full" 
+                         alt="Ground Cafe" />
+                    <div class="hidden w-full h-full flex items-center justify-center">
+                      <svg class="w-full h-full" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="256" cy="256" r="236" fill="#FFFFFF"/>
+                        <g fill="#18181B">
+                          <path fill-rule="evenodd" clip-rule="evenodd" d="M 256,136 C 318,136 362,170 362,220 C 362,254 338,280 302,294 C 336,308 356,334 356,366 C 356,416 310,446 250,446 C 190,446 150,412 150,366 L 182,366 C 182,396 210,418 250,418 C 292,418 324,394 324,366 C 324,336 290,316 238,316 C 218,316 202,318 188,322 L 180,296 C 196,292 214,290 232,290 C 240,290 248,290 256,292 C 278,286 292,274 298,256 C 270,266 236,266 208,256 C 174,244 152,222 152,190 C 152,158 190,136 256,136 Z M 256,166 C 210,166 182,182 182,206 C 182,230 210,246 256,246 C 302,246 330,230 330,206 C 330,182 302,166 256,166 Z"/>
+                          <g transform="translate(354, 130) rotate(42)">
+                            <path d="M 0,-30 C -20,-24 -26,-8 -26,0 C -26,12 -18,26 0,30 C -4,18 -7,6 -2,0 C 3,-6 5,-18 0,-30 Z"/>
+                            <path d="M 6,-28 C 11,-18 9,-6 4,0 C 0,6 3,18 6,28 C 22,24 30,12 30,0 C 30,-10 22,-24 6,-28 Z"/>
+                          </g>
                         </g>
-                      </g>
-                    </svg>
+                      </svg>
+                    </div>
                   </div>
                   <div>
                     <h2 class="text-lg font-black text-slate-900 tracking-tight leading-none">GROUND CAFE</h2>
@@ -1858,7 +1886,13 @@
             <div class="pt-1.5 border-t border-slate-100 flex items-center justify-between text-[9px] text-slate-400 font-medium">
               <span class="flex items-center gap-1.5 font-semibold text-slate-700">
                 <span class="w-4 h-4 inline-block rounded-full bg-white border border-slate-200 overflow-hidden shadow-2xs">
-                  <svg class="w-full h-full" viewBox="0 0 512 512" fill="none"><circle cx="256" cy="256" r="236" fill="#FFFFFF"/><g fill="#18181B"><path fill-rule="evenodd" clip-rule="evenodd" d="M 256,136 C 318,136 362,170 362,220 C 362,254 338,280 302,294 C 336,308 356,334 356,366 C 356,416 310,446 250,446 C 190,446 150,412 150,366 L 182,366 C 182,396 210,418 250,418 C 292,418 324,394 324,366 C 324,336 290,316 238,316 C 218,316 202,318 188,322 L 180,296 C 196,292 214,290 232,290 C 240,290 248,290 256,292 C 278,286 292,274 298,256 C 270,266 236,266 208,256 C 174,244 152,222 152,190 C 152,158 190,136 256,136 Z M 256,166 C 210,166 182,182 182,206 C 182,230 210,246 256,246 C 302,246 330,230 330,206 C 330,182 302,166 256,166 Z"/><g transform="translate(354, 130) rotate(42)"><path d="M 0,-30 C -20,-24 -26,-8 -26,0 C -26,12 -18,26 0,30 C -4,18 -7,6 -2,0 C 3,-6 5,-18 0,-30 Z"/><path d="M 6,-28 C 11,-18 9,-6 4,0 C 0,6 3,18 6,28 C 22,24 30,12 30,0 C 30,-10 22,-24 6,-28 Z"/></g></g></svg>
+                  <img src="logo.png" 
+                       onerror="if(!this.dataset.step){this.dataset.step='1';this.src='9184.jpg';}else if(this.dataset.step==='1'){this.dataset.step='2';this.src='logo.jpg';}else{this.style.display='none';const fb=this.nextElementSibling;if(fb)fb.classList.remove('hidden');}" 
+                       class="w-full h-full object-cover rounded-full" 
+                       alt="Ground Cafe" />
+                  <div class="hidden w-full h-full">
+                    <svg class="w-full h-full" viewBox="0 0 512 512" fill="none"><circle cx="256" cy="256" r="236" fill="#FFFFFF"/><g fill="#18181B"><path fill-rule="evenodd" clip-rule="evenodd" d="M 256,136 C 318,136 362,170 362,220 C 362,254 338,280 302,294 C 336,308 356,334 356,366 C 356,416 310,446 250,446 C 190,446 150,412 150,366 L 182,366 C 182,396 210,418 250,418 C 292,418 324,394 324,366 C 324,336 290,316 238,316 C 218,316 202,318 188,322 L 180,296 C 196,292 214,290 232,290 C 240,290 248,290 256,292 C 278,286 292,274 298,256 C 270,266 236,266 208,256 C 174,244 152,222 152,190 C 152,158 190,136 256,136 Z M 256,166 C 210,166 182,182 182,206 C 182,230 210,246 256,246 C 302,246 330,230 330,206 C 330,182 302,166 256,166 Z"/><g transform="translate(354, 130) rotate(42)"><path d="M 0,-30 C -20,-24 -26,-8 -26,0 C -26,12 -18,26 0,30 C -4,18 -7,6 -2,0 C 3,-6 5,-18 0,-30 Z"/><path d="M 6,-28 C 11,-18 9,-6 4,0 C 0,6 3,18 6,28 C 22,24 30,12 30,0 C 30,-10 22,-24 6,-28 Z"/></g></g></svg>
+                  </div>
                 </span>
                 <span>Ground Cafe • Smart Inventory</span>
               </span>
@@ -2231,7 +2265,7 @@
         } catch(e) {}
       },
 
-      // 8. สลับแท็บ / เมนู: เสียง Tactile Tab Switch คมชัด สดใส ชัดเจน สไตล์ iOS
+      // 8. สลับแท็บ / เมนู: เสียง Velvet Warm Chime นุ่มนวล ละมุนหู สบายใจ ไม่บาด และไม่ซ้ำกับกลุ่มเดิม
       playTab() {
         if (!this.enabled) return;
         try {
@@ -2239,31 +2273,37 @@
           if (!ctx) return;
           const t = ctx.currentTime;
 
-          // โทน 1: คลิกสั้นคมชัด (Transient Click)
+          // โน้ตฐานนุ่มนวล (Warm Mellow Tone) เฟดเข้า 12ms นุ่มนวล ไม่มีเสียงคลิกแหลมกระแทก
           const osc1 = ctx.createOscillator();
           const gain1 = ctx.createGain();
-          osc1.type = 'triangle';
-          osc1.frequency.setValueAtTime(1250, t);
-          osc1.frequency.exponentialRampToValueAtTime(450, t + 0.03);
-          gain1.gain.setValueAtTime(0.22, t);
-          gain1.gain.exponentialRampToValueAtTime(0.001, t + 0.035);
+          osc1.type = 'sine';
+          osc1.frequency.setValueAtTime(480, t);
+          osc1.frequency.exponentialRampToValueAtTime(540, t + 0.08);
+
+          gain1.gain.setValueAtTime(0.001, t);
+          gain1.gain.linearRampToValueAtTime(0.18, t + 0.012);
+          gain1.gain.exponentialRampToValueAtTime(0.001, t + 0.11);
+
           osc1.connect(gain1);
           gain1.connect(ctx.destination);
           osc1.start(t);
-          osc1.stop(t + 0.035);
+          osc1.stop(t + 0.12);
 
-          // โทน 2: เสียงป๊อปโน้ตสลับแท็บสดใส (Crisp Ascending Pop) ก้องกังวานกำลังดี
+          // โน้ตคู่ 5 ละมุน (Harmonic Fifth Shimmer) เพิ่มมิติโปร่ง นุ่มละมุน
           const osc2 = ctx.createOscillator();
           const gain2 = ctx.createGain();
           osc2.type = 'sine';
-          osc2.frequency.setValueAtTime(680, t);
-          osc2.frequency.exponentialRampToValueAtTime(960, t + 0.055);
-          gain2.gain.setValueAtTime(0.24, t);
-          gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+          osc2.frequency.setValueAtTime(720, t + 0.01);
+          osc2.frequency.exponentialRampToValueAtTime(810, t + 0.08);
+
+          gain2.gain.setValueAtTime(0.001, t + 0.01);
+          gain2.gain.linearRampToValueAtTime(0.12, t + 0.022);
+          gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+
           osc2.connect(gain2);
           gain2.connect(ctx.destination);
-          osc2.start(t);
-          osc2.stop(t + 0.09);
+          osc2.start(t + 0.01);
+          osc2.stop(t + 0.13);
         } catch(e) {}
       },
 
