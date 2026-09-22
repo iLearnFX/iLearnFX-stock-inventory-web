@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>แดชบอร์ดและระบบจัดการสต็อกสินค้า</title>
+  <title>Ground Cafe - ระบบจัดการสต็อกและวัตถุดิบ</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Ccircle cx='256' cy='256' r='236' fill='%23FFFFFF'/%3E%3Cg fill='%2318181B'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M 256,136 C 318,136 362,170 362,220 C 362,254 338,280 302,294 C 336,308 356,334 356,366 C 356,416 310,446 250,446 C 190,446 150,412 150,366 L 182,366 C 182,396 210,418 250,418 C 292,418 324,394 324,366 C 324,336 290,316 238,316 C 218,316 202,318 188,322 L 180,296 C 196,292 214,290 232,290 C 240,290 248,290 256,292 C 278,286 292,274 298,256 C 270,266 236,266 208,256 C 174,244 152,222 152,190 C 152,158 190,136 256,136 Z M 256,166 C 210,166 182,182 182,206 C 182,230 210,246 256,246 C 302,246 330,230 330,206 C 330,182 302,166 256,166 Z'/%3E%3Cg transform='translate(354, 130) rotate(42)'%3E%3Cpath d='M 0,-30 C -20,-24 -26,-8 -26,0 C -26,12 -18,26 0,30 C -4,18 -7,6 -2,0 C 3,-6 5,-18 0,-30 Z'/%3E%3Cpath d='M 6,-28 C 11,-18 9,-6 4,0 C 0,6 3,18 6,28 C 22,24 30,12 30,0 C 30,-10 22,-24 6,-28 Z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E" />
   <!-- Tailwind CSS & Google Fonts -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -152,12 +153,25 @@
   <header class="bg-blue-600 text-white shadow-md sticky top-0 z-30">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
       <div class="flex items-center gap-2.5">
-        <div class="bg-blue-500/80 p-2 rounded-xl shadow-inner">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+        <!-- Ground Cafe Brand Logo (Vector SVG High-Def) -->
+        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-white p-0.5 shadow-md shadow-blue-900/30 flex-shrink-0 flex items-center justify-center overflow-hidden border border-white/50 ring-2 ring-white/20 transition transform active:scale-95" title="Ground Cafe">
+          <svg class="w-full h-full" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="256" cy="256" r="236" fill="#FFFFFF"/>
+            <g fill="#18181B">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M 256,136 C 318,136 362,170 362,220 C 362,254 338,280 302,294 C 336,308 356,334 356,366 C 356,416 310,446 250,446 C 190,446 150,412 150,366 L 182,366 C 182,396 210,418 250,418 C 292,418 324,394 324,366 C 324,336 290,316 238,316 C 218,316 202,318 188,322 L 180,296 C 196,292 214,290 232,290 C 240,290 248,290 256,292 C 278,286 292,274 298,256 C 270,266 236,266 208,256 C 174,244 152,222 152,190 C 152,158 190,136 256,136 Z M 256,166 C 210,166 182,182 182,206 C 182,230 210,246 256,246 C 302,246 330,230 330,206 C 330,182 302,166 256,166 Z"/>
+              <g transform="translate(354, 130) rotate(42)">
+                <path d="M 0,-30 C -20,-24 -26,-8 -26,0 C -26,12 -18,26 0,30 C -4,18 -7,6 -2,0 C 3,-6 5,-18 0,-30 Z"/>
+                <path d="M 6,-28 C 11,-18 9,-6 4,0 C 0,6 3,18 6,28 C 22,24 30,12 30,0 C 30,-10 22,-24 6,-28 Z"/>
+              </g>
+            </g>
+          </svg>
         </div>
         <div>
-          <h1 class="font-bold text-base sm:text-xl leading-tight">แดชบอร์ดสต็อกสินค้า</h1>
-          <p class="text-[10px] sm:text-xs text-blue-200">Ground Cafe & Inventory Tracker</p>
+          <h1 class="font-bold text-base sm:text-xl leading-tight flex items-center gap-1.5">
+            <span>Ground Cafe</span>
+            <span class="text-[10px] sm:text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-500/80 text-white border border-blue-400/40">Stock</span>
+          </h1>
+          <p class="text-[10px] sm:text-xs text-blue-200">แดชบอร์ดจัดการสต็อก & วัตถุดิบ</p>
         </div>
       </div>
       <div class="flex items-center gap-2">
@@ -1173,8 +1187,17 @@
               <!-- PO Header -->
               <div class="flex items-start justify-between border-b-2 border-slate-800 pb-3">
                 <div class="flex items-center gap-3">
-                  <div class="w-12 h-12 rounded-2xl bg-slate-900 text-amber-400 flex items-center justify-center flex-shrink-0 shadow">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                  <div class="w-12 h-12 rounded-2xl bg-white p-0.5 border-2 border-slate-800 flex items-center justify-center flex-shrink-0 shadow-xs overflow-hidden">
+                    <svg class="w-full h-full" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="256" cy="256" r="236" fill="#FFFFFF"/>
+                      <g fill="#18181B">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M 256,136 C 318,136 362,170 362,220 C 362,254 338,280 302,294 C 336,308 356,334 356,366 C 356,416 310,446 250,446 C 190,446 150,412 150,366 L 182,366 C 182,396 210,418 250,418 C 292,418 324,394 324,366 C 324,336 290,316 238,316 C 218,316 202,318 188,322 L 180,296 C 196,292 214,290 232,290 C 240,290 248,290 256,292 C 278,286 292,274 298,256 C 270,266 236,266 208,256 C 174,244 152,222 152,190 C 152,158 190,136 256,136 Z M 256,166 C 210,166 182,182 182,206 C 182,230 210,246 256,246 C 302,246 330,230 330,206 C 330,182 302,166 256,166 Z"/>
+                        <g transform="translate(354, 130) rotate(42)">
+                          <path d="M 0,-30 C -20,-24 -26,-8 -26,0 C -26,12 -18,26 0,30 C -4,18 -7,6 -2,0 C 3,-6 5,-18 0,-30 Z"/>
+                          <path d="M 6,-28 C 11,-18 9,-6 4,0 C 0,6 3,18 6,28 C 22,24 30,12 30,0 C 30,-10 22,-24 6,-28 Z"/>
+                        </g>
+                      </g>
+                    </svg>
                   </div>
                   <div>
                     <h2 class="text-lg font-black text-slate-900 tracking-tight leading-none">GROUND CAFE</h2>
@@ -1833,7 +1856,12 @@
 
             <!-- ท้ายป้าย: Footer ข้อความของร้าน -->
             <div class="pt-1.5 border-t border-slate-100 flex items-center justify-between text-[9px] text-slate-400 font-medium">
-              <span>Ground Cafe • Smart Inventory</span>
+              <span class="flex items-center gap-1.5 font-semibold text-slate-700">
+                <span class="w-4 h-4 inline-block rounded-full bg-white border border-slate-200 overflow-hidden shadow-2xs">
+                  <svg class="w-full h-full" viewBox="0 0 512 512" fill="none"><circle cx="256" cy="256" r="236" fill="#FFFFFF"/><g fill="#18181B"><path fill-rule="evenodd" clip-rule="evenodd" d="M 256,136 C 318,136 362,170 362,220 C 362,254 338,280 302,294 C 336,308 356,334 356,366 C 356,416 310,446 250,446 C 190,446 150,412 150,366 L 182,366 C 182,396 210,418 250,418 C 292,418 324,394 324,366 C 324,336 290,316 238,316 C 218,316 202,318 188,322 L 180,296 C 196,292 214,290 232,290 C 240,290 248,290 256,292 C 278,286 292,274 298,256 C 270,266 236,266 208,256 C 174,244 152,222 152,190 C 152,158 190,136 256,136 Z M 256,166 C 210,166 182,182 182,206 C 182,230 210,246 256,246 C 302,246 330,230 330,206 C 330,182 302,166 256,166 Z"/><g transform="translate(354, 130) rotate(42)"><path d="M 0,-30 C -20,-24 -26,-8 -26,0 C -26,12 -18,26 0,30 C -4,18 -7,6 -2,0 C 3,-6 5,-18 0,-30 Z"/><path d="M 6,-28 C 11,-18 9,-6 4,0 C 0,6 3,18 6,28 C 22,24 30,12 30,0 C 30,-10 22,-24 6,-28 Z"/></g></g></svg>
+                </span>
+                <span>Ground Cafe • Smart Inventory</span>
+              </span>
               <span class="text-blue-600 font-bold">Scan to Action</span>
             </div>
           </div>
@@ -1966,9 +1994,24 @@
           }
         }
         if (this.ctx && this.ctx.state === 'suspended') {
-          this.ctx.resume();
+          this.ctx.resume().catch(() => {});
         }
         return this.ctx;
+      },
+
+      initUserGestureUnlock() {
+        const unlock = () => {
+          const ctx = this.getAudioContext();
+          if (ctx && ctx.state === 'suspended') {
+            ctx.resume().catch(() => {});
+          }
+          ['touchstart', 'touchend', 'mousedown', 'keydown'].forEach(ev => {
+            document.removeEventListener(ev, unlock, true);
+          });
+        };
+        ['touchstart', 'touchend', 'mousedown', 'keydown'].forEach(ev => {
+          document.addEventListener(ev, unlock, { capture: true, passive: true });
+        });
       },
 
       toggle() {
@@ -2175,20 +2218,20 @@
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
           osc.type = 'triangle';
-          osc.frequency.setValueAtTime(550, t);
-          osc.frequency.exponentialRampToValueAtTime(280, t + 0.025);
+          osc.frequency.setValueAtTime(600, t);
+          osc.frequency.exponentialRampToValueAtTime(320, t + 0.04);
 
-          gain.gain.setValueAtTime(0.14, t);
-          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.03);
+          gain.gain.setValueAtTime(0.18, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.045);
 
           osc.connect(gain);
           gain.connect(ctx.destination);
           osc.start(t);
-          osc.stop(t + 0.03);
+          osc.stop(t + 0.045);
         } catch(e) {}
       },
 
-      // 8. สลับแท็บ / เมนู: เสียง Whisper Pop เบาๆ นุ่มนวล
+      // 8. สลับแท็บ / เมนู: เสียง Tactile Tab Switch คมชัด สดใส ชัดเจน สไตล์ iOS
       playTab() {
         if (!this.enabled) return;
         try {
@@ -2196,19 +2239,31 @@
           if (!ctx) return;
           const t = ctx.currentTime;
 
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(700, t);
-          osc.frequency.exponentialRampToValueAtTime(450, t + 0.02);
+          // โทน 1: คลิกสั้นคมชัด (Transient Click)
+          const osc1 = ctx.createOscillator();
+          const gain1 = ctx.createGain();
+          osc1.type = 'triangle';
+          osc1.frequency.setValueAtTime(1250, t);
+          osc1.frequency.exponentialRampToValueAtTime(450, t + 0.03);
+          gain1.gain.setValueAtTime(0.22, t);
+          gain1.gain.exponentialRampToValueAtTime(0.001, t + 0.035);
+          osc1.connect(gain1);
+          gain1.connect(ctx.destination);
+          osc1.start(t);
+          osc1.stop(t + 0.035);
 
-          gain.gain.setValueAtTime(0.09, t);
-          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.025);
-
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(t);
-          osc.stop(t + 0.025);
+          // โทน 2: เสียงป๊อปโน้ตสลับแท็บสดใส (Crisp Ascending Pop) ก้องกังวานกำลังดี
+          const osc2 = ctx.createOscillator();
+          const gain2 = ctx.createGain();
+          osc2.type = 'sine';
+          osc2.frequency.setValueAtTime(680, t);
+          osc2.frequency.exponentialRampToValueAtTime(960, t + 0.055);
+          gain2.gain.setValueAtTime(0.24, t);
+          gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+          osc2.connect(gain2);
+          gain2.connect(ctx.destination);
+          osc2.start(t);
+          osc2.stop(t + 0.09);
         } catch(e) {}
       },
 
@@ -2586,6 +2641,8 @@
     }
 
     function setCategoryFilter(catName) {
+      if (navigator.vibrate) navigator.vibrate(10);
+      AppSoundFX.playTab();
       state.activeCategoryFilter = catName;
       state.showOnlyLowStock = false;
       renderCategoryLegend();
@@ -3818,6 +3875,8 @@
     }
 
     function switchCartTab(tab) {
+      if (navigator.vibrate) navigator.vibrate(10);
+      AppSoundFX.playTab();
       const isItems = tab === 'items';
       const isPreview = tab === 'preview';
       const isHistory = tab === 'history';
@@ -4445,6 +4504,8 @@
     }
 
     function filterHistory(type) {
+      if (navigator.vibrate) navigator.vibrate(10);
+      AppSoundFX.playTab();
       state.historyFilter = type;
       document.getElementById('hfilter-all').className = type === 'ALL' ? 'px-2.5 py-0.5 rounded-full bg-blue-600 text-white font-medium' : 'px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-700 hover:bg-slate-300';
       document.getElementById('hfilter-adjust').className = type === 'ADJUST' ? 'px-2.5 py-0.5 rounded-full bg-amber-600 text-white font-medium' : 'px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-700 hover:bg-slate-300';
@@ -4536,6 +4597,9 @@
     }, 200);
 
     function switchTab(tab) {
+      if (navigator.vibrate) navigator.vibrate(10);
+      AppSoundFX.playTab();
+
       ['dashboard', 'lowstock', 'reports', 'suppliers', 'history'].forEach(t => {
         const view = document.getElementById('view-' + t);
         if (view) view.classList.toggle('hidden', t !== tab);
@@ -5569,6 +5633,8 @@
     // ระบบเมนูย่อย KPI สไตล์ iOS 27 (Daily Summary, Chart, Calendar, SKU, Vendor)
     // ==========================================
     function switchKpiMenu(menu) {
+      if (navigator.vibrate) navigator.vibrate(10);
+      AppSoundFX.playTab();
       state.activeKpiMenu = menu;
       ['daily', 'chart', 'calendar', 'table', 'vendor'].forEach(m => {
         const sec = document.getElementById('kpi-sec-' + m);
@@ -7848,6 +7914,7 @@
     window.addEventListener('load', () => {
       checkUrlQueryParams();
       AppSoundFX.updateUI();
+      AppSoundFX.initUserGestureUnlock();
     });
 
 </script>
