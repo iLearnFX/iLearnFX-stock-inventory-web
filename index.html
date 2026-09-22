@@ -80,6 +80,30 @@
       animation: iosSheetSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
+    /* Fluid Tab Gliding Animation & Input Micro-pulse */
+    @keyframes iosTabGlide {
+      0% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.985);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    .ios-tab-anim {
+      animation: iosTabGlide 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes iosPulseQty {
+      0% { transform: scale(1); }
+      35% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+    .ios-pulse-qty {
+      animation: iosPulseQty 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
     .ios-btn-press {
       transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.16s ease, filter 0.16s ease;
     }
@@ -757,18 +781,32 @@
     </div>
   </footer>
 
-  <!-- FLOATING CART BUTTON (มุมขวาล่างสำหรับเปิดดูตะกร้าสั่งซื้อได้ตลอดเวลา ลอยอยู่เหนือแถบเครื่องมือด้านล่าง) -->
-  <div id="floatingCartBtn" onclick="openPurchaseCartModal()" class="hidden fixed bottom-[4.8rem] sm:bottom-20 right-4 sm:right-6 z-40 cursor-pointer ios-btn-press transition-all duration-300">
-    <div class="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-3 rounded-full shadow-2xl flex items-center gap-2.5 font-bold text-xs border-2 border-white hover:brightness-105">
-      <div class="relative">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-        <span id="floatingCartCount" class="absolute -top-2.5 -right-2.5 bg-rose-600 text-white text-[11px] font-black w-5 h-5 rounded-full flex items-center justify-center ring-2 ring-white">0</span>
+  <!-- FLOATING QUICK SCAN BUTTON (ปุ่มสแกนด่วนลอยตัวมุมซ้ายล่าง เหนือ Footer สำหรับถือใช้งานด้วยมือเดียว) -->
+  <div id="floatingScanBtn" onclick="openBarcodeScannerModal()" class="fixed bottom-[4.8rem] sm:bottom-20 left-3.5 sm:left-6 z-40 cursor-pointer ios-btn-press transition-all duration-300">
+    <div class="bg-slate-900/90 hover:bg-slate-950 text-white pl-2 pr-3 py-1.5 sm:pl-2.5 sm:pr-3.5 sm:py-2 rounded-full shadow-xl border border-white/25 flex items-center gap-2 text-xs font-bold active:scale-95 transition backdrop-blur-md hover:brightness-105" title="เปิดกล้องสแกนบาร์โค้ด / QR Code ด่วนด้วยมือเดียว">
+      <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-500/25 text-blue-400 flex items-center justify-center flex-shrink-0 shadow-inner">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7V5a2 2 0 012-2h2m10 0h2a2 2 0 012 2v2m0 10v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2M7 12h10M12 7v10"/></svg>
       </div>
-      <div class="flex flex-col text-left leading-tight pr-1">
-        <span>ตะกร้าสั่งซื้อ</span>
-        <span id="floatingCartSummary" class="text-xs font-bold text-amber-100">0 รายการ</span>
+      <div class="flex flex-col text-left leading-none justify-center pr-0.5">
+        <span class="text-[11px] sm:text-xs font-bold text-white mb-0.5">สแกน</span>
+        <span class="text-[9px] text-blue-300 font-medium">กล้องด่วน</span>
       </div>
-      <svg class="w-4 h-4 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+    </div>
+  </div>
+
+  <!-- FLOATING CART BUTTON (มุมขวาล่างสำหรับเปิดดูตะกร้าสั่งซื้อ ปรับสัดส่วนกะทัดรัด ตัวเลขไม่ชิดข้อความ) -->
+  <div id="floatingCartBtn" onclick="openPurchaseCartModal()" class="hidden fixed bottom-[4.8rem] sm:bottom-20 right-3.5 sm:right-6 z-40 cursor-pointer ios-btn-press transition-all duration-300">
+    <div class="bg-gradient-to-r from-amber-500 via-orange-500 to-orange-600 text-white pl-2 pr-3 py-1.5 sm:pl-2.5 sm:pr-3.5 sm:py-2 rounded-full shadow-xl flex items-center gap-2 text-xs font-bold border border-white/30 hover:brightness-105 backdrop-blur-md">
+      <div class="relative w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 shadow-inner">
+        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        <!-- Badge จำนวนรายการในตะกร้า มีระยะห่างและไม่ทับข้อความ -->
+        <span id="floatingCartCount" class="absolute -top-1 -right-1 bg-rose-600 text-white text-[10px] font-black min-w-[17px] h-[17px] px-1 rounded-full flex items-center justify-center ring-1.5 ring-white shadow-xs">0</span>
+      </div>
+      <div class="flex flex-col text-left leading-none justify-center">
+        <span class="text-[11px] sm:text-xs font-bold text-white mb-0.5">ตะกร้าสั่งซื้อ</span>
+        <span id="floatingCartSummary" class="text-[9px] sm:text-[10px] font-semibold text-amber-100/90">0 รายการ</span>
+      </div>
+      <svg class="w-3.5 h-3.5 text-white/75 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
     </div>
   </div>
 
@@ -822,29 +860,46 @@
       <div class="p-4 overflow-y-auto space-y-4 flex-1">
         
         <div>
-          <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5">เลือกการทำรายการ</label>
-          <div class="grid grid-cols-5 gap-1 text-[10px] font-bold">
-            <button type="button" onclick="setModalAction('OUT')" id="btn-m-out" class="py-2 rounded-xl border border-blue-500 bg-blue-50 text-blue-700 ring-2 ring-blue-300 text-center">เบิก (-)</button>
-            <button type="button" onclick="setModalAction('IN')" id="btn-m-in" class="py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-center">รับ (+)</button>
-            <button type="button" onclick="setModalAction('ADJUST')" id="btn-m-adjust" class="py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-center">⚙️ ปรับยอด</button>
-            <button type="button" onclick="setModalAction('CART')" id="btn-m-cart" class="py-2 rounded-xl border border-slate-200 text-amber-700 hover:bg-amber-50 text-center">🛒 สั่งซื้อ</button>
-            <button type="button" onclick="setModalAction('IMAGE')" id="btn-m-image" class="py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-center">📷 รูป</button>
+          <div class="flex items-center justify-between mb-1.5 px-0.5">
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">เลือกการทำรายการ (Action)</label>
+            <span id="modalActionBadgeHint" class="text-[10px] font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full">ตัดสต็อกออก (-)</span>
+          </div>
+          <!-- 6 Action Tabs with Apple Fluid Micro-interactions & Vibrant Color-coding -->
+          <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5 p-1 bg-slate-100/90 rounded-2xl border border-slate-200/80 shadow-inner">
+            <button type="button" onclick="setModalAction('OUT')" id="btn-m-out" class="py-2 px-1 rounded-xl font-black text-xs flex flex-col sm:flex-row items-center justify-center gap-1 transition-all duration-200 ios-btn-press bg-white text-rose-600 shadow-sm border border-rose-300 ring-2 ring-rose-200">
+              <span class="text-sm">🔴</span><span>เบิก (-)</span>
+            </button>
+            <button type="button" onclick="setModalAction('IN')" id="btn-m-in" class="py-2 px-1 rounded-xl font-medium text-xs flex flex-col sm:flex-row items-center justify-center gap-1 transition-all duration-200 ios-btn-press text-slate-600 hover:text-emerald-700 hover:bg-white/60">
+              <span class="text-sm">🟢</span><span>รับ (+)</span>
+            </button>
+            <button type="button" onclick="setModalAction('WASTE')" id="btn-m-waste" class="py-2 px-1 rounded-xl font-medium text-xs flex flex-col sm:flex-row items-center justify-center gap-1 transition-all duration-200 ios-btn-press text-slate-600 hover:text-amber-800 hover:bg-white/60">
+              <span class="text-sm">🟡</span><span>เสีย (x)</span>
+            </button>
+            <button type="button" onclick="setModalAction('ADJUST')" id="btn-m-adjust" class="py-2 px-1 rounded-xl font-medium text-xs flex flex-col sm:flex-row items-center justify-center gap-1 transition-all duration-200 ios-btn-press text-slate-600 hover:text-indigo-700 hover:bg-white/60">
+              <span class="text-sm">⚙️</span><span>ปรับยอด</span>
+            </button>
+            <button type="button" onclick="setModalAction('CART')" id="btn-m-cart" class="py-2 px-1 rounded-xl font-medium text-xs flex flex-col sm:flex-row items-center justify-center gap-1 transition-all duration-200 ios-btn-press text-slate-600 hover:text-blue-700 hover:bg-white/60">
+              <span class="text-sm">🛒</span><span>สั่งซื้อ</span>
+            </button>
+            <button type="button" onclick="setModalAction('IMAGE')" id="btn-m-image" class="py-2 px-1 rounded-xl font-medium text-xs flex flex-col sm:flex-row items-center justify-center gap-1 transition-all duration-200 ios-btn-press text-slate-600 hover:text-purple-700 hover:bg-white/60">
+              <span class="text-sm">📷</span><span>รูปภาพ</span>
+            </button>
           </div>
         </div>
 
         <!-- FORM A: เบิกออก (-) หรือ รับเข้า (+) -->
-        <form id="formQuickTrans" onsubmit="submitQuickTransaction(event)" class="space-y-3">
+        <form id="formQuickTrans" onsubmit="submitQuickTransaction(event)" class="space-y-3 ios-tab-anim">
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">
               จำนวนที่ต้องการ <span id="labelQuickActionType">เบิกออก</span> <span id="modalUnitLabel"></span> *
             </label>
             <div class="flex gap-1.5 mb-2">
-              <button type="button" onclick="addQuickQty(1)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700">+1</button>
-              <button type="button" onclick="addQuickQty(5)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700">+5</button>
-              <button type="button" onclick="addQuickQty(10)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700">+10</button>
-              <button type="button" onclick="addQuickQty(50)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700">+50</button>
+              <button type="button" onclick="addQuickQty(1)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700 ios-btn-press active:scale-90 transition">+1</button>
+              <button type="button" onclick="addQuickQty(5)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700 ios-btn-press active:scale-90 transition">+5</button>
+              <button type="button" onclick="addQuickQty(10)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700 ios-btn-press active:scale-90 transition">+10</button>
+              <button type="button" onclick="addQuickQty(50)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700 ios-btn-press active:scale-90 transition">+50</button>
             </div>
-            <input type="number" step="any" min="0.01" id="quickQty" required placeholder="ระบุจำนวน" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none" />
+            <input type="number" step="any" min="0.01" id="quickQty" required placeholder="ระบุจำนวน" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none transition-all" />
           </div>
 
           <div class="grid grid-cols-2 gap-2">
@@ -858,8 +913,56 @@
             </div>
           </div>
 
-          <button type="submit" id="btnSubmitQuick" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow text-xs transition">
-            ยืนยันการทำรายการ
+          <button type="submit" id="btnSubmitQuick" class="w-full py-3 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 hover:to-red-700 text-white font-bold rounded-xl shadow text-xs transition active:scale-98 ios-btn-press flex items-center justify-center gap-2">
+            <span>ยืนยันการทำรายการ</span>
+          </button>
+        </form>
+
+        <!-- FORM E: บันทึกของเสีย / หมดอายุ / ชำรุด (NEW WASTE ACTION) -->
+        <form id="formQuickWaste" onsubmit="submitQuickWaste(event)" class="hidden space-y-3 bg-amber-50/70 p-3.5 rounded-2xl border border-amber-200/90 shadow-2xs ios-tab-anim">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-xs font-bold text-amber-900">
+                จำนวนที่ตัดทิ้ง / ของเสีย <span id="wasteModalUnitLabel"></span> *
+              </label>
+              <span class="text-[10px] text-amber-800 font-semibold bg-amber-100/90 border border-amber-300/60 px-2 py-0.5 rounded-full">ตัดยอดออกจากสต็อก</span>
+            </div>
+            
+            <div class="flex gap-1.5 mb-2">
+              <button type="button" onclick="addWasteQty(1)" class="px-2.5 py-1 bg-white hover:bg-amber-100 border border-amber-200 rounded-lg text-xs font-bold text-amber-800 ios-btn-press active:scale-90 transition">+1</button>
+              <button type="button" onclick="addWasteQty(5)" class="px-2.5 py-1 bg-white hover:bg-amber-100 border border-amber-200 rounded-lg text-xs font-bold text-amber-800 ios-btn-press active:scale-90 transition">+5</button>
+              <button type="button" onclick="addWasteQty(10)" class="px-2.5 py-1 bg-white hover:bg-amber-100 border border-amber-200 rounded-lg text-xs font-bold text-amber-800 ios-btn-press active:scale-90 transition">+10</button>
+              <button type="button" onclick="addWasteQty(50)" class="px-2.5 py-1 bg-white hover:bg-amber-100 border border-amber-200 rounded-lg text-xs font-bold text-amber-800 ios-btn-press active:scale-90 transition">+50</button>
+            </div>
+            <input type="number" step="any" min="0.01" id="quickWasteQty" required placeholder="ระบุจำนวนของเสีย" class="w-full border border-amber-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-amber-500 outline-none bg-white font-bold text-sm text-amber-950 transition-all" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-amber-900 mb-1">สาเหตุของเสีย / การตัดทิ้ง *</label>
+            <div class="flex flex-wrap gap-1 mb-1.5">
+              <button type="button" onclick="setQuickWasteReason('⏳ หมดอายุ')" class="text-[10px] bg-white border border-amber-200 text-amber-900 px-2 py-1 rounded-lg hover:bg-amber-100 font-medium ios-btn-press active:scale-95 transition">⏳ หมดอายุ</button>
+              <button type="button" onclick="setQuickWasteReason('💥 แตก / ชำรุด')" class="text-[10px] bg-white border border-amber-200 text-amber-900 px-2 py-1 rounded-lg hover:bg-amber-100 font-medium ios-btn-press active:scale-95 transition">💥 แตก / ชำรุด</button>
+              <button type="button" onclick="setQuickWasteReason('☕ ชงเสีย / เทสช็อต')" class="text-[10px] bg-white border border-amber-200 text-amber-900 px-2 py-1 rounded-lg hover:bg-amber-100 font-medium ios-btn-press active:scale-95 transition">☕ ชงเสีย / เทส</button>
+              <button type="button" onclick="setQuickWasteReason('📦 เสื่อมสภาพ / ชื้น')" class="text-[10px] bg-white border border-amber-200 text-amber-900 px-2 py-1 rounded-lg hover:bg-amber-100 font-medium ios-btn-press active:scale-95 transition">📦 เสื่อมสภาพ</button>
+              <button type="button" onclick="setQuickWasteReason('🪲 มีสิ่งปนเปื้อน')" class="text-[10px] bg-white border border-amber-200 text-amber-900 px-2 py-1 rounded-lg hover:bg-amber-100 font-medium ios-btn-press active:scale-95 transition">🪲 มีสิ่งปนเปื้อน</button>
+            </div>
+            <input type="text" id="quickWasteReason" required placeholder="เลือกสาเหตุข้างต้น หรือพิมพ์ระบุเพิ่มเติม..." class="w-full border border-amber-300 rounded-xl p-2 text-xs outline-none bg-white focus:ring-2 focus:ring-amber-500 text-slate-700" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs font-semibold text-amber-900 mb-1">ผู้บันทึก</label>
+              <input type="text" id="quickWasteUser" placeholder="ชื่อผู้บันทึก" class="w-full border border-amber-200 rounded-xl p-2 text-xs outline-none bg-white focus:ring-2 focus:ring-amber-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-amber-900 mb-1">หมายเหตุเพิ่มเติม</label>
+              <input type="text" id="quickWasteNotes" placeholder="เช่น ล็อตวันที่..., ทิ้งถังขยะ" class="w-full border border-amber-200 rounded-xl p-2 text-xs outline-none bg-white focus:ring-2 focus:ring-amber-500" />
+            </div>
+          </div>
+
+          <button type="submit" id="btnSubmitWaste" class="w-full py-3 bg-gradient-to-r from-amber-600 to-rose-600 hover:from-amber-700 hover:to-rose-700 text-white font-bold rounded-xl shadow-md text-xs transition flex items-center justify-center gap-2 active:scale-98 ios-btn-press">
+            <span>🗑️</span>
+            <span>ยืนยันบันทึกของเสีย / หมดอายุ (x)</span>
           </button>
         </form>
 
@@ -888,42 +991,44 @@
           </div>
 
           <button type="submit" id="btnSubmitAdj" class="w-full py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl shadow text-xs transition">
-            บันทึก Log ปรับปรุงสต็อก
+            <button type="submit" id="btnSubmitAdj" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold rounded-xl shadow text-xs transition active:scale-98 ios-btn-press flex items-center justify-center gap-1.5">
+            <span>⚙️</span>
+            <span>บันทึก Log ปรับปรุงสต็อก</span>
           </button>
         </form>
 
         <!-- FORM D: เพิ่มเข้าตะกร้าสั่งซื้อ (NEW) -->
-        <form id="formQuickCart" onsubmit="submitQuickCart(event)" class="hidden space-y-3 bg-orange-50/50 p-3.5 rounded-2xl border border-orange-200">
+        <form id="formQuickCart" onsubmit="submitQuickCart(event)" class="hidden space-y-3 bg-blue-50/50 p-3.5 rounded-2xl border border-blue-200/80 shadow-2xs ios-tab-anim">
           <div>
             <div class="flex items-center justify-between mb-1">
-              <label class="block text-xs font-bold text-orange-900">
+              <label class="block text-xs font-bold text-blue-900">
                 จำนวนที่ต้องการสั่งซื้อ <span id="cartModalUnitLabel"></span> *
               </label>
               <span id="cartSuggestContainer"></span>
             </div>
             
             <div class="flex gap-1.5 mb-2">
-              <button type="button" onclick="addCartQty(1)" class="px-2.5 py-1 bg-white hover:bg-orange-100 border border-orange-200 rounded-lg text-xs font-bold text-orange-800">+1</button>
-              <button type="button" onclick="addCartQty(5)" class="px-2.5 py-1 bg-white hover:bg-orange-100 border border-orange-200 rounded-lg text-xs font-bold text-orange-800">+5</button>
-              <button type="button" onclick="addCartQty(10)" class="px-2.5 py-1 bg-white hover:bg-orange-100 border border-orange-200 rounded-lg text-xs font-bold text-orange-800">+10</button>
-              <button type="button" onclick="addCartQty(50)" class="px-2.5 py-1 bg-white hover:bg-orange-100 border border-orange-200 rounded-lg text-xs font-bold text-orange-800">+50</button>
+              <button type="button" onclick="addCartQty(1)" class="px-2.5 py-1 bg-white hover:bg-blue-100 border border-blue-200 rounded-lg text-xs font-bold text-blue-800 ios-btn-press active:scale-90 transition">+1</button>
+              <button type="button" onclick="addCartQty(5)" class="px-2.5 py-1 bg-white hover:bg-blue-100 border border-blue-200 rounded-lg text-xs font-bold text-blue-800 ios-btn-press active:scale-90 transition">+5</button>
+              <button type="button" onclick="addCartQty(10)" class="px-2.5 py-1 bg-white hover:bg-blue-100 border border-blue-200 rounded-lg text-xs font-bold text-blue-800 ios-btn-press active:scale-90 transition">+10</button>
+              <button type="button" onclick="addCartQty(50)" class="px-2.5 py-1 bg-white hover:bg-blue-100 border border-blue-200 rounded-lg text-xs font-bold text-blue-800 ios-btn-press active:scale-90 transition">+50</button>
             </div>
-            <input type="number" step="any" min="0.01" id="quickCartQty" required placeholder="ระบุจำนวนที่ต้องการซื้อ" class="w-full border border-orange-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-orange-500 outline-none bg-white font-bold text-sm" />
+            <input type="number" step="any" min="0.01" id="quickCartQty" required placeholder="ระบุจำนวนที่ต้องการซื้อ" class="w-full border border-blue-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none bg-white font-bold text-sm text-blue-950 transition-all" />
           </div>
 
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">หมายเหตุการสั่งซื้อ (ถ้ามี)</label>
-            <input type="text" id="quickCartNote" placeholder="เช่น ยี่ห้อเดิม, ซื้อที่แม็คโคร, ขนาด 1 ลิตร" class="w-full border border-orange-200 rounded-xl p-2 text-xs outline-none bg-white focus:ring-2 focus:ring-orange-500" />
+            <input type="text" id="quickCartNote" placeholder="เช่น ยี่ห้อเดิม, ซื้อที่แม็คโคร, ขนาด 1 ลิตร" class="w-full border border-blue-200 rounded-xl p-2 text-xs outline-none bg-white focus:ring-2 focus:ring-blue-500" />
           </div>
 
-          <button type="submit" id="btnSubmitAddCart" class="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold rounded-xl shadow text-xs transition flex items-center justify-center gap-2">
+          <button type="submit" id="btnSubmitAddCart" class="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow text-xs transition flex items-center justify-center gap-2 active:scale-98 ios-btn-press">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
             <span>เพิ่มเข้าตะกร้าสั่งซื้อ</span>
           </button>
         </form>
 
         <!-- FORM C: เพิ่ม/แก้ไขรูปภาพสินค้า (อัปเกรด: อัปโหลดไฟล์จากเครื่อง/ถ่ายรูปได้ทันที!) -->
-        <form id="formQuickImage" onsubmit="submitQuickImage(event)" class="hidden space-y-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+        <form id="formQuickImage" onsubmit="submitQuickImage(event)" class="hidden space-y-3 bg-purple-50/50 p-3.5 rounded-2xl border border-purple-200/80 shadow-2xs ios-tab-anim">
           <div class="flex items-center gap-3">
             <div id="quickImgBox" class="w-16 h-16 rounded-xl border border-slate-300 bg-white overflow-hidden flex items-center justify-center shadow-inner flex-shrink-0">
               <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
@@ -932,8 +1037,8 @@
             <!-- ปุ่มเลือกไฟล์ / ถ่ายรูปจากมือถือ -->
             <div class="flex-1 space-y-1.5">
               <input type="file" id="quickImageFileInput" accept="image/*" onchange="handleImageFileSelect(event)" class="hidden" />
-              <button type="button" onclick="document.getElementById('quickImageFileInput').click()" class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-xl text-xs border border-blue-200 flex items-center justify-center gap-1.5 transition active:scale-95 shadow-xs">
-                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              <button type="button" onclick="document.getElementById('quickImageFileInput').click()" class="w-full py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold rounded-xl text-xs border border-purple-200 flex items-center justify-center gap-1.5 transition active:scale-95 shadow-xs ios-btn-press">
+                <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                 <span>เลือกรูปจากเครื่อง หรือ ถ่ายรูป</span>
               </button>
               <p class="text-[9px] text-slate-400 leading-tight">ระบบจะย่อขนาดและบีบอัดรูปภาพให้อัตโนมัติ ไม่ต้องไปฝากไฟล์ที่อื่น</p>
@@ -941,12 +1046,12 @@
           </div>
 
           <!-- หรือกรอกเป็น URL ได้ตามสะดวก -->
-          <div class="pt-2 border-t border-slate-200">
+          <div class="pt-2 border-t border-purple-200/60">
             <label class="block text-[11px] font-semibold text-slate-600 mb-1">หรือระบุลิงก์ URL รูปภาพ</label>
-            <input type="url" id="quickImageUrl" oninput="previewQuickImage()" placeholder="https://example.com/item.jpg" class="w-full border border-slate-300 rounded-xl p-2 text-xs outline-none bg-white focus:ring-2 focus:ring-blue-500" />
+            <input type="url" id="quickImageUrl" oninput="previewQuickImage()" placeholder="https://example.com/item.jpg" class="w-full border border-slate-300 rounded-xl p-2 text-xs outline-none bg-white focus:ring-2 focus:ring-purple-500" />
           </div>
 
-          <button type="submit" id="btnSubmitImg" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow text-xs transition">
+          <button type="submit" id="btnSubmitImg" class="w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow text-xs transition active:scale-98 ios-btn-press">
             บันทึกรูปภาพสินค้า
           </button>
         </form>
@@ -2710,6 +2815,18 @@
       document.getElementById('quickImageUrl').value = prod.imageUrl || '';
       previewQuickImage();
 
+      // รีเซ็ตฟอร์มของเสีย (WASTE)
+      const wasteUnitEl = document.getElementById('wasteModalUnitLabel');
+      if (wasteUnitEl) wasteUnitEl.textContent = `(${prod.unit})`;
+      const wasteQty = document.getElementById('quickWasteQty');
+      if (wasteQty) wasteQty.value = '';
+      const wasteReason = document.getElementById('quickWasteReason');
+      if (wasteReason) wasteReason.value = '';
+      const wasteNotes = document.getElementById('quickWasteNotes');
+      if (wasteNotes) wasteNotes.value = '';
+      const wasteUser = document.getElementById('quickWasteUser');
+      if (wasteUser) wasteUser.value = '';
+
       // ตะกร้าสั่งซื้อใน Modal
       const existingInCart = (state.cart || []).find(item => item.productName === prod.name);
       const suggestedQty = Math.max(1, (Number(prod.minStock) * 2) - Number(prod.currentBalance));
@@ -2718,7 +2835,7 @@
       
       const suggestBox = document.getElementById('cartSuggestContainer');
       if (isLow) {
-        suggestBox.innerHTML = `<button type="button" onclick="setCartQty(${suggestedQty})" class="text-[10px] bg-rose-100 text-rose-800 px-2 py-0.5 rounded-full font-bold hover:bg-rose-200">⚡ แนะนำซื้อ ${suggestedQty} ${prod.unit}</button>`;
+        suggestBox.innerHTML = `<button type="button" onclick="setCartQty(${suggestedQty})" class="text-[10px] bg-rose-100 text-rose-800 px-2 py-0.5 rounded-full font-bold hover:bg-rose-200 ios-btn-press">⚡ แนะนำซื้อ ${suggestedQty} ${prod.unit}</button>`;
       } else {
         suggestBox.innerHTML = '';
       }
@@ -2737,63 +2854,151 @@
       const btns = {
         'OUT': document.getElementById('btn-m-out'),
         'IN': document.getElementById('btn-m-in'),
+        'WASTE': document.getElementById('btn-m-waste'),
         'ADJUST': document.getElementById('btn-m-adjust'),
         'CART': document.getElementById('btn-m-cart'),
         'IMAGE': document.getElementById('btn-m-image')
       };
 
-      const formTrans = document.getElementById('formQuickTrans');
-      const formAdj = document.getElementById('formQuickAdjust');
-      const formCart = document.getElementById('formQuickCart');
-      const formImg = document.getElementById('formQuickImage');
+      const forms = {
+        'OUT': document.getElementById('formQuickTrans'),
+        'IN': document.getElementById('formQuickTrans'),
+        'WASTE': document.getElementById('formQuickWaste'),
+        'ADJUST': document.getElementById('formQuickAdjust'),
+        'CART': document.getElementById('formQuickCart'),
+        'IMAGE': document.getElementById('formQuickImage')
+      };
+
+      const hint = document.getElementById('modalActionBadgeHint');
+
+      // Apple Haptic Feedback สั่นตอบสนองเบาๆ
+      if (navigator.vibrate) navigator.vibrate(10);
+
+      // สไตล์ปุ่มกดแบบ Apple Segmented Control มีแสงเงาและสีตามประเภท
+      const activeStyles = {
+        'OUT': 'py-2 px-1 rounded-xl font-black text-xs flex flex-col sm:flex-row items-center justify-center gap-1 transition-all duration-200 ios-btn-press bg-white text-rose-600 shadow-sm border border-rose-300 ring-2 ring-rose-200',
+        'IN': 'py-2 px-1 rounded-xl font-black text-xs flex flex-col sm:flex-row items-center justify-center gap-1 transition-all duration-200 ios-btn-press bg-white text-emerald-600 shadow-sm border border-emerald-300 ring-2 ring-emerald-200',
+        'WASTE': 'py-2 px-1 rounded-xl font-black text-xs flex flex-col sm:flex-row items-center justify-center gap-1 transition-all duration-200 ios-btn-press bg-white text-amber-700 shadow-sm border border-amber-300 ring-2 ring-amber-200',
+        'ADJUST': 'py-2 px-1 rounded-xl font-black text-xs flex flex-col sm:flex-row items-center justify-center gap-1 transition-all duration-200 ios-btn-press bg-white text-indigo-700 shadow-sm border border-indigo-300 ring-2 ring-indigo-200',
+        'CART': 'py-2 px-1 rounded-xl font-black text-xs flex flex-col sm:flex-row items-center justify-center gap-1 transition-all duration-200 ios-btn-press bg-white text-blue-700 shadow-sm border border-blue-300 ring-2 ring-blue-200',
+        'IMAGE': 'py-2 px-1 rounded-xl font-black text-xs flex flex-col sm:flex-row items-center justify-center gap-1 transition-all duration-200 ios-btn-press bg-white text-purple-700 shadow-sm border border-purple-300 ring-2 ring-purple-200'
+      };
+
+      const inactiveStyle = 'py-2 px-1 rounded-xl font-medium text-xs flex flex-col sm:flex-row items-center justify-center gap-1 transition-all duration-200 ios-btn-press text-slate-600 hover:text-slate-900 hover:bg-white/60';
 
       Object.keys(btns).forEach(k => {
+        if (!btns[k]) return;
         if (k === action) {
-          btns[k].className = "py-2 rounded-xl border border-blue-500 bg-blue-50 text-blue-700 font-bold ring-2 ring-blue-300 text-center";
+          btns[k].className = activeStyles[k] || activeStyles['OUT'];
         } else {
-          btns[k].className = "py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-center";
+          btns[k].className = inactiveStyle;
         }
       });
 
-      formTrans.classList.add('hidden');
-      formAdj.classList.add('hidden');
-      formCart.classList.add('hidden');
-      formImg.classList.add('hidden');
-
-      if (action === 'OUT' || action === 'IN') {
-        formTrans.classList.remove('hidden');
-        document.getElementById('labelQuickActionType').textContent = action === 'OUT' ? 'เบิกออก (-)' : 'รับเข้า (+)';
-        const submitBtn = document.getElementById('btnSubmitQuick');
-        if (action === 'OUT') {
-          submitBtn.className = "w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow text-xs transition";
-          submitBtn.textContent = 'ยืนยันการเบิกออก (-)';
-        } else {
-          submitBtn.className = "w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow text-xs transition";
-          submitBtn.textContent = 'ยืนยันการรับเข้า (+)';
+      // ซ่อนทุกฟอร์ม แล้วเปิดฟอร์มที่เลือกพร้อม animation สไลด์ขึ้นลื่นไหล
+      const allFormEls = [
+        document.getElementById('formQuickTrans'),
+        document.getElementById('formQuickWaste'),
+        document.getElementById('formQuickAdjust'),
+        document.getElementById('formQuickCart'),
+        document.getElementById('formQuickImage')
+      ];
+      allFormEls.forEach(f => {
+        if (f) {
+          f.classList.add('hidden');
+          f.classList.remove('ios-tab-anim');
         }
+      });
+
+      const activeForm = forms[action];
+      if (activeForm) {
+        activeForm.classList.remove('hidden');
+        void activeForm.offsetWidth; // trigger reflow for smooth animation
+        activeForm.classList.add('ios-tab-anim');
+      }
+
+      if (action === 'OUT') {
+        if (hint) {
+          hint.textContent = 'ตัดสต็อกออก (-)';
+          hint.className = 'text-[10px] font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full';
+        }
+        document.getElementById('labelQuickActionType').textContent = 'เบิกออก (-)';
+        const submitBtn = document.getElementById('btnSubmitQuick');
+        submitBtn.className = "w-full py-3 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 hover:to-red-700 text-white font-bold rounded-xl shadow text-xs transition active:scale-98 ios-btn-press flex items-center justify-center gap-2";
+        submitBtn.innerHTML = '<span>📤</span><span>ยืนยันการเบิกออก (-)</span>';
+      } else if (action === 'IN') {
+        if (hint) {
+          hint.textContent = 'เพิ่มสต็อกเข้า (+)';
+          hint.className = 'text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full';
+        }
+        document.getElementById('labelQuickActionType').textContent = 'รับเข้า (+)';
+        const submitBtn = document.getElementById('btnSubmitQuick');
+        submitBtn.className = "w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-xl shadow text-xs transition active:scale-98 ios-btn-press flex items-center justify-center gap-2";
+        submitBtn.innerHTML = '<span>📥</span><span>ยืนยันการรับเข้า (+)</span>';
+      } else if (action === 'WASTE') {
+        if (hint) {
+          hint.textContent = 'ของเสีย / หมดอายุ (x)';
+          hint.className = 'text-[10px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full';
+        }
+        const wUnit = document.getElementById('wasteModalUnitLabel');
+        if (wUnit && activeModalProduct) wUnit.textContent = `(${activeModalProduct.unit})`;
       } else if (action === 'ADJUST') {
-        formAdj.classList.remove('hidden');
+        if (hint) {
+          hint.textContent = 'นับสต็อกจริง / Audit';
+          hint.className = 'text-[10px] font-semibold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-full';
+        }
         calcQuickAdjDiff();
       } else if (action === 'CART') {
-        formCart.classList.remove('hidden');
+        if (hint) {
+          hint.textContent = 'ใส่ตะกร้าสั่งซื้อ';
+          hint.className = 'text-[10px] font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full';
+        }
       } else if (action === 'IMAGE') {
-        formImg.classList.remove('hidden');
+        if (hint) {
+          hint.textContent = 'ข้อมูล & รูปภาพ';
+          hint.className = 'text-[10px] font-semibold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full';
+        }
       }
     }
 
     function addQuickQty(val) {
+      if (navigator.vibrate) navigator.vibrate(10);
       const input = document.getElementById('quickQty');
       const cur = Number(input.value) || 0;
       input.value = cur + val;
+      input.classList.remove('ios-pulse-qty');
+      void input.offsetWidth;
+      input.classList.add('ios-pulse-qty');
+    }
+
+    function addWasteQty(val) {
+      if (navigator.vibrate) navigator.vibrate(10);
+      const input = document.getElementById('quickWasteQty');
+      const cur = Number(input.value) || 0;
+      input.value = cur + val;
+      input.classList.remove('ios-pulse-qty');
+      void input.offsetWidth;
+      input.classList.add('ios-pulse-qty');
+    }
+
+    function setQuickWasteReason(reason) {
+      if (navigator.vibrate) navigator.vibrate(10);
+      const input = document.getElementById('quickWasteReason');
+      if (input) input.value = reason;
     }
 
     function addCartQty(val) {
+      if (navigator.vibrate) navigator.vibrate(10);
       const input = document.getElementById('quickCartQty');
       const cur = Number(input.value) || 0;
       input.value = cur + val;
+      input.classList.remove('ios-pulse-qty');
+      void input.offsetWidth;
+      input.classList.add('ios-pulse-qty');
     }
 
     function setCartQty(val) {
+      if (navigator.vibrate) navigator.vibrate(10);
       document.getElementById('quickCartQty').value = val;
     }
 
@@ -2808,13 +3013,14 @@
       const type = activeModalAction === 'IN' ? 'รับเข้า (+)' : 'เบิกออก (-)';
 
       if (!qty || qty <= 0) {
-        alert('กรุณากรอกจำนวนให้ถูกต้อง');
+        showAlert('กรุณากรอกจำนวนให้ถูกต้อง', 'error');
         return;
       }
 
       const btn = document.getElementById('btnSubmitQuick');
+      const oldHtml = btn.innerHTML;
       btn.disabled = true;
-      btn.textContent = 'กำลังบันทึก...';
+      btn.innerHTML = '<span class="animate-spin inline-block mr-1">⏳</span> กำลังบันทึก...';
 
       const diff = activeModalAction === 'IN' ? qty : -qty;
       state.products = state.products.map(p => {
@@ -2825,6 +3031,9 @@
       });
       updateUI();
       closeCardActionModal();
+
+      if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
+      playScanSuccessSound();
 
       try {
         const payload = {
@@ -2846,15 +3055,92 @@
 
         const json = await res.json();
         if (json.status === 'success') {
-          showAlert(`บันทึก ${type} ${qty} ${activeModalProduct.unit} "${activeModalProduct.name}" สำเร็จ`, 'success');
+          showAlert(`✓ บันทึก ${type} ${qty} ${activeModalProduct.unit} "${activeModalProduct.name}" สำเร็จ`, 'success');
           fetchData();
         } else {
           showAlert('เกิดข้อผิดพลาด: ' + json.message, 'error');
         }
       } catch (err) {
-        showAlert('บันทึกสำเร็จ (ข้อมูลกำลังซิงค์เข้า Google Sheet)', 'success');
+        showAlert('✓ บันทึกสำเร็จ (ข้อมูลกำลังซิงค์เข้า Google Sheet)', 'success');
       } finally {
         btn.disabled = false;
+        btn.innerHTML = oldHtml;
+      }
+    }
+
+    // บันทึกของเสีย / สินค้าหมดอายุ / ชำรุด (WASTE ACTION)
+    async function submitQuickWaste(e) {
+      e.preventDefault();
+      if (!activeModalProduct) return;
+
+      const qty = Number(document.getElementById('quickWasteQty').value);
+      const reason = document.getElementById('quickWasteReason').value.trim();
+      const user = document.getElementById('quickWasteUser').value.trim();
+      const notes = document.getElementById('quickWasteNotes').value.trim();
+
+      if (!qty || qty <= 0) {
+        showAlert('กรุณากรอกจำนวนของเสียให้ถูกต้อง', 'error');
+        return;
+      }
+      if (!reason) {
+        showAlert('กรุณาระบุสาเหตุของเสีย หรือเลือกตัวเลือกด้านบน', 'error');
+        return;
+      }
+
+      const fullNotes = notes ? `[${reason}] ${notes}` : `[${reason}]`;
+
+      const btn = document.getElementById('btnSubmitWaste');
+      const oldHtml = btn ? btn.innerHTML : '';
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="animate-spin inline-block mr-1">⏳</span> กำลังบันทึกของเสีย...';
+      }
+
+      // ตัดยอดออกจากสต็อกทันที (Optimistic update)
+      state.products = state.products.map(p => {
+        if (p.name === activeModalProduct.name) {
+          return { ...p, currentBalance: Math.max(0, Number(p.currentBalance) - qty) };
+        }
+        return p;
+      });
+      updateUI();
+      closeCardActionModal();
+
+      if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
+      playScanSuccessSound();
+
+      try {
+        const payload = {
+          action: 'addTransaction',
+          date: new Date().toISOString().split('T')[0],
+          category: activeModalProduct.category,
+          product: activeModalProduct.name,
+          type: 'ของเสีย (x)',
+          quantity: qty,
+          recordedBy: user || 'ผู้ดูแลสต็อก',
+          notes: fullNotes
+        };
+
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+
+        const json = await res.json();
+        if (json.status === 'success') {
+          showAlert(`✓ บันทึกของเสีย ${qty} ${activeModalProduct.unit} "${activeModalProduct.name}" (${reason}) เรียบร้อย`, 'success');
+          fetchData();
+        } else {
+          showAlert('เกิดข้อผิดพลาด: ' + json.message, 'error');
+        }
+      } catch (err) {
+        showAlert(`✓ บันทึกของเสีย ${qty} ${activeModalProduct.unit} "${activeModalProduct.name}" เรียบร้อย (กำลังซิงค์)`, 'success');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = oldHtml;
+        }
       }
     }
 
@@ -3966,13 +4252,26 @@
         }
       }
 
-      // ปรับตำแหน่งปุ่มตะกร้าลอย: ถ้าอยู่หน้าแดชบอร์ดให้ลอยเหนือแถบ Footer ถ้าอยู่แท็บอื่นให้ชิดล่างปกติ
+      // ปรับตำแหน่งปุ่มตะกร้าลอย & ปุ่มสแกนลอย: ถ้าอยู่หน้าแดชบอร์ดให้ลอยเหนือแถบ Footer ถ้าอยู่แท็บอื่นให้ชิดล่างปกติ
       const floatingCart = document.getElementById('floatingCartBtn');
       if (floatingCart) {
         if (tab === 'dashboard') {
-          floatingCart.className = "hidden fixed bottom-[4.8rem] sm:bottom-20 right-4 sm:right-6 z-40 cursor-pointer ios-btn-press transition-all duration-300";
+          floatingCart.classList.remove('bottom-5');
+          floatingCart.classList.add('bottom-[4.8rem]', 'sm:bottom-20');
         } else {
-          floatingCart.className = "hidden fixed bottom-5 right-4 sm:right-6 z-40 cursor-pointer ios-btn-press transition-all duration-300";
+          floatingCart.classList.remove('bottom-[4.8rem]', 'sm:bottom-20');
+          floatingCart.classList.add('bottom-5');
+        }
+      }
+
+      const floatingScan = document.getElementById('floatingScanBtn');
+      if (floatingScan) {
+        if (tab === 'dashboard') {
+          floatingScan.classList.remove('bottom-5');
+          floatingScan.classList.add('bottom-[4.8rem]', 'sm:bottom-20');
+        } else {
+          floatingScan.classList.remove('bottom-[4.8rem]', 'sm:bottom-20');
+          floatingScan.classList.add('bottom-5');
         }
       }
 
