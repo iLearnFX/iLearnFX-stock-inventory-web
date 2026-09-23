@@ -4374,24 +4374,28 @@
         document.getElementById('editSkuImageUrl').value = currentCapturedDataUrl;
         updateSkuImgPreview(currentCapturedDataUrl);
         if (editingSkuProduct) {
-          state.products = state.products.map(p => p.name === editingSkuProduct.name ? { ...p, imageUrl: currentCapturedDataUrl } : p);
+          const prodName = editingSkuProduct.name;
+          state.products = state.products.map(p => p.name === prodName ? { ...p, imageUrl: currentCapturedDataUrl } : p);
           localStorage.setItem('stock_app_cache_v4', JSON.stringify(state));
           updateUI();
+          // ซิงค์รูปภาพลง Google Sheet อัตโนมัติทันที
+          saveProductImageDirectly(prodName, currentCapturedDataUrl);
         }
-        showAlert('✓ ถ่ายรูปสินค้าเรียบร้อยแล้ว กด "บันทึกข้อมูลลง Google Sheet"', 'success');
       } else if (productCameraTarget === 'new') {
         document.getElementById('newProductImageUrl').value = currentCapturedDataUrl;
         updateNewProductImgPreview(currentCapturedDataUrl);
-        showAlert('✓ ถ่ายรูปสินค้าเรียบร้อยแล้ว กด "บันทึกสินค้าใหม่"', 'success');
+        showAlert('✓ ถ่ายรูปสินค้าเรียบร้อยแล้ว กด "บันทึกสินค้าใหม่" เพื่อเพิ่มลงระบบ', 'success');
       } else if (productCameraTarget === 'quick') {
         document.getElementById('quickImageUrl').value = currentCapturedDataUrl;
         previewQuickImage();
         if (activeModalProduct) {
-          state.products = state.products.map(p => p.name === activeModalProduct.name ? { ...p, imageUrl: currentCapturedDataUrl } : p);
+          const prodName = activeModalProduct.name;
+          state.products = state.products.map(p => p.name === prodName ? { ...p, imageUrl: currentCapturedDataUrl } : p);
           localStorage.setItem('stock_app_cache_v4', JSON.stringify(state));
           updateUI();
+          // ซิงค์รูปภาพลง Google Sheet อัตโนมัติทันที
+          saveProductImageDirectly(prodName, currentCapturedDataUrl);
         }
-        showAlert('✓ ถ่ายรูปสินค้าเรียบร้อยแล้ว กด "บันทึกรูปภาพสินค้า"', 'success');
       }
 
       closeProductCameraModal();
@@ -4532,7 +4536,41 @@
       }
     }
 
-    // รับไฟล์รูปภาพจากเครื่อง/กล้องมือถือ แล้วทำการย่อขนาดและบีบอัดแบบอัตโนมัติ
+    // ฟังก์ชันซิงค์รูปภาพสินค้าเข้า Google Sheet ทันทีแบบ Auto-save
+    async function saveProductImageDirectly(productName, imageUrl) {
+      if (!productName || !imageUrl) return false;
+      showAlert(`⏳ กำลังบันทึกรูปภาพ "${productName}" ลง Google Sheet...`, 'info');
+      try {
+        const payload = {
+          action: 'updateImage',
+          product: productName,
+          imageUrl: imageUrl
+        };
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+        const json = await res.json();
+        if (json.status === 'success') {
+          const finalUrl = json.imageUrl || imageUrl;
+          state.products = state.products.map(p => p.name === productName ? { ...p, imageUrl: finalUrl } : p);
+          localStorage.setItem('stock_app_cache_v4', JSON.stringify(state));
+          updateUI();
+          showAlert(`✓ บันทึกรูปภาพ "${productName}" ลง Google Sheet เรียบร้อยแล้ว (ทุกอุปกรณ์จะเห็นรูปทันที)`, 'success');
+          return true;
+        } else {
+          showAlert(`⚠️ บันทึกรูปภาพลง Google Sheet ไม่สำเร็จ: ${json.message || 'โปรดลองอีกครั้ง'}`, 'error');
+          return false;
+        }
+      } catch (err) {
+        console.error('Error saving image to Google Sheet:', err);
+        showAlert(`⚠️ ไม่สามารถส่งรูปภาพเข้า Google Sheet ได้: ${err.message || 'โปรดตรวจสอบการเชื่อมต่อ'}`, 'error');
+        return false;
+      }
+    }
+
+    // รับไฟล์รูปภาพจากเครื่อง/กล้องมือถือ แล้วทำการย่อขนาด บีบอัด และซิงค์ลง Google Sheet อัตโนมัติ
     async function handleImageFileSelect(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -4546,11 +4584,13 @@
         document.getElementById('quickImageUrl').value = compressedDataUrl;
         previewQuickImage();
         if (activeModalProduct) {
-          state.products = state.products.map(p => p.name === activeModalProduct.name ? { ...p, imageUrl: compressedDataUrl } : p);
+          const prodName = activeModalProduct.name;
+          state.products = state.products.map(p => p.name === prodName ? { ...p, imageUrl: compressedDataUrl } : p);
           localStorage.setItem('stock_app_cache_v4', JSON.stringify(state));
           updateUI();
+          // ซิงค์รูปภาพลง Google Sheet ทันที
+          saveProductImageDirectly(prodName, compressedDataUrl);
         }
-        showAlert('✓ ประมวลผลรูปภาพพร้อมใช้งานแล้ว กด "บันทึกรูปภาพสินค้า"', 'success');
       } catch (err) {
         imgBox.innerHTML = oldBoxHtml;
         showAlert('⚠️ ' + (err.message || 'ไม่สามารถโหลดรูปภาพได้'), 'error');
@@ -4563,13 +4603,16 @@
       e.preventDefault();
       if (!activeModalProduct) return;
 
+      const targetProdName = activeModalProduct.name;
       const url = document.getElementById('quickImageUrl').value.trim();
       const btn = document.getElementById('btnSubmitImg');
-      btn.disabled = true;
-      btn.textContent = 'กำลังบันทึกรูป...';
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'กำลังบันทึกรูป...';
+      }
 
       state.products = state.products.map(p => {
-        if (p.name === activeModalProduct.name) {
+        if (p.name === targetProdName) {
           return { ...p, imageUrl: url };
         }
         return p;
@@ -4577,34 +4620,9 @@
       updateUI();
       closeCardActionModal();
 
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 12000);
+      await saveProductImageDirectly(targetProdName, url);
 
-      try {
-        const payload = {
-          action: 'updateImage',
-          product: activeModalProduct.name,
-          imageUrl: url
-        };
-
-        const res = await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload),
-          signal: controller.signal
-        });
-        clearTimeout(timeoutId);
-
-        const json = await res.json();
-        if (json.status === 'success') {
-          showAlert('✓ บันทึกรูปภาพสินค้าลง Google Sheet สำเร็จ', 'success');
-        } else {
-          showAlert('✓ บันทึกรูปภาพสินค้าเรียบร้อยแล้ว', 'success');
-        }
-      } catch (err) {
-        clearTimeout(timeoutId);
-        showAlert('✓ บันทึกรูปภาพสินค้าเรียบร้อยแล้ว (แสดงผลทันที)', 'success');
-      } finally {
+      if (btn) {
         btn.disabled = false;
         btn.textContent = 'บันทึกรูปภาพสินค้า';
       }
