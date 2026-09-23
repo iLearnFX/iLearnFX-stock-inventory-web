@@ -1099,18 +1099,19 @@
             
             <!-- ปุ่มเลือกไฟล์ / ถ่ายรูปจากมือถือ -->
             <div class="flex-1 space-y-2">
-              <input type="file" id="quickImageFileInput" accept="image/*" onchange="handleImageFileSelect(event)" class="hidden" />
-              <input type="file" id="quickImageCameraInput" accept="image/*" capture="environment" onchange="handleImageFileSelect(event)" class="hidden" />
+              <input type="file" id="quickImageFileInput" accept="image/*" onchange="handleImageFileSelect(event)" class="sr-only" style="position: absolute; width: 1px; height: 1px; opacity: 0;" />
+              <input type="file" id="quickImageCameraInput" accept="image/*" capture="environment" onchange="handleImageFileSelect(event)" class="sr-only" style="position: absolute; width: 1px; height: 1px; opacity: 0;" />
               
+              <!-- 2 ปุ่มแยกชัดเจน: ถ่ายรูป vs เลือกจากเครื่อง -->
               <div class="grid grid-cols-2 gap-2">
                 <button type="button" onclick="openProductCameraModal('quick')" class="py-2.5 px-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition active:scale-95 whitespace-nowrap ios-btn-press">
                   <span class="text-sm">📷</span>
                   <span>เปิดกล้องถ่าย</span>
                 </button>
-                <button type="button" onclick="document.getElementById('quickImageFileInput').click()" class="py-2.5 px-2 bg-white hover:bg-slate-100 border border-purple-200 text-purple-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-2xs transition active:scale-95 whitespace-nowrap ios-btn-press">
+                <label for="quickImageFileInput" class="py-2.5 px-2 bg-white hover:bg-slate-100 border border-purple-200 text-purple-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-2xs transition active:scale-95 whitespace-nowrap ios-btn-press cursor-pointer text-center">
                   <span class="text-sm">🖼️</span>
                   <span>เลือกจากเครื่อง</span>
-                </button>
+                </label>
               </div>
               <p class="text-[9px] text-slate-400 leading-tight">ระบบจะย่อขนาดและบีบอัดรูปภาพให้อัตโนมัติ ไม่ต้องไปฝากไฟล์ที่อื่น</p>
             </div>
@@ -1412,8 +1413,8 @@
             </div>
             
             <div class="flex-1 space-y-2">
-              <input type="file" id="newProductFileInput" accept="image/*" onchange="handleNewProductFileSelect(event)" class="hidden" />
-              <input type="file" id="newProductCameraInput" accept="image/*" capture="environment" onchange="handleNewProductFileSelect(event)" class="hidden" />
+              <input type="file" id="newProductFileInput" accept="image/*" onchange="handleNewProductFileSelect(event)" class="sr-only" style="position: absolute; width: 1px; height: 1px; opacity: 0;" />
+              <input type="file" id="newProductCameraInput" accept="image/*" capture="environment" onchange="handleNewProductFileSelect(event)" class="sr-only" style="position: absolute; width: 1px; height: 1px; opacity: 0;" />
               
               <!-- 2 ปุ่มแยกชัดเจน: ถ่ายรูป vs เลือกจากเครื่อง -->
               <div class="grid grid-cols-2 gap-2">
@@ -1421,10 +1422,10 @@
                   <span class="text-sm">📷</span>
                   <span>เปิดกล้องถ่าย</span>
                 </button>
-                <button type="button" onclick="document.getElementById('newProductFileInput').click()" class="py-2.5 px-2 bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-2xs transition active:scale-95 whitespace-nowrap ios-btn-press">
+                <label for="newProductFileInput" class="py-2.5 px-2 bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-2xs active:scale-95 whitespace-nowrap ios-btn-press cursor-pointer text-center">
                   <span class="text-sm">🖼️</span>
                   <span>เลือกจากเครื่อง</span>
-                </button>
+                </label>
               </div>
               
               <div class="flex items-center gap-2">
@@ -1546,8 +1547,8 @@
             </div>
             
             <div class="flex-1 space-y-2">
-              <input type="file" id="editSkuFileInput" accept="image/*" onchange="handleSkuFileSelect(event)" class="hidden" />
-              <input type="file" id="editSkuCameraInput" accept="image/*" capture="environment" onchange="handleSkuFileSelect(event)" class="hidden" />
+              <input type="file" id="editSkuFileInput" accept="image/*" onchange="handleSkuFileSelect(event)" class="sr-only" style="position: absolute; width: 1px; height: 1px; opacity: 0;" />
+              <input type="file" id="editSkuCameraInput" accept="image/*" capture="environment" onchange="handleSkuFileSelect(event)" class="sr-only" style="position: absolute; width: 1px; height: 1px; opacity: 0;" />
               
               <!-- 2 ปุ่มแยกชัดเจน: ถ่ายรูป vs เลือกจากเครื่อง -->
               <div class="grid grid-cols-2 gap-2">
@@ -1555,10 +1556,10 @@
                   <span class="text-sm">📷</span>
                   <span>เปิดกล้องถ่าย</span>
                 </button>
-                <button type="button" onclick="document.getElementById('editSkuFileInput').click()" class="py-2.5 px-2 bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-2xs transition active:scale-95 whitespace-nowrap ios-btn-press">
+                <label for="editSkuFileInput" class="py-2.5 px-2 bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-2xs active:scale-95 whitespace-nowrap ios-btn-press cursor-pointer text-center">
                   <span class="text-sm">🖼️</span>
                   <span>เลือกจากเครื่อง</span>
-                </button>
+                </label>
               </div>
               
               <div class="flex items-center gap-2">
@@ -1635,6 +1636,12 @@
         <button type="submit" id="btnSaveSku" class="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-md text-xs transition active:scale-98 flex items-center justify-center gap-2">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
           <span>บันทึกข้อมูลลง Google Sheet</span>
+        </button>
+
+        <!-- ปุ่มลบสินค้านี้ออกจากระบบ -->
+        <button type="button" onclick="confirmDeleteSku()" class="w-full py-2.5 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 font-bold rounded-xl text-xs transition active:scale-98 flex items-center justify-center gap-1.5 shadow-2xs">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          <span>ลบสินค้านี้ออกจากระบบ</span>
         </button>
 
       </form>
@@ -2292,7 +2299,7 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbx5n8lDhigbaib0EYMv3W-qpxPzKYXyWDoabe4T-XfEywLROdqb0KdH0OesADpxWPyK1g/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbwjEBH98-lSDSMEhes-PMGX7MmZ2CanawbtysGXhsPWZBmvRzrZaofjURfKbN1kHTJysQ/exec";
 
     // ==========================================
     // AUDIO & SOUND FX ENGINE (Web Audio API Synthesizer - 0ms Latency, Full Offline)
@@ -3082,10 +3089,15 @@
               else if (p.name.includes('น้ำตาล')) dp = '1 กก.';
               else if (p.name.includes('แก้ว') || p.name.includes('ฝา')) dp = '50 ใบ';
             }
+
+            // ตรวจสอบรูปภาพ: ถ้า Google Sheet ส่งค่าว่างมา ให้ใช้รูปเดิมที่บันทึกไว้ในเครื่อง (ป้องกัน Refresh แล้วรูปหาย)
+            const localProd = (state.products || []).find(x => x.name === p.name);
+            const finalImage = (p.imageUrl && p.imageUrl.trim() !== '') ? p.imageUrl : (localProd && localProd.imageUrl ? localProd.imageUrl : '');
+
             return {
               ...p,
               packSize: dp,
-              imageUrl: p.imageUrl || '',
+              imageUrl: finalImage,
               supplier: p.supplier || (p.name.includes('กาแฟ') ? 'โรงคั่วกาแฟ Ground Roaster' : (p.name.includes('แก้ว') || p.name.includes('ฝา') ? 'ศิริมงคลพาณิชย์' : 'แม็คโคร (CP Axtra)'))
             };
           });
@@ -4024,6 +4036,37 @@
       }
     }
 
+    async function confirmDeleteSku() {
+      if (!editingSkuProduct) return;
+      const prodName = editingSkuProduct.name;
+      const origProd = editingSkuProduct;
+      if (!confirm(`คุณต้องการลบสินค้า "${prodName}" ออกจากระบบสต็อกใช่หรือไม่?\n\n(ประวัติการทำรายการเดิมจะยังคงอยู่ แต่สินค้าจะถูกนำออกจากรายการสต็อกและ Google Sheet)`)) return;
+
+      // Optimistic UI: นำออกจากหน้าจอและ LocalStorage ทันที
+      state.products = state.products.filter(p => p.name !== prodName);
+      if (state.cart) {
+        state.cart = state.cart.filter(item => item.productName !== prodName);
+        saveCart(state.cart);
+      }
+      localStorage.setItem('stock_app_cache_v4', JSON.stringify(state));
+      updateUI();
+      closeEditSkuModal();
+      if (activeModalProduct && activeModalProduct.name === prodName) {
+        closeCardActionModal();
+      }
+      showAlert(`✓ ลบสินค้า "${prodName}" ออกจากระบบเรียบร้อยแล้ว`, 'info');
+
+      try {
+        await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'deleteProduct', name: prodName, product: prodName, id: origProd.id })
+        });
+      } catch (err) {
+        console.warn('Backend sync deleteProduct error:', err);
+      }
+    }
+
     // บันทึกของเสีย / สินค้าหมดอายุ / ชำรุด (WASTE ACTION)
     async function submitQuickWaste(e) {
       e.preventDefault();
@@ -4293,14 +4336,15 @@
       const sx = (vw - side) / 2;
       const sy = (vh - side) / 2;
 
-      canvas.width = 300;
-      canvas.height = 300;
+      // ปรับขนาด 240x240 px คุณภาพ 0.58 เพื่อให้ขนาดไฟล์เหลือเพียง ~6-8 KB เซฟลง Google Sheet ได้โดยตรง 100%
+      canvas.width = 240;
+      canvas.height = 240;
       const ctx = canvas.getContext('2d');
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
-      ctx.drawImage(video, sx, sy, side, side, 0, 0, 300, 300);
+      ctx.drawImage(video, sx, sy, side, side, 0, 0, 240, 240);
 
-      currentCapturedDataUrl = canvas.toDataURL('image/jpeg', 0.65);
+      currentCapturedDataUrl = canvas.toDataURL('image/jpeg', 0.58);
 
       const previewImg = document.getElementById('productCameraPreviewImg');
       if (previewImg) previewImg.src = currentCapturedDataUrl;
@@ -4329,6 +4373,11 @@
       if (productCameraTarget === 'edit') {
         document.getElementById('editSkuImageUrl').value = currentCapturedDataUrl;
         updateSkuImgPreview(currentCapturedDataUrl);
+        if (editingSkuProduct) {
+          state.products = state.products.map(p => p.name === editingSkuProduct.name ? { ...p, imageUrl: currentCapturedDataUrl } : p);
+          localStorage.setItem('stock_app_cache_v4', JSON.stringify(state));
+          updateUI();
+        }
         showAlert('✓ ถ่ายรูปสินค้าเรียบร้อยแล้ว กด "บันทึกข้อมูลลง Google Sheet"', 'success');
       } else if (productCameraTarget === 'new') {
         document.getElementById('newProductImageUrl').value = currentCapturedDataUrl;
@@ -4337,6 +4386,11 @@
       } else if (productCameraTarget === 'quick') {
         document.getElementById('quickImageUrl').value = currentCapturedDataUrl;
         previewQuickImage();
+        if (activeModalProduct) {
+          state.products = state.products.map(p => p.name === activeModalProduct.name ? { ...p, imageUrl: currentCapturedDataUrl } : p);
+          localStorage.setItem('stock_app_cache_v4', JSON.stringify(state));
+          updateUI();
+        }
         showAlert('✓ ถ่ายรูปสินค้าเรียบร้อยแล้ว กด "บันทึกรูปภาพสินค้า"', 'success');
       }
 
@@ -4357,7 +4411,7 @@
     // ==========================================
     // ตัวประมวลผลและย่อขนาดรูปภาพความเร็วสูง (High-Performance Image Compression Engine)
     // ==========================================
-    function processSelectedImageFile(file, maxDim = 320, quality = 0.65) {
+    function processSelectedImageFile(file, maxDim = 240, quality = 0.58) {
       return new Promise((resolve, reject) => {
         if (!file) return reject(new Error('ไม่พบไฟล์รูปภาพ'));
 
@@ -4488,9 +4542,14 @@
       imgBox.innerHTML = '<div class="text-[9px] text-blue-600 font-bold animate-pulse text-center p-1">กำลังประมวลผล...</div>';
 
       try {
-        const compressedDataUrl = await processSelectedImageFile(file, 300, 0.65);
+        const compressedDataUrl = await processSelectedImageFile(file, 240, 0.58);
         document.getElementById('quickImageUrl').value = compressedDataUrl;
         previewQuickImage();
+        if (activeModalProduct) {
+          state.products = state.products.map(p => p.name === activeModalProduct.name ? { ...p, imageUrl: compressedDataUrl } : p);
+          localStorage.setItem('stock_app_cache_v4', JSON.stringify(state));
+          updateUI();
+        }
         showAlert('✓ ประมวลผลรูปภาพพร้อมใช้งานแล้ว กด "บันทึกรูปภาพสินค้า"', 'success');
       } catch (err) {
         imgBox.innerHTML = oldBoxHtml;
@@ -5609,7 +5668,7 @@
       box.innerHTML = '<div class="text-[9px] text-blue-600 font-bold animate-pulse text-center p-1">กำลังประมวลผลรูป...</div>';
 
       try {
-        const compressedDataUrl = await processSelectedImageFile(file, 300, 0.65);
+        const compressedDataUrl = await processSelectedImageFile(file, 240, 0.58);
         document.getElementById('newProductImageUrl').value = compressedDataUrl;
         updateNewProductImgPreview(compressedDataUrl);
         showAlert('✓ รูปภาพพร้อมแล้ว กด "บันทึกสินค้าใหม่"', 'success');
@@ -5689,6 +5748,7 @@
           product: name,
           category: category,
           unit: unit,
+          packSize: packSize,
           openingBalance: openingBal,
           minStock: minStock,
           currentBalance: openingBal,
@@ -5828,9 +5888,14 @@
       box.innerHTML = '<div class="text-[9px] text-blue-600 font-bold animate-pulse text-center p-1">กำลังประมวลผลรูป...</div>';
 
       try {
-        const compressedDataUrl = await processSelectedImageFile(file, 300, 0.65);
+        const compressedDataUrl = await processSelectedImageFile(file, 240, 0.58);
         document.getElementById('editSkuImageUrl').value = compressedDataUrl;
         updateSkuImgPreview(compressedDataUrl);
+        if (editingSkuProduct) {
+          state.products = state.products.map(p => p.name === editingSkuProduct.name ? { ...p, imageUrl: compressedDataUrl } : p);
+          localStorage.setItem('stock_app_cache_v4', JSON.stringify(state));
+          updateUI();
+        }
         showAlert('✓ ประมวลผลรูปภาพพร้อมใช้งานแล้ว กด "บันทึกข้อมูลลง Google Sheet"', 'success');
       } catch (err) {
         box.innerHTML = oldBoxHtml;
@@ -5924,6 +5989,7 @@
           category: newCat,
           minStock: newMinStock,
           unit: newUnit,
+          packSize: newPackSize,
           imageUrl: newImageUrl,
           supplier: newSupplier
         };
@@ -8010,6 +8076,7 @@
               product: item.product,
               type: 'ปรับยอดสต็อก',
               quantity: item.newBalance,
+              newBalance: item.newBalance,
               user: auditor,
               notes: `[ตรวจนับสต็อกจริง] นับได้ ${item.newBalance} (เดิม ${item.oldBalance} ${item.unit}, ผลต่าง ${item.diff > 0 ? '+' : ''}${item.diff} ${item.unit})`
             })
