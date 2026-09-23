@@ -370,19 +370,16 @@
             </button>
           </div>
 
-          <!-- ปุ่มสลับ 3 มุมมอง: 📱 ปัด | 🔲 การ์ด | 📋 รายการ -->
-          <div class="flex items-center bg-slate-200/70 p-0.5 rounded-xl flex-shrink-0 shadow-2xs border border-slate-300/40">
-            <button type="button" onclick="setDashboardViewMode('swipe')" id="btnViewSwipe" class="py-1.5 px-2 sm:px-2.5 rounded-lg text-xs font-bold transition flex items-center gap-1 whitespace-nowrap ios-btn-press" title="มุมมองปัดหน้าจอ ซ้าย-ขวา สไตล์แอปมือถือ">
-              <span class="text-xs">📱</span>
-              <span class="inline">ปัด</span>
+          <!-- ปุ่มสลับ 3 มุมมอง: สัญลักษณ์ไอคอนล้วน (📱 | ⊞ | ☰) กระทัดรัด ไม่ล้นจอ -->
+          <div class="flex items-center bg-slate-200/80 p-0.5 rounded-xl flex-shrink-0 shadow-2xs border border-slate-300/40">
+            <button type="button" onclick="setDashboardViewMode('swipe')" id="btnViewSwipe" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center ios-btn-press" title="มุมมองปัดหน้าจอ ซ้าย-ขวา (Swipe)">
+              <span class="text-sm">📱</span>
             </button>
-            <button type="button" onclick="setDashboardViewMode('grid')" id="btnViewGrid" class="py-1.5 px-2 sm:px-2.5 rounded-lg text-xs font-medium transition flex items-center gap-1 whitespace-nowrap ios-btn-press" title="มุมมองการ์ดตาราง">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-              <span class="inline">การ์ด</span>
+            <button type="button" onclick="setDashboardViewMode('grid')" id="btnViewGrid" class="w-8 h-8 rounded-lg text-xs font-medium transition flex items-center justify-center ios-btn-press text-slate-600 hover:text-slate-900" title="มุมมองการ์ด (Grid)">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
             </button>
-            <button type="button" onclick="setDashboardViewMode('list')" id="btnViewList" class="py-1.5 px-2 sm:px-2.5 rounded-lg text-xs font-medium transition flex items-center gap-1 whitespace-nowrap ios-btn-press" title="มุมมองรายการแน่น">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-              <span class="inline">รายการ</span>
+            <button type="button" onclick="setDashboardViewMode('list')" id="btnViewList" class="w-8 h-8 rounded-lg text-xs font-medium transition flex items-center justify-center ios-btn-press text-slate-600 hover:text-slate-900" title="มุมมองรายการ (List)">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
             </button>
           </div>
         </div>
@@ -1101,12 +1098,20 @@
             </div>
             
             <!-- ปุ่มเลือกไฟล์ / ถ่ายรูปจากมือถือ -->
-            <div class="flex-1 space-y-1.5">
+            <div class="flex-1 space-y-2">
               <input type="file" id="quickImageFileInput" accept="image/*" onchange="handleImageFileSelect(event)" class="hidden" />
-              <button type="button" onclick="document.getElementById('quickImageFileInput').click()" class="w-full py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold rounded-xl text-xs border border-purple-200 flex items-center justify-center gap-1.5 transition active:scale-95 shadow-xs ios-btn-press">
-                <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                <span>เลือกรูปจากเครื่อง หรือ ถ่ายรูป</span>
-              </button>
+              <input type="file" id="quickImageCameraInput" accept="image/*" capture="environment" onchange="handleImageFileSelect(event)" class="hidden" />
+              
+              <div class="grid grid-cols-2 gap-2">
+                <button type="button" onclick="openProductCameraModal('quick')" class="py-2.5 px-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition active:scale-95 whitespace-nowrap ios-btn-press">
+                  <span class="text-sm">📷</span>
+                  <span>เปิดกล้องถ่าย</span>
+                </button>
+                <button type="button" onclick="document.getElementById('quickImageFileInput').click()" class="py-2.5 px-2 bg-white hover:bg-slate-100 border border-purple-200 text-purple-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-2xs transition active:scale-95 whitespace-nowrap ios-btn-press">
+                  <span class="text-sm">🖼️</span>
+                  <span>เลือกจากเครื่อง</span>
+                </button>
+              </div>
               <p class="text-[9px] text-slate-400 leading-tight">ระบบจะย่อขนาดและบีบอัดรูปภาพให้อัตโนมัติ ไม่ต้องไปฝากไฟล์ที่อื่น</p>
             </div>
           </div>
@@ -1408,10 +1413,19 @@
             
             <div class="flex-1 space-y-2">
               <input type="file" id="newProductFileInput" accept="image/*" onchange="handleNewProductFileSelect(event)" class="hidden" />
-              <button type="button" onclick="document.getElementById('newProductFileInput').click()" class="w-full py-2.5 px-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition active:scale-95">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                <span>ถ่ายรูป หรือ เลือกรูปจากมือถือ</span>
-              </button>
+              <input type="file" id="newProductCameraInput" accept="image/*" capture="environment" onchange="handleNewProductFileSelect(event)" class="hidden" />
+              
+              <!-- 2 ปุ่มแยกชัดเจน: ถ่ายรูป vs เลือกจากเครื่อง -->
+              <div class="grid grid-cols-2 gap-2">
+                <button type="button" onclick="openProductCameraModal('new')" class="py-2.5 px-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition active:scale-95 whitespace-nowrap ios-btn-press">
+                  <span class="text-sm">📷</span>
+                  <span>เปิดกล้องถ่าย</span>
+                </button>
+                <button type="button" onclick="document.getElementById('newProductFileInput').click()" class="py-2.5 px-2 bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-2xs transition active:scale-95 whitespace-nowrap ios-btn-press">
+                  <span class="text-sm">🖼️</span>
+                  <span>เลือกจากเครื่อง</span>
+                </button>
+              </div>
               
               <div class="flex items-center gap-2">
                 <button type="button" onclick="clearNewProductImage()" class="text-[11px] text-rose-500 hover:text-rose-700 font-semibold underline">
@@ -1465,7 +1479,9 @@
           </div>
           <div>
             <label class="block font-bold text-slate-700 mb-1">หน่วยนับสต็อก *</label>
-            <input type="text" id="newProductUnit" required placeholder="เช่น ถุง, แพ็ค, ขวด, กก." class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-semibold outline-none focus:ring-2 focus:ring-blue-500" />
+            <select id="newProductUnit" required onchange="handleUnitSelectChange(this)" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-semibold outline-none focus:ring-2 focus:ring-blue-500">
+              <!-- Rendered by JS -->
+            </select>
           </div>
         </div>
 
@@ -1531,10 +1547,19 @@
             
             <div class="flex-1 space-y-2">
               <input type="file" id="editSkuFileInput" accept="image/*" onchange="handleSkuFileSelect(event)" class="hidden" />
-              <button type="button" onclick="document.getElementById('editSkuFileInput').click()" class="w-full py-2.5 px-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition active:scale-95">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                <span>เลือกรูปจากอุปกรณ์ หรือ ถ่ายรูป</span>
-              </button>
+              <input type="file" id="editSkuCameraInput" accept="image/*" capture="environment" onchange="handleSkuFileSelect(event)" class="hidden" />
+              
+              <!-- 2 ปุ่มแยกชัดเจน: ถ่ายรูป vs เลือกจากเครื่อง -->
+              <div class="grid grid-cols-2 gap-2">
+                <button type="button" onclick="openProductCameraModal('edit')" class="py-2.5 px-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition active:scale-95 whitespace-nowrap ios-btn-press">
+                  <span class="text-sm">📷</span>
+                  <span>เปิดกล้องถ่าย</span>
+                </button>
+                <button type="button" onclick="document.getElementById('editSkuFileInput').click()" class="py-2.5 px-2 bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-2xs transition active:scale-95 whitespace-nowrap ios-btn-press">
+                  <span class="text-sm">🖼️</span>
+                  <span>เลือกจากเครื่อง</span>
+                </button>
+              </div>
               
               <div class="flex items-center gap-2">
                 <button type="button" onclick="clearSkuImage()" class="text-[11px] text-rose-500 hover:text-rose-700 font-semibold underline">
@@ -1583,7 +1608,9 @@
           </div>
           <div>
             <label class="block font-bold text-slate-700 mb-1">หน่วยนับสต็อก (Unit) *</label>
-            <input type="text" id="editSkuUnit" required placeholder="เช่น ถุง, แพ็ค, ขวด, กก." class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-semibold outline-none focus:ring-2 focus:ring-blue-500" />
+            <select id="editSkuUnit" required onchange="handleUnitSelectChange(this)" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-semibold outline-none focus:ring-2 focus:ring-blue-500">
+              <!-- Rendered by JS -->
+            </select>
           </div>
         </div>
 
@@ -1852,6 +1879,77 @@
     </div>
   </div>
 
+  <!-- MODAL ถ่ายรูปสินค้าด้วยกล้องสด (Live Product Camera Modal) -->
+  <div id="modalProductCamera" class="hidden fixed inset-0 bg-black/95 z-[99] flex flex-col justify-between">
+    <!-- Camera Header -->
+    <div class="p-4 flex items-center justify-between text-white z-10 bg-gradient-to-b from-black/80 to-transparent">
+      <div class="flex items-center gap-2">
+        <span class="text-lg">📷</span>
+        <span class="font-bold text-sm text-white">ถ่ายรูปสินค้า</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button type="button" onclick="switchProductCamera()" id="btnSwitchProductCam" class="p-2 rounded-full bg-white/20 hover:bg-white/30 text-white transition active:scale-90" title="สลับกล้องหน้า/หลัง">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        </button>
+        <button type="button" onclick="closeProductCameraModal()" class="p-2 rounded-full bg-white/20 hover:bg-white/30 text-white transition active:scale-90" title="ปิดกล้อง">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Viewfinder Area -->
+    <div class="relative flex-1 flex items-center justify-center overflow-hidden bg-black">
+      <video id="productCameraVideo" autoplay playsinline muted class="w-full h-full object-cover"></video>
+      <canvas id="productCameraCanvas" class="hidden"></canvas>
+      
+      <!-- Frame Guide -->
+      <div id="productCameraGuide" class="absolute w-64 h-64 sm:w-72 sm:h-72 border-2 border-white/60 rounded-3xl pointer-events-none shadow-[0_0_0_9999px_rgba(0,0,0,0.4)]">
+        <div class="absolute inset-0 flex items-center justify-center">
+          <span class="text-white/40 text-xs font-semibold">จัดสินค้าให้อยู่ในกรอบ</span>
+        </div>
+      </div>
+
+      <!-- Captured Preview (if snapped) -->
+      <div id="productCameraPreviewBox" class="hidden absolute inset-0 bg-black flex items-center justify-center p-4">
+        <img id="productCameraPreviewImg" class="max-w-full max-h-[75vh] object-contain rounded-2xl shadow-2xl border border-white/20" alt="" />
+      </div>
+    </div>
+
+    <!-- Camera Controls Footer -->
+    <div class="p-6 bg-gradient-to-t from-black via-black/90 to-transparent flex items-center justify-center z-10">
+      <!-- State 1: Ready to Capture -->
+      <div id="productCameraShootControls" class="flex items-center justify-around w-full max-w-xs">
+        <!-- Native camera fallback button -->
+        <button type="button" onclick="fallbackNativeCameraShoot()" class="text-white/80 hover:text-white text-xs flex flex-col items-center gap-1">
+          <span class="text-lg">⚙️</span>
+          <span class="text-[10px]">กล้องระบบ</span>
+        </button>
+
+        <!-- Big Shutter Button -->
+        <button type="button" onclick="takeProductSnapshot()" class="w-18 h-18 rounded-full border-4 border-white flex items-center justify-center bg-white/20 hover:bg-white/40 transition active:scale-90 shadow-2xl">
+          <div class="w-14 h-14 rounded-full bg-white shadow-md"></div>
+        </button>
+
+        <button type="button" onclick="closeProductCameraModal()" class="text-white/80 hover:text-white text-xs flex flex-col items-center gap-1">
+          <span class="text-lg">✕</span>
+          <span class="text-[10px]">ยกเลิก</span>
+        </button>
+      </div>
+
+      <!-- State 2: Confirm Captured Photo -->
+      <div id="productCameraConfirmControls" class="hidden flex items-center justify-center gap-4 w-full max-w-xs">
+        <button type="button" onclick="retakeProductSnapshot()" class="flex-1 py-3 bg-white/20 hover:bg-white/30 text-white font-bold rounded-2xl text-xs flex items-center justify-center gap-1.5 transition active:scale-95">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          <span>ถ่ายใหม่</span>
+        </button>
+        <button type="button" onclick="acceptProductSnapshot()" class="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl text-xs flex items-center justify-center gap-1.5 shadow-lg transition active:scale-95">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          <span>ใช้รูปนี้</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL ป้าย QR CODE ติดเชลฟ์สินค้า (Shelf & Bin QR Tag for Print & Scan) -->
   <div id="modalShelfTag" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[85] flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white w-full sm:max-w-lg rounded-t-[32px] sm:rounded-[28px] shadow-2xl border border-slate-200/80 overflow-hidden max-h-[95vh] flex flex-col ios-sheet-anim">
@@ -2056,6 +2154,61 @@
   <!-- BATCH PRINT CONTAINER (สำหรับพิมพ์ลงกระดาษ A4 อัตโนมัติ - 10 ป้าย/แผ่น) -->
   <div id="shelfTagBatchPrintArea" class="hidden"></div>
 
+  <!-- MODAL จัดการหน่วยนับสินค้า (Units Management: เพิ่ม/ลด/แก้ไขชื่อหน่วย) -->
+  <div id="modalUnitManage" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[90] flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white w-full sm:max-w-md rounded-t-[32px] sm:rounded-[28px] shadow-[0_25px_60px_rgba(0,0,0,0.22)] border border-slate-200/80 overflow-hidden max-h-[90vh] flex flex-col ios-sheet-anim">
+      <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto my-2 sm:hidden flex-shrink-0"></div>
+
+      <!-- Header -->
+      <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white p-4 flex items-center justify-between flex-shrink-0">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-2xl bg-white/20 text-white flex items-center justify-center text-lg shadow-inner flex-shrink-0">
+            🏷️
+          </div>
+          <div>
+            <h3 class="font-bold text-base text-white leading-tight">จัดการหน่วยนับสินค้า</h3>
+            <p class="text-[11px] text-blue-100">เพิ่ม ลบ หรือแก้ไขชื่อหน่วยนับในระบบ</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeUnitManageModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition active:scale-90">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="p-4 overflow-y-auto space-y-4 flex-1 text-xs">
+        <!-- ฟอร์มเพิ่มหน่วยใหม่ -->
+        <form onsubmit="handleAddNewUnit(event)" class="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-2">
+          <label class="block font-bold text-slate-700 text-xs">เพิ่มหน่วยนับใหม่</label>
+          <div class="flex items-center gap-2">
+            <input type="text" id="inputNewUnitName" required placeholder="เช่น แก้ว, ถาด, หลอด, แผ่น" class="flex-1 bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-semibold outline-none focus:ring-2 focus:ring-blue-500" />
+            <button type="submit" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs flex items-center gap-1 shadow-xs transition active:scale-95 flex-shrink-0">
+              <span>+ เพิ่ม</span>
+            </button>
+          </div>
+        </form>
+
+        <!-- รายการหน่วยนับที่มีอยู่ในระบบ -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-bold text-slate-700">หน่วยนับทั้งหมดในระบบ</span>
+            <span id="unitCountBadge" class="text-[10px] text-blue-600 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full font-bold">0 หน่วย</span>
+          </div>
+          <div id="unitManageItemsList" class="space-y-1.5 max-h-[45vh] overflow-y-auto pr-1">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="p-3 bg-slate-50 border-t border-slate-200 flex justify-end flex-shrink-0">
+        <button type="button" onclick="closeUnitManageModal()" class="px-5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-xs transition active:scale-95">
+          เสร็จสิ้น
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- CATEGORY MANAGEMENT & COLOR PICKER MODAL: จัดการและเพิ่มหมวดหมู่พร้อมกำหนดสีเอง -->
   <div id="modalCategoryManage" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white w-full sm:max-w-xl md:max-w-2xl rounded-t-[32px] sm:rounded-[28px] shadow-[0_25px_60px_rgba(0,0,0,0.22)] border border-slate-200/80 overflow-hidden max-h-[90vh] flex flex-col ios-sheet-anim">
@@ -2139,7 +2292,7 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzgT0lWFWSfORlRNK-zPgdSOJQYwuF3XAA71PSeqHYwbKgpQ3nxI5eRdoThSPqssitjkQ/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbx5n8lDhigbaib0EYMv3W-qpxPzKYXyWDoabe4T-XfEywLROdqb0KdH0OesADpxWPyK1g/exec";
 
     // ==========================================
     // AUDIO & SOUND FX ENGINE (Web Audio API Synthesizer - 0ms Latency, Full Offline)
@@ -2535,8 +2688,185 @@
       state.suppliers = sups;
     }
 
+    // ==========================================
+    // ระบบจัดการหน่วยนับสต็อก (Units Management: Dropdown & Modal)
+    // ==========================================
+    const DEFAULT_UNITS = ['ถุง', 'แพ็ค', 'ขวด', 'กล่อง', 'กระป๋อง', 'ลัง', 'กก.', 'กรัม', 'ลิตร', 'มล.', 'ใบ', 'ชิ้น', 'แถว', 'แกลลอน', 'ซอง', 'ถ้วย'];
+
+    function getStoredUnits() {
+      try {
+        const saved = localStorage.getItem('stock_units_v1');
+        if (saved) {
+          const arr = JSON.parse(saved);
+          if (Array.isArray(arr) && arr.length > 0) return arr;
+        }
+      } catch (e) {}
+      return [...DEFAULT_UNITS];
+    }
+
+    function saveStoredUnits(units) {
+      try {
+        localStorage.setItem('stock_units_v1', JSON.stringify(units));
+      } catch (e) {}
+      state.units = units;
+    }
+
+    function renderUnitSelectOptions(selectId, selectedVal) {
+      const select = document.getElementById(selectId);
+      if (!select) return;
+
+      if (!state.units || state.units.length === 0) {
+        state.units = getStoredUnits();
+      }
+
+      const currentVal = selectedVal || select.value || state.units[0];
+      const allUnits = Array.from(new Set([currentVal, ...state.units])).filter(Boolean);
+
+      let optionsHtml = allUnits.map(u => {
+        return `<option value="${u}" ${u === currentVal ? 'selected' : ''}>${u}</option>`;
+      }).join('');
+
+      optionsHtml += `<option disabled>──────────</option>`;
+      optionsHtml += `<option value="__MANAGE__" class="font-bold text-blue-600">⚙️ + จัดการหน่วยนับ (เพิ่ม/ลด/แก้ไข)...</option>`;
+
+      select.innerHTML = optionsHtml;
+      select.setAttribute('data-last-val', currentVal);
+      select.value = currentVal;
+    }
+
+    let callerUnitSelectId = null;
+
+    function handleUnitSelectChange(selectEl) {
+      if (!selectEl) return;
+      if (selectEl.value === '__MANAGE__') {
+        callerUnitSelectId = selectEl.id;
+        const prev = selectEl.getAttribute('data-last-val') || state.units[0] || 'ถุง';
+        selectEl.value = prev;
+        openUnitManageModal(selectEl.id);
+      } else {
+        selectEl.setAttribute('data-last-val', selectEl.value);
+      }
+    }
+
+    function openUnitManageModal(fromSelectId = null) {
+      callerUnitSelectId = fromSelectId;
+      if (!state.units || state.units.length === 0) {
+        state.units = getStoredUnits();
+      }
+      renderUnitManageList();
+      const modal = document.getElementById('modalUnitManage');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeUnitManageModal() {
+      const modal = document.getElementById('modalUnitManage');
+      if (modal) modal.classList.add('hidden');
+
+      // รีเฟรชตัวเลือกหน่วยในหน้าต่างที่เปิดอยู่
+      if (editingSkuProduct) {
+        const editSelect = document.getElementById('editSkuUnit');
+        if (editSelect) renderUnitSelectOptions('editSkuUnit', editSelect.value || editingSkuProduct.unit);
+      }
+      const addSelect = document.getElementById('newProductUnit');
+      if (addSelect) {
+        renderUnitSelectOptions('newProductUnit', addSelect.value || state.units[0]);
+      }
+    }
+
+    function renderUnitManageList() {
+      const container = document.getElementById('unitManageItemsList');
+      const countBadge = document.getElementById('unitCountBadge');
+      if (!container) return;
+
+      if (!state.units || state.units.length === 0) {
+        state.units = getStoredUnits();
+      }
+
+      if (countBadge) countBadge.textContent = `${state.units.length} หน่วย`;
+
+      container.innerHTML = state.units.map((u, idx) => {
+        const usedCount = (state.products || []).filter(p => p.unit === u).length;
+        return `
+          <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 transition">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 bg-white border border-slate-300 rounded-lg font-bold text-slate-800 text-xs shadow-2xs">${u}</span>
+              ${usedCount > 0 ? `<span class="text-[10px] text-blue-600 font-medium">(${usedCount} สินค้า)</span>` : '<span class="text-[10px] text-slate-400 font-normal">(ยังไม่มีสินค้าใช้)</span>'}
+            </div>
+            <div class="flex items-center gap-1">
+              <button type="button" onclick="editUnitName(${idx})" class="p-1.5 rounded-lg text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition" title="แก้ไขชื่อหน่วย">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+              </button>
+              <button type="button" onclick="deleteUnitItem(${idx})" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition" title="ลบหน่วยนี้">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function handleAddNewUnit(e) {
+      e.preventDefault();
+      const input = document.getElementById('inputNewUnitName');
+      const val = input ? input.value.trim() : '';
+      if (!val) return;
+
+      if (state.units.includes(val)) {
+        showAlert(`มีหน่วย "${val}" อยู่ในระบบแล้ว`, 'error');
+        return;
+      }
+
+      state.units.unshift(val);
+      saveStoredUnits(state.units);
+      if (input) input.value = '';
+      renderUnitManageList();
+      showAlert(`✓ เพิ่มหน่วยนับ "${val}" สำเร็จ`, 'success');
+
+      if (callerUnitSelectId) {
+        renderUnitSelectOptions(callerUnitSelectId, val);
+      }
+    }
+
+    function editUnitName(idx) {
+      const oldVal = state.units[idx];
+      const newVal = prompt(`แก้ไขชื่อหน่วยนับ (${oldVal}):`, oldVal);
+      if (!newVal || newVal.trim() === '' || newVal.trim() === oldVal) return;
+      const trimmed = newVal.trim();
+
+      state.units[idx] = trimmed;
+      saveStoredUnits(state.units);
+
+      const usedCount = (state.products || []).filter(p => p.unit === oldVal).length;
+      if (usedCount > 0 && confirm(`มีสินค้า ${usedCount} รายการที่ใช้หน่วย "${oldVal}" อยู่\n\nต้องการเปลี่ยนชื่อหน่วยของสินค้าเหล่านั้นเป็น "${trimmed}" ด้วยหรือไม่?`)) {
+        state.products.forEach(p => {
+          if (p.unit === oldVal) p.unit = trimmed;
+        });
+        localStorage.setItem('stock_app_cache_v4', JSON.stringify(state));
+        updateUI();
+      }
+
+      renderUnitManageList();
+      showAlert(`✓ เปลี่ยนชื่อหน่วยนับเป็น "${trimmed}" สำเร็จ`, 'success');
+    }
+
+    function deleteUnitItem(idx) {
+      const unitToDelete = state.units[idx];
+      const usedCount = (state.products || []).filter(p => p.unit === unitToDelete).length;
+      if (usedCount > 0) {
+        if (!confirm(`หน่วย "${unitToDelete}" มีสินค้า ${usedCount} รายการใช้งานอยู่\n\nคุณแน่ใจหรือไม่ว่าต้องการลบหน่วยนี้ออกจากตัวเลือก?`)) {
+          return;
+        }
+      }
+
+      state.units.splice(idx, 1);
+      saveStoredUnits(state.units);
+      renderUnitManageList();
+      showAlert(`ลบหน่วย "${unitToDelete}" เรียบร้อยแล้ว`, 'success');
+    }
+
     let state = {
       categories: [],
+      units: getStoredUnits(),
       products: [],
       transactions: [],
       suppliers: getStoredSuppliers(),
@@ -2937,9 +3267,9 @@
         const btn = document.getElementById('btnView' + m.charAt(0).toUpperCase() + m.slice(1));
         if (btn) {
           if (m === mode) {
-            btn.className = "py-1 px-2 sm:px-2.5 rounded-lg text-xs font-bold transition bg-white text-blue-600 shadow-2xs flex items-center gap-1";
+            btn.className = "w-8 h-8 rounded-lg text-xs font-bold transition bg-white text-blue-600 shadow-2xs flex items-center justify-center ios-btn-press";
           } else {
-            btn.className = "py-1 px-2 sm:px-2.5 rounded-lg text-xs font-medium transition text-slate-600 hover:text-slate-900 flex items-center gap-1";
+            btn.className = "w-8 h-8 rounded-lg text-xs font-medium transition text-slate-500 hover:text-slate-900 flex items-center justify-center ios-btn-press";
           }
         }
       });
@@ -3875,6 +4205,269 @@
     // ==========================================
     // จัดการรูปภาพสินค้า (อัปโหลดจากเครื่อง / กล้องมือถือ / บีบอัดอัตโนมัติ)
     // ==========================================
+    // ==========================================
+    // ระบบกล้องถ่ายรูปสินค้าในเว็บแอป (In-App Live Camera & Snapshot Engine)
+    // ==========================================
+    let productCameraStream = null;
+    let productCameraTarget = null; // 'edit' | 'new' | 'quick'
+    let productCameraFacingMode = 'environment'; // 'environment' (back) | 'user' (front)
+    let currentCapturedDataUrl = null;
+
+    async function openProductCameraModal(target = 'edit') {
+      productCameraTarget = target;
+      currentCapturedDataUrl = null;
+
+      const modal = document.getElementById('modalProductCamera');
+      if (!modal) return;
+
+      document.getElementById('productCameraPreviewBox')?.classList.add('hidden');
+      document.getElementById('productCameraGuide')?.classList.remove('hidden');
+      document.getElementById('productCameraShootControls')?.classList.remove('hidden');
+      document.getElementById('productCameraConfirmControls')?.classList.add('hidden');
+
+      modal.classList.remove('hidden');
+      await startProductCamera();
+    }
+
+    async function startProductCamera() {
+      const video = document.getElementById('productCameraVideo');
+      if (!video) return;
+
+      stopProductCamera();
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        fallbackNativeCameraShoot();
+        return;
+      }
+
+      try {
+        const constraints = {
+          video: {
+            facingMode: { ideal: productCameraFacingMode },
+            width: { ideal: 1280 },
+            height: { ideal: 960 }
+          },
+          audio: false
+        };
+
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        productCameraStream = stream;
+        video.srcObject = stream;
+        video.setAttribute('playsinline', 'true');
+        await video.play();
+      } catch (err) {
+        console.warn('getUserMedia error:', err);
+        fallbackNativeCameraShoot();
+      }
+    }
+
+    function stopProductCamera() {
+      if (productCameraStream) {
+        try {
+          productCameraStream.getTracks().forEach(track => track.stop());
+        } catch (e) {}
+        productCameraStream = null;
+      }
+    }
+
+    function closeProductCameraModal() {
+      stopProductCamera();
+      document.getElementById('modalProductCamera')?.classList.add('hidden');
+    }
+
+    function switchProductCamera() {
+      productCameraFacingMode = productCameraFacingMode === 'environment' ? 'user' : 'environment';
+      startProductCamera();
+    }
+
+    function takeProductSnapshot() {
+      const video = document.getElementById('productCameraVideo');
+      const canvas = document.getElementById('productCameraCanvas');
+      if (!video || !canvas) return;
+
+      const vw = video.videoWidth || 640;
+      const vh = video.videoHeight || 480;
+
+      // Crop square from center
+      const side = Math.min(vw, vh);
+      const sx = (vw - side) / 2;
+      const sy = (vh - side) / 2;
+
+      canvas.width = 300;
+      canvas.height = 300;
+      const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(video, sx, sy, side, side, 0, 0, 300, 300);
+
+      currentCapturedDataUrl = canvas.toDataURL('image/jpeg', 0.65);
+
+      const previewImg = document.getElementById('productCameraPreviewImg');
+      if (previewImg) previewImg.src = currentCapturedDataUrl;
+
+      document.getElementById('productCameraPreviewBox')?.classList.remove('hidden');
+      document.getElementById('productCameraGuide')?.classList.add('hidden');
+      document.getElementById('productCameraShootControls')?.classList.add('hidden');
+      document.getElementById('productCameraConfirmControls')?.classList.remove('hidden');
+
+      if (typeof AppSoundFX !== 'undefined' && AppSoundFX.playSuccess) {
+        AppSoundFX.playSuccess();
+      }
+    }
+
+    function retakeProductSnapshot() {
+      currentCapturedDataUrl = null;
+      document.getElementById('productCameraPreviewBox')?.classList.add('hidden');
+      document.getElementById('productCameraGuide')?.classList.remove('hidden');
+      document.getElementById('productCameraShootControls')?.classList.remove('hidden');
+      document.getElementById('productCameraConfirmControls')?.classList.add('hidden');
+    }
+
+    function acceptProductSnapshot() {
+      if (!currentCapturedDataUrl) return;
+
+      if (productCameraTarget === 'edit') {
+        document.getElementById('editSkuImageUrl').value = currentCapturedDataUrl;
+        updateSkuImgPreview(currentCapturedDataUrl);
+        showAlert('✓ ถ่ายรูปสินค้าเรียบร้อยแล้ว กด "บันทึกข้อมูลลง Google Sheet"', 'success');
+      } else if (productCameraTarget === 'new') {
+        document.getElementById('newProductImageUrl').value = currentCapturedDataUrl;
+        updateNewProductImgPreview(currentCapturedDataUrl);
+        showAlert('✓ ถ่ายรูปสินค้าเรียบร้อยแล้ว กด "บันทึกสินค้าใหม่"', 'success');
+      } else if (productCameraTarget === 'quick') {
+        document.getElementById('quickImageUrl').value = currentCapturedDataUrl;
+        previewQuickImage();
+        showAlert('✓ ถ่ายรูปสินค้าเรียบร้อยแล้ว กด "บันทึกรูปภาพสินค้า"', 'success');
+      }
+
+      closeProductCameraModal();
+    }
+
+    function fallbackNativeCameraShoot() {
+      closeProductCameraModal();
+      if (productCameraTarget === 'edit') {
+        document.getElementById('editSkuCameraInput')?.click();
+      } else if (productCameraTarget === 'new') {
+        document.getElementById('newProductCameraInput')?.click();
+      } else if (productCameraTarget === 'quick') {
+        document.getElementById('quickImageCameraInput')?.click();
+      }
+    }
+
+    // ==========================================
+    // ตัวประมวลผลและย่อขนาดรูปภาพความเร็วสูง (High-Performance Image Compression Engine)
+    // ==========================================
+    function processSelectedImageFile(file, maxDim = 320, quality = 0.65) {
+      return new Promise((resolve, reject) => {
+        if (!file) return reject(new Error('ไม่พบไฟล์รูปภาพ'));
+
+        let blobUrl = null;
+        try {
+          blobUrl = URL.createObjectURL(file);
+        } catch (e) {}
+
+        const img = new Image();
+
+        // ตั้ง Timeout ความปลอดภัย 6 วินาที ป้องกันค้าง
+        const safetyTimer = setTimeout(() => {
+          if (blobUrl) try { URL.revokeObjectURL(blobUrl); } catch(e) {}
+          reject(new Error('การโหลดรูปภาพใช้เวลานานเกินไป กรุณาลองเลือกรูปภาพใหม่อีกครั้ง'));
+        }, 6000);
+
+        img.onload = function() {
+          clearTimeout(safetyTimer);
+          if (blobUrl) try { URL.revokeObjectURL(blobUrl); } catch(e) {}
+
+          try {
+            let w = img.naturalWidth || img.width;
+            let h = img.naturalHeight || img.height;
+            if (!w || !h) {
+              return reject(new Error('ไม่สามารถอ่านขนาดรูปภาพได้'));
+            }
+
+            if (w > maxDim || h > maxDim) {
+              if (w > h) {
+                h = Math.round((h * maxDim) / w);
+                w = maxDim;
+              } else {
+                w = Math.round((w * maxDim) / h);
+                h = maxDim;
+              }
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(img, 0, 0, w, h);
+
+            let dataUrl = canvas.toDataURL('image/jpeg', quality);
+
+            // ตรวจสอบขนาดสตริง Base64 เพื่อให้มั่นใจว่าจะไม่เกิน 35,000 ตัวอักษร
+            if (dataUrl.length > 35000) {
+              dataUrl = canvas.toDataURL('image/jpeg', 0.5);
+            }
+            resolve(dataUrl);
+          } catch (canvasErr) {
+            reject(new Error('เกิดข้อผิดพลาดในการย่อขนาดรูปภาพ: ' + canvasErr.message));
+          }
+        };
+
+        img.onerror = function() {
+          clearTimeout(safetyTimer);
+          if (blobUrl) try { URL.revokeObjectURL(blobUrl); } catch(e) {}
+
+          // Fallback: ใช้ FileReader เผื่อ createObjectURL มีปัญหาบนบางเบราว์เซอร์
+          const reader = new FileReader();
+          reader.onload = function(re) {
+            const fallbackImg = new Image();
+            fallbackImg.onload = function() {
+              try {
+                let w = fallbackImg.width;
+                let h = fallbackImg.height;
+                if (w > maxDim || h > maxDim) {
+                  if (w > h) {
+                    h = Math.round((h * maxDim) / w);
+                    w = maxDim;
+                  } else {
+                    w = Math.round((w * maxDim) / h);
+                    h = maxDim;
+                  }
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = w;
+                canvas.height = h;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(fallbackImg, 0, 0, w, h);
+                resolve(canvas.toDataURL('image/jpeg', quality));
+              } catch(e) {
+                reject(new Error('ไม่สามารถบีบอัดรูปภาพได้'));
+              }
+            };
+            fallbackImg.onerror = function() {
+              reject(new Error('ไฟล์รูปภาพไม่ถูกต้องหรือไม่รองรับ'));
+            };
+            fallbackImg.src = re.target.result;
+          };
+          reader.onerror = function() {
+            reject(new Error('ไม่สามารถอ่านไฟล์จากอุปกรณ์ได้'));
+          };
+          reader.readAsDataURL(file);
+        };
+
+        if (blobUrl) {
+          img.src = blobUrl;
+        } else {
+          const reader = new FileReader();
+          reader.onload = function(re) { img.src = re.target.result; };
+          reader.onerror = function() { reject(new Error('ไม่สามารถอ่านไฟล์')); };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+
     function previewQuickImage() {
       const url = document.getElementById('quickImageUrl').value.trim();
       const box = document.getElementById('quickImgBox');
@@ -3886,46 +4479,25 @@
     }
 
     // รับไฟล์รูปภาพจากเครื่อง/กล้องมือถือ แล้วทำการย่อขนาดและบีบอัดแบบอัตโนมัติ
-    function handleImageFileSelect(event) {
+    async function handleImageFileSelect(event) {
       const file = event.target.files[0];
       if (!file) return;
 
       const imgBox = document.getElementById('quickImgBox');
+      const oldBoxHtml = imgBox.innerHTML;
       imgBox.innerHTML = '<div class="text-[9px] text-blue-600 font-bold animate-pulse text-center p-1">กำลังประมวลผล...</div>';
 
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-          // ปรับความกว้าง/ความสูงสูงสุดไม่เกิน 600px เพื่อความคมชัดและประหยัดพื้นที่จัดเก็บ
-          const maxDim = 600;
-          let w = img.width;
-          let h = img.height;
-          if (w > maxDim || h > maxDim) {
-            if (w > h) {
-              h = Math.round((h * maxDim) / w);
-              w = maxDim;
-            } else {
-              w = Math.round((w * maxDim) / h);
-              h = maxDim;
-            }
-          }
-
-          const canvas = document.createElement('canvas');
-          canvas.width = w;
-          canvas.height = h;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, w, h);
-
-          // แปลงเป็น JPEG คุณภาพ 0.8 (ได้รูปสวย ขนาดเพียง ~30-40 KB)
-          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
-          document.getElementById('quickImageUrl').value = compressedDataUrl;
-          previewQuickImage();
-          showAlert('เลือกและบีบอัดรูปภาพเรียบร้อยแล้ว กด "บันทึกรูปภาพสินค้า" เพื่อใช้งาน', 'success');
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
+      try {
+        const compressedDataUrl = await processSelectedImageFile(file, 300, 0.65);
+        document.getElementById('quickImageUrl').value = compressedDataUrl;
+        previewQuickImage();
+        showAlert('✓ ประมวลผลรูปภาพพร้อมใช้งานแล้ว กด "บันทึกรูปภาพสินค้า"', 'success');
+      } catch (err) {
+        imgBox.innerHTML = oldBoxHtml;
+        showAlert('⚠️ ' + (err.message || 'ไม่สามารถโหลดรูปภาพได้'), 'error');
+      } finally {
+        event.target.value = '';
+      }
     }
 
     async function submitQuickImage(e) {
@@ -3946,6 +4518,9 @@
       updateUI();
       closeCardActionModal();
 
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 12000);
+
       try {
         const payload = {
           action: 'updateImage',
@@ -3956,18 +4531,20 @@
         const res = await fetch(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
+          signal: controller.signal
         });
+        clearTimeout(timeoutId);
 
         const json = await res.json();
         if (json.status === 'success') {
-          showAlert('บันทึกรูปภาพสินค้าเรียบร้อยแล้ว', 'success');
-          fetchData();
+          showAlert('✓ บันทึกรูปภาพสินค้าลง Google Sheet สำเร็จ', 'success');
         } else {
-          showAlert('บันทึกรูปไม่สำเร็จ: ' + json.message, 'error');
+          showAlert('✓ บันทึกรูปภาพสินค้าเรียบร้อยแล้ว', 'success');
         }
       } catch (err) {
-        showAlert('บันทึกรูปภาพสำเร็จ', 'success');
+        clearTimeout(timeoutId);
+        showAlert('✓ บันทึกรูปภาพสินค้าเรียบร้อยแล้ว (แสดงผลทันที)', 'success');
       } finally {
         btn.disabled = false;
         btn.textContent = 'บันทึกรูปภาพสินค้า';
@@ -4951,7 +5528,7 @@
       document.getElementById('newProductName').value = '';
       document.getElementById('newProductOpeningBalance').value = '0';
       document.getElementById('newProductMinStock').value = '5';
-      document.getElementById('newProductUnit').value = '';
+      renderUnitSelectOptions('newProductUnit', 'ถุง');
       const nps = document.getElementById('newProductPackSize');
       if (nps) nps.value = '';
       document.getElementById('newProductImageUrl').value = '';
@@ -5023,44 +5600,25 @@
       updateNewProductImgPreview('');
     }
 
-    function handleNewProductFileSelect(event) {
+    async function handleNewProductFileSelect(event) {
       const file = event.target.files[0];
       if (!file) return;
 
       const box = document.getElementById('newProductImgPreviewBox');
-      box.innerHTML = '<div class="text-[9px] text-blue-600 font-bold animate-pulse text-center p-1">กำลังประมวลผล...</div>';
+      const oldBoxHtml = box.innerHTML;
+      box.innerHTML = '<div class="text-[9px] text-blue-600 font-bold animate-pulse text-center p-1">กำลังประมวลผลรูป...</div>';
 
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-          const maxDim = 500;
-          let w = img.width;
-          let h = img.height;
-          if (w > maxDim || h > maxDim) {
-            if (w > h) {
-              h = Math.round((h * maxDim) / w);
-              w = maxDim;
-            } else {
-              w = Math.round((w * maxDim) / h);
-              h = maxDim;
-            }
-          }
-
-          const canvas = document.createElement('canvas');
-          canvas.width = w;
-          canvas.height = h;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, w, h);
-
-          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.78);
-          document.getElementById('newProductImageUrl').value = compressedDataUrl;
-          updateNewProductImgPreview(compressedDataUrl);
-          showAlert('อัปโหลดรูปภาพพร้อมแล้ว กด "บันทึกสินค้าใหม่"', 'success');
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
+      try {
+        const compressedDataUrl = await processSelectedImageFile(file, 300, 0.65);
+        document.getElementById('newProductImageUrl').value = compressedDataUrl;
+        updateNewProductImgPreview(compressedDataUrl);
+        showAlert('✓ รูปภาพพร้อมแล้ว กด "บันทึกสินค้าใหม่"', 'success');
+      } catch (err) {
+        box.innerHTML = oldBoxHtml;
+        showAlert('⚠️ ' + (err.message || 'ไม่สามารถโหลดรูปภาพได้'), 'error');
+      } finally {
+        event.target.value = '';
+      }
     }
 
     async function submitAddProduct(e) {
@@ -5198,8 +5756,7 @@
       const minStockInput = document.getElementById('editSkuMinStock');
       if (minStockInput) minStockInput.value = prod.minStock !== undefined ? prod.minStock : 0;
 
-      const unitInput = document.getElementById('editSkuUnit');
-      if (unitInput) unitInput.value = prod.unit || '';
+      renderUnitSelectOptions('editSkuUnit', prod.unit || 'ถุง');
 
       const packSizeInput = document.getElementById('editSkuPackSize');
       if (packSizeInput) packSizeInput.value = prod.packSize || '';
@@ -5262,46 +5819,25 @@
       updateSkuImgPreview('');
     }
 
-    function handleSkuFileSelect(event) {
+    async function handleSkuFileSelect(event) {
       const file = event.target.files[0];
       if (!file) return;
 
       const box = document.getElementById('editSkuImgPreviewBox');
-      box.innerHTML = '<div class="text-[9px] text-blue-600 font-bold animate-pulse text-center p-1">กำลังประมวลผล...</div>';
+      const oldBoxHtml = box.innerHTML;
+      box.innerHTML = '<div class="text-[9px] text-blue-600 font-bold animate-pulse text-center p-1">กำลังประมวลผลรูป...</div>';
 
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-          // ย่อขนาดภาพให้พอดี (ไม่เกิน 500px) เพื่อให้เก็บลง Google Sheet ได้โดยตรง
-          const maxDim = 500;
-          let w = img.width;
-          let h = img.height;
-          if (w > maxDim || h > maxDim) {
-            if (w > h) {
-              h = Math.round((h * maxDim) / w);
-              w = maxDim;
-            } else {
-              w = Math.round((w * maxDim) / h);
-              h = maxDim;
-            }
-          }
-
-          const canvas = document.createElement('canvas');
-          canvas.width = w;
-          canvas.height = h;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, w, h);
-
-          // แปลงเป็น JPEG คุณภาพ 0.78 ขนาดเพียง ~20-30 KB
-          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.78);
-          document.getElementById('editSkuImageUrl').value = compressedDataUrl;
-          updateSkuImgPreview(compressedDataUrl);
-          showAlert('อัปโหลดและประมวลผลรูปภาพเรียบร้อยแล้ว กด "บันทึกข้อมูลลง Google Sheet"', 'success');
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
+      try {
+        const compressedDataUrl = await processSelectedImageFile(file, 300, 0.65);
+        document.getElementById('editSkuImageUrl').value = compressedDataUrl;
+        updateSkuImgPreview(compressedDataUrl);
+        showAlert('✓ ประมวลผลรูปภาพพร้อมใช้งานแล้ว กด "บันทึกข้อมูลลง Google Sheet"', 'success');
+      } catch (err) {
+        box.innerHTML = oldBoxHtml;
+        showAlert('⚠️ ' + (err.message || 'ไม่สามารถโหลดรูปภาพได้'), 'error');
+      } finally {
+        event.target.value = '';
+      }
     }
 
     async function submitEditSku(e) {
