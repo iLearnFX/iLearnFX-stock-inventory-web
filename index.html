@@ -197,7 +197,83 @@
     }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen pb-32 sm:pb-36">
+<body class="bg-slate-100 text-slate-800 min-h-screen">
+
+  <!-- ======================================================== -->
+  <!-- 1. DEDICATED LOGIN SCREEN (หน้าจอเข้าสู่ระบบ แยกเด็ดขาด ปลอดภัย ไม่มีปุ่มกากบาท) -->
+  <!-- ======================================================== -->
+  <div id="appLoginScreen" class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 flex items-center justify-center p-3 sm:p-6 select-none">
+    <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-200/80 overflow-hidden ios-sheet-anim flex flex-col">
+      <!-- Login Screen Header -->
+      <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white p-6 text-center relative flex-shrink-0">
+        <div class="w-16 h-16 rounded-2xl bg-white p-1 mx-auto mb-3 shadow-lg flex items-center justify-center border-2 border-white/60 ring-4 ring-white/10">
+          <img src="logo.png" class="w-full h-full object-cover rounded-xl" alt="Ground Cafe" />
+        </div>
+        <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Ground Cafe Stock</h1>
+        <p class="text-xs text-blue-100 mt-1">ระบบบริหารจัดการสต็อก & วัตถุดิบ</p>
+        <div class="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 text-[11px] font-semibold text-blue-100">
+          <span>🔒</span><span>กรุณาเข้าสู่ระบบก่อนเริ่มทำงาน</span>
+        </div>
+      </div>
+
+      <div class="p-5 sm:p-6 space-y-4">
+        <!-- ตัวเลือกผู้ใช้งานแบบแตะเลือกด่วน (Quick Employee Selection) -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-2 flex items-center justify-between">
+            <span>👤 แตะเลือกพนักงานผู้ปฏิบัติงาน</span>
+            <span class="text-[10px] font-normal text-slate-400">หรือพิมพ์ Username ด้านล่าง</span>
+          </label>
+          <div id="quickUserGrid" class="grid grid-cols-2 gap-2">
+            <!-- Rendered dynamically from state.users -->
+          </div>
+        </div>
+
+        <!-- ฟอร์มกรอกรหัสผ่าน PIN -->
+        <form onsubmit="executeLogin(event)" class="space-y-3 pt-2 border-t border-slate-100">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Username (ชื่อผู้ใช้)</label>
+            <input type="text" id="loginInputUsername" placeholder="เช่น admin, barista1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-blue-500 font-medium" required />
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1 flex items-center justify-between">
+              <span>รหัสผ่าน / PIN (4 หลัก)</span>
+              <span id="loginPinHint" class="text-[10px] text-blue-600 font-medium">กดปุ่มตัวเลขด้านล่างได้</span>
+            </label>
+            <input type="password" id="loginInputPassword" placeholder="••••" maxlength="8" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 font-bold tracking-widest text-center text-slate-800" required />
+          </div>
+
+          <!-- แป้นตัวเลขด่วนสำหรับ Tablet / Mobile -->
+          <div class="grid grid-cols-3 gap-1.5 pt-1">
+            <button type="button" onclick="appendLoginPin('1')" class="py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-sm font-bold text-slate-700 ios-btn-press">1</button>
+            <button type="button" onclick="appendLoginPin('2')" class="py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-sm font-bold text-slate-700 ios-btn-press">2</button>
+            <button type="button" onclick="appendLoginPin('3')" class="py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-sm font-bold text-slate-700 ios-btn-press">3</button>
+            <button type="button" onclick="appendLoginPin('4')" class="py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-sm font-bold text-slate-700 ios-btn-press">4</button>
+            <button type="button" onclick="appendLoginPin('5')" class="py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-sm font-bold text-slate-700 ios-btn-press">5</button>
+            <button type="button" onclick="appendLoginPin('6')" class="py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-sm font-bold text-slate-700 ios-btn-press">6</button>
+            <button type="button" onclick="appendLoginPin('7')" class="py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-sm font-bold text-slate-700 ios-btn-press">7</button>
+            <button type="button" onclick="appendLoginPin('8')" class="py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-sm font-bold text-slate-700 ios-btn-press">8</button>
+            <button type="button" onclick="appendLoginPin('9')" class="py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-sm font-bold text-slate-700 ios-btn-press">9</button>
+            <button type="button" onclick="clearLoginPin()" class="py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 active:scale-95 text-xs font-bold ios-btn-press">ล้าง</button>
+            <button type="button" onclick="appendLoginPin('0')" class="py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-sm font-bold text-slate-700 ios-btn-press">0</button>
+            <button type="button" onclick="backspaceLoginPin()" class="py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-sm font-bold text-slate-700 ios-btn-press">⌫</button>
+          </div>
+
+          <!-- ข้อความแจ้งเตือน Error ในฟอร์ม -->
+          <div id="loginErrorMsg" class="hidden text-xs text-rose-600 font-semibold bg-rose-50 border border-rose-200 p-2.5 rounded-xl text-center"></div>
+
+          <button type="submit" id="btnLoginSubmit" class="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:scale-95 text-white font-bold rounded-xl text-sm shadow-md transition flex items-center justify-center gap-1.5 ios-btn-press">
+            <span>เข้าสู่ระบบ (Login)</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- 2. MAIN APPLICATION WORKSPACE (หน้าทำงานหลัก จะแสดงเมื่อล็อกอินแล้วเท่านั้น) -->
+  <!-- ======================================================== -->
+  <div id="appMainScreen" class="hidden pb-32 sm:pb-36">
 
   <!-- Top App Bar -->
   <header class="bg-blue-600 text-white shadow-md sticky top-0 z-30">
@@ -223,12 +299,20 @@
           <span id="headerCartBadge" class="hidden absolute -top-1 -right-1 bg-amber-400 text-slate-900 font-black text-[11px] w-5 h-5 rounded-full flex items-center justify-center shadow ring-2 ring-blue-700">0</span>
         </button>
 
-        <!-- ปุ่มผู้ใช้งาน / สลับผู้ใช้งาน (User Profile & Switcher) -->
-        <button onclick="openUserModal()" id="btnHeaderUser" class="p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl hover:bg-blue-700 active:scale-95 transition bg-blue-500/60 border border-blue-400/40 flex items-center gap-1.5 text-xs font-semibold shadow-xs" title="ผู้ปฏิบัติงานปัจจุบัน / สลับผู้ใช้งาน">
-          <span class="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-white/20 flex items-center justify-center text-xs">👤</span>
-          <span id="headerUserName" class="max-w-[70px] sm:max-w-[120px] truncate">เข้าสู่ระบบ</span>
-          <span id="headerUserRole" class="hidden sm:inline-block px-1.5 py-0.2 rounded-md bg-blue-400/30 text-[10px] text-blue-100 font-medium">Staff</span>
-        </button>
+        <!-- บัญชีผู้ใช้งานที่ล็อกอิน + ปุ่มออกจากระบบ/สลับผู้ใช้งาน -->
+        <div id="headerUserContainer" class="flex items-center gap-1.5 sm:gap-2 bg-blue-700/70 border border-blue-400/40 rounded-xl px-2 py-1 sm:px-2.5 sm:py-1.5 shadow-xs">
+          <span id="headerUserIcon" class="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center text-xs flex-shrink-0">👤</span>
+          <div class="flex flex-col leading-tight">
+            <span id="headerUserName" class="max-w-[75px] sm:max-w-[130px] truncate text-xs font-bold text-white">เข้าสู่ระบบ</span>
+            <div class="flex items-center gap-1">
+              <span id="headerUserRole" class="text-[9px] font-semibold px-1 py-0.2 rounded bg-amber-400 text-slate-900 leading-none">Staff</span>
+            </div>
+          </div>
+          <button type="button" onclick="executeLogout()" class="ml-1 sm:ml-1.5 px-2 py-1 rounded-lg bg-white/15 hover:bg-rose-600 active:scale-95 text-white transition flex items-center gap-1 text-[11px] font-semibold shadow-xs" title="ออกจากระบบ / สลับบัญชี">
+            <span>🚪</span>
+            <span class="hidden sm:inline">ออก</span>
+          </button>
+        </div>
 
         <!-- ปุ่มเปิด/ปิดเสียงเอฟเฟกต์ (Sound FX Toggle) -->
         <button onclick="toggleAppSound()" id="btnHeaderSound" class="p-2 rounded-xl hover:bg-blue-700 active:scale-95 transition bg-blue-500/50 flex items-center gap-1 text-xs font-medium" title="เปิด/ปิดเสียงเอฟเฟกต์">
@@ -955,87 +1039,6 @@
     </div>
   </div>
 
-  <!-- MODAL: เข้าสู่ระบบ / สลับผู้ใช้งาน (User Login & Switcher Modal) -->
-  <div id="modalUserLogin" class="hidden fixed inset-0 bg-slate-900/65 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4">
-    <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-200/80 overflow-hidden ios-sheet-anim flex flex-col max-h-[92vh]">
-      
-      <!-- Modal Header -->
-      <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white p-5 text-center relative flex-shrink-0">
-        <button type="button" onclick="closeUserModal()" class="absolute right-3.5 top-3.5 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center text-sm font-bold active:scale-95 transition">✕</button>
-        <div class="w-12 h-12 rounded-2xl bg-white p-1 mx-auto mb-2 shadow-md flex items-center justify-center border-2 border-white/60">
-          <img src="logo.png" class="w-full h-full object-cover rounded-xl" alt="Ground Cafe" />
-        </div>
-        <h2 class="text-base sm:text-lg font-bold">เข้าสู่ระบบผู้ปฏิบัติงาน</h2>
-        <p class="text-xs text-blue-100 mt-0.5">ระบุตัวตนเพื่อลง Log การเบิก-รับ-แก้ไขสต็อก</p>
-      </div>
-
-      <div class="p-4 sm:p-5 overflow-y-auto space-y-4 no-scrollbar">
-        
-        <!-- สถานะผู้ใช้ปัจจุบัน (ถ้าล็อกอินอยู่แล้ว) -->
-        <div id="loginCurrentUserInfoBox" class="hidden bg-blue-50 border border-blue-200 rounded-2xl p-3 flex items-center justify-between">
-          <div class="flex items-center gap-2.5">
-            <div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center text-base font-bold shadow-xs">👤</div>
-            <div>
-              <div class="text-[10px] text-blue-600 font-bold uppercase tracking-wider">กำลังใช้งานโดย</div>
-              <div id="loginCurrentUserName" class="text-xs sm:text-sm font-bold text-slate-800">-</div>
-              <div id="loginCurrentUserRole" class="text-[10px] text-slate-500 font-medium">-</div>
-            </div>
-          </div>
-          <button type="button" onclick="executeLogout()" class="px-2.5 py-1.5 rounded-xl bg-white hover:bg-rose-50 text-rose-600 border border-slate-200 text-xs font-bold active:scale-95 transition shadow-2xs">ออกจากระบบ</button>
-        </div>
-
-        <!-- ตัวเลือกผู้ใช้งานแบบแตะเลือกด่วน (Quick Employee Selection) -->
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-2 flex items-center justify-between">
-            <span>แตะเลือกพนักงาน / ผู้ปฏิบัติงาน</span>
-            <span class="text-[10px] font-normal text-slate-400">หรือกรอก Username ด้านล่าง</span>
-          </label>
-          <div id="quickUserGrid" class="grid grid-cols-2 gap-2">
-            <!-- Rendered dynamically from state.users -->
-          </div>
-        </div>
-
-        <!-- ฟอร์มกรอกรหัสผ่าน PIN -->
-        <form onsubmit="executeLogin(event)" class="space-y-3 pt-1 border-t border-slate-100">
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Username</label>
-            <input type="text" id="loginInputUsername" placeholder="เช่น admin, barista1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-blue-500 font-medium" required />
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1 flex items-center justify-between">
-              <span>รหัสผ่าน / PIN</span>
-              <span id="loginPinHint" class="text-[10px] text-blue-600 font-medium">กดปุ่มตัวเลขได้</span>
-            </label>
-            <input type="password" id="loginInputPassword" placeholder="กรอกรหัสผ่านหรือ PIN 4 หลัก" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-blue-500 font-bold tracking-widest text-center text-sm" required />
-          </div>
-
-          <!-- แป้นตัวเลขด่วนสำหรับ Tablet / Mobile -->
-          <div class="grid grid-cols-3 gap-1.5 pt-1">
-            <button type="button" onclick="appendLoginPin('1')" class="py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-xs font-bold text-slate-700 ios-btn-press">1</button>
-            <button type="button" onclick="appendLoginPin('2')" class="py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-xs font-bold text-slate-700 ios-btn-press">2</button>
-            <button type="button" onclick="appendLoginPin('3')" class="py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-xs font-bold text-slate-700 ios-btn-press">3</button>
-            <button type="button" onclick="appendLoginPin('4')" class="py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-xs font-bold text-slate-700 ios-btn-press">4</button>
-            <button type="button" onclick="appendLoginPin('5')" class="py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-xs font-bold text-slate-700 ios-btn-press">5</button>
-            <button type="button" onclick="appendLoginPin('6')" class="py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-xs font-bold text-slate-700 ios-btn-press">6</button>
-            <button type="button" onclick="appendLoginPin('7')" class="py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-xs font-bold text-slate-700 ios-btn-press">7</button>
-            <button type="button" onclick="appendLoginPin('8')" class="py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-xs font-bold text-slate-700 ios-btn-press">8</button>
-            <button type="button" onclick="appendLoginPin('9')" class="py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-xs font-bold text-slate-700 ios-btn-press">9</button>
-            <button type="button" onclick="clearLoginPin()" class="py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 active:scale-95 text-xs font-bold ios-btn-press">ลบ</button>
-            <button type="button" onclick="appendLoginPin('0')" class="py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-xs font-bold text-slate-700 ios-btn-press">0</button>
-            <button type="button" onclick="backspaceLoginPin()" class="py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-xs font-bold text-slate-700 ios-btn-press">⌫</button>
-          </div>
-
-          <!-- ข้อความแจ้งเตือน Error ในฟอร์ม -->
-          <div id="loginErrorMsg" class="hidden text-xs text-rose-600 font-semibold bg-rose-50 border border-rose-200 p-2 rounded-xl text-center"></div>
-
-          <button type="submit" id="btnLoginSubmit" class="w-full py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:scale-95 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md transition flex items-center justify-center gap-1.5 ios-btn-press">
-            <span>เข้าสู่ระบบ / ยืนยันผู้ใช้</span>
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
 
   <!-- QUICK ACTION MODAL: คลิกที่การ์ดแล้ว Popup ขึ้นมาจัดการได้ทันที -->
   <div id="modalCardAction" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
@@ -1539,7 +1542,6 @@
         </div>
       </div>
     </div>
-  </div>
 
   
   
@@ -2462,6 +2464,8 @@
     </div>
   </div>
 
+  </div> <!-- /appMainScreen -->
+
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxToULZfnEkaHSYtyzY0_hoMBmSQqacSnlNQxp6FZ6moHqaH4K1fsUpSDa7WJBK5brK/exec";
 
@@ -3101,15 +3105,17 @@
     function updateCurrentUserUI() {
       const nameEl = document.getElementById('headerUserName');
       const roleEl = document.getElementById('headerUserRole');
+      const iconEl = document.getElementById('headerUserIcon');
       const tabUsers = document.getElementById('tab-users');
       const cur = state.currentUser;
       if (cur) {
         if (nameEl) nameEl.textContent = cur.name;
+        if (iconEl) iconEl.textContent = cur.role === 'Admin' ? '👑' : '👤';
         if (roleEl) {
           roleEl.textContent = cur.role;
           roleEl.className = cur.role === 'Admin' ? 
-            'hidden sm:inline-block px-1.5 py-0.2 rounded-md bg-amber-400 text-[10px] text-slate-900 font-bold shadow-xs' : 
-            'hidden sm:inline-block px-1.5 py-0.2 rounded-md bg-blue-400/40 text-[10px] text-blue-100 font-medium';
+            'text-[9px] font-bold px-1.5 py-0.2 rounded bg-amber-400 text-slate-900 leading-none shadow-2xs' : 
+            'text-[9px] font-semibold px-1.5 py-0.2 rounded bg-blue-400/40 text-blue-100 leading-none';
         }
         if (tabUsers) {
           if (cur.role === 'Admin') {
@@ -3123,13 +3129,39 @@
           }
         }
       } else {
-        if (nameEl) nameEl.textContent = 'เข้าสู่ระบบ';
+        if (nameEl) nameEl.textContent = 'ยังไม่เข้าสู่ระบบ';
+        if (iconEl) iconEl.textContent = '🔒';
         if (roleEl) {
-          roleEl.textContent = 'ยังไม่ล็อกอิน';
-          roleEl.className = 'hidden sm:inline-block px-1.5 py-0.2 rounded-md bg-rose-500 text-[10px] text-white font-medium';
+          roleEl.textContent = '-';
+          roleEl.className = 'text-[9px] font-semibold px-1.5 py-0.2 rounded bg-rose-500 text-white leading-none';
         }
         if (tabUsers) tabUsers.classList.add('hidden');
       }
+    }
+
+    function showLoginScreen() {
+      const loginScreen = document.getElementById('appLoginScreen');
+      const mainScreen = document.getElementById('appMainScreen');
+      if (loginScreen) loginScreen.classList.remove('hidden');
+      if (mainScreen) mainScreen.classList.add('hidden');
+      renderQuickUserGrid();
+      const pwdInput = document.getElementById('loginInputPassword');
+      if (pwdInput) {
+        pwdInput.value = '';
+        pwdInput.focus();
+      }
+      const errBox = document.getElementById('loginErrorMsg');
+      if (errBox) errBox.classList.add('hidden');
+    }
+
+    function showMainScreen() {
+      const loginScreen = document.getElementById('appLoginScreen');
+      const mainScreen = document.getElementById('appMainScreen');
+      if (loginScreen) loginScreen.classList.add('hidden');
+      if (mainScreen) mainScreen.classList.remove('hidden');
+      updateCurrentUserUI();
+      if (typeof updateNavScrollIndicators === 'function') updateNavScrollIndicators();
+      if (typeof updateCatScrollIndicators === 'function') updateCatScrollIndicators();
     }
 
     function renderQuickUserGrid() {
@@ -3191,32 +3223,11 @@
     }
 
     function openUserModal() {
-      const modal = document.getElementById('modalUserLogin');
-      if (!modal) return;
-      renderQuickUserGrid();
-      const infoBox = document.getElementById('loginCurrentUserInfoBox');
-      const cur = state.currentUser;
-      if (cur && infoBox) {
-        infoBox.classList.remove('hidden');
-        document.getElementById('loginCurrentUserName').textContent = cur.name;
-        document.getElementById('loginCurrentUserRole').textContent = `สิทธิ์: ${cur.role} (${cur.username})`;
-      } else if (infoBox) {
-        infoBox.classList.add('hidden');
-      }
-
-      document.getElementById('loginInputPassword').value = '';
-      document.getElementById('loginErrorMsg').classList.add('hidden');
-      if (!cur) {
-        document.getElementById('loginInputUsername').value = 'admin';
-      } else {
-        document.getElementById('loginInputUsername').value = cur.username;
-      }
-      modal.classList.remove('hidden');
+      executeLogout();
     }
 
     function closeUserModal() {
-      const modal = document.getElementById('modalUserLogin');
-      if (modal) modal.classList.add('hidden');
+      // No-op: login is a dedicated screen, not a modal
     }
 
     async function executeLogin(e) {
@@ -3248,13 +3259,14 @@
           role: matchedLocal.role || 'Staff'
         };
         saveStoredCurrentUser(state.currentUser);
-        updateCurrentUserUI();
-        closeUserModal();
+        showMainScreen();
         showAlert(`✓ เข้าสู่ระบบสำเร็จ: ยินดีต้อนรับ ${state.currentUser.name}`, 'success');
         if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
         AppSoundFX.playSuccess();
         submitBtn.disabled = false;
         submitBtn.innerHTML = oldBtnHtml;
+        updateUI();
+        fetchData();
         return;
       }
 
@@ -3269,11 +3281,12 @@
         if (json.status === 'success' && json.user) {
           state.currentUser = json.user;
           saveStoredCurrentUser(state.currentUser);
-          updateCurrentUserUI();
-          closeUserModal();
+          showMainScreen();
           showAlert(`✓ เข้าสู่ระบบสำเร็จ: ยินดีต้อนรับ ${state.currentUser.name}`, 'success');
           if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
           AppSoundFX.playSuccess();
+          updateUI();
+          fetchData();
         } else {
           errBox.textContent = json.message || 'Username หรือ PIN ไม่ถูกต้อง';
           errBox.classList.remove('hidden');
@@ -3288,17 +3301,15 @@
     }
 
     function executeLogout() {
-      if (confirm('ต้องการออกจากระบบหรือไม่?')) {
+      if (confirm('ต้องการออกจากระบบเพื่อสลับบัญชีผู้ใช้งานหรือไม่?')) {
         state.currentUser = null;
         saveStoredCurrentUser(null);
-        updateCurrentUserUI();
-        closeUserModal();
-        showAlert('ออกจากระบบเรียบร้อยแล้ว', 'info');
-        openUserModal();
+        showLoginScreen();
+        showAlert('ออกจากระบบเรียบร้อยแล้ว กรุณาเข้าสู่ระบบใหม่', 'info');
       }
     }
 
-    // ==========================================
+        // ==========================================
     // ฟังก์ชันจัดการพนักงานสำหรับ Admin (Admin Tab: view-users)
     // ==========================================
     function openAddUserForm(userToEdit = null) {
@@ -3613,12 +3624,20 @@
         });
       }
       state.cart = getStoredCart();
-      updateUI();
-      updateCurrentUserUI();
-      if (!state.currentUser) {
-        setTimeout(() => { openUserModal(); }, 350);
+      state.currentUser = getStoredCurrentUser();
+      if (state.currentUser) {
+        showMainScreen();
+        updateUI();
+      } else {
+        showLoginScreen();
       }
-    } catch (e) {}
+    } catch (e) {
+      if (state.currentUser) {
+        showMainScreen();
+      } else {
+        showLoginScreen();
+      }
+    }
 
     // ดึงข้อมูลล่าสุดจาก Google Apps Script
     async function fetchData(isManual = false) {
