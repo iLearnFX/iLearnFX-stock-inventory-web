@@ -2515,7 +2515,7 @@
       return `REQ-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     }
 
-    async function sendToGAS(payload) {
+    async function sendToGAS(payload, options = {}) {
       const action = payload && payload.action;
       const publicAction = action === 'login';
       const readAction = action === 'getData' || action === 'getProductSnapshot';
@@ -2528,14 +2528,46 @@
       if (!publicAction && !readAction && action !== 'logout' && action !== 'changePin' && !body.requestId) {
         body.requestId = newRequestId();
       }
+      // Cover both the connection and response body. A stalled Apps Script
+      // request must release the UI even if fetch ignores AbortController.
+      const timeoutMs = options.timeoutMs || (publicAction || readAction ? 25000 : 45000);
+      const controller = typeof AbortController === 'function' ? new AbortController() : null;
+      const externalSignal = options.signal;
+      let timeoutId = null;
+      let onCancel = null;
+      let timedOut = false;
+      let cancelled = !!(externalSignal && externalSignal.aborted);
+      if (cancelled) {
+        return { status: 'error', code: 'REQUEST_CANCELLED', message: 'ยกเลิกการเชื่อมต่อแล้ว' };
+      }
       try {
-        const res = await fetch(API_URL, {
-          method: 'POST',
-          mode: 'cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(body)
+        const deadline = new Promise((_, reject) => {
+          timeoutId = setTimeout(() => {
+            timedOut = true;
+            if (controller) controller.abort();
+            reject(new Error('REQUEST_TIMEOUT'));
+          }, timeoutMs);
         });
-        const text = await res.text();
+        const cancellation = externalSignal ? new Promise((_, reject) => {
+          onCancel = () => {
+            cancelled = true;
+            if (controller) controller.abort();
+            reject(new Error('REQUEST_CANCELLED'));
+          };
+          externalSignal.addEventListener('abort', onCancel, { once: true });
+          if (externalSignal.aborted) onCancel();
+        }) : null;
+        const request = (async () => {
+          const res = await fetch(API_URL, {
+            method: 'POST',
+            mode: 'cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(body),
+            ...(controller ? { signal: controller.signal } : {})
+          });
+          return res.text();
+        })();
+        const text = await Promise.race(cancellation ? [request, deadline, cancellation] : [request, deadline]);
         try {
           const json = JSON.parse(text);
           if (!publicAction && json && json.status === 'error') {
@@ -2565,11 +2597,21 @@
           };
         }
       } catch (err) {
+        if (timedOut) {
+          return { status: 'error', code: 'REQUEST_TIMEOUT',
+            message: 'Google Sheet ตอบกลับนานเกินไป กรุณาตรวจสอบการเชื่อมต่อแล้วลองใหม่' };
+        }
+        if (cancelled) {
+          return { status: 'error', code: 'REQUEST_CANCELLED', message: 'ยกเลิกการเชื่อมต่อแล้ว' };
+        }
         console.error('sendToGAS error:', err);
         return {
           status: 'error',
           message: err.message || 'ไม่สามารถติดต่อ Google Apps Script ได้ (โปรดตรวจสอบเน็ตหรือการ Deploy)'
         };
+      } finally {
+        if (timeoutId !== null) clearTimeout(timeoutId);
+        if (externalSignal && onCancel) externalSignal.removeEventListener('abort', onCancel);
       }
     }
 
@@ -3369,24 +3411,31 @@
       // No-op: login is a dedicated screen, not a modal
     }
 
-    function showLoginLoading() {
+    function showLoginLoading(onCancel) {
       const overlay = document.createElement('div');
       overlay.id = 'loginLoadingOverlay';
       overlay.className = 'fixed inset-0 z-[140] bg-slate-950/65 backdrop-blur-sm flex items-center justify-center p-4';
-      overlay.setAttribute('role', 'status');
-      overlay.setAttribute('aria-live', 'polite');
+      overlay.setAttribute('role', 'dialog');
+      overlay.setAttribute('aria-modal', 'true');
+      overlay.setAttribute('aria-labelledby', 'loginLoadingTitle');
       const panel = document.createElement('div');
       panel.className = 'w-full max-w-sm rounded-3xl bg-white p-6 text-center shadow-2xl';
       const spinner = document.createElement('div');
       spinner.className = 'mx-auto h-10 w-10 rounded-full border-4 border-blue-100 border-t-blue-600 animate-spin';
       spinner.setAttribute('aria-hidden', 'true');
       const title = document.createElement('p');
+      title.id = 'loginLoadingTitle';
       title.className = 'mt-4 text-base font-bold text-slate-900';
       title.textContent = 'กำลังเข้าสู่ระบบและโหลดข้อมูลล่าสุด…';
       const detail = document.createElement('p');
       detail.className = 'mt-1 text-sm text-slate-500';
       detail.textContent = 'กรุณารอสักครู่';
-      panel.append(spinner, title, detail);
+      const cancel = document.createElement('button');
+      cancel.type = 'button';
+      cancel.className = 'mt-5 rounded-xl border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100';
+      cancel.textContent = 'ยกเลิกการรอ';
+      cancel.onclick = onCancel;
+      panel.append(spinner, title, detail, cancel);
       overlay.appendChild(panel);
       document.body.appendChild(overlay);
       return overlay;
@@ -3411,26 +3460,45 @@
         return;
       }
 
+      // A saved-session refresh may still be waiting for the same GAS lock.
+      // Stop it before starting a deliberate login, and ignore its late reply.
+      if (executeLogin.sessionRestoreController) {
+        executeLogin.sessionRestoreController.abort();
+        executeLogin.sessionRestoreController = null;
+      }
+      if (authSession) clearClientSession();
       const oldBtnHtml = submitBtn.innerHTML;
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<span class="animate-spin inline-block mr-1">⏳</span> กำลังตรวจสอบ...';
-      const loadingOverlay = showLoginLoading();
+      const requestController = new AbortController();
+      const loadingOverlay = showLoginLoading(() => requestController.abort());
       try {
-        const json = await sendToGAS({ action: 'login', username, pin, includeData: true });
+        const json = await sendToGAS({ action: 'login', username, pin, includeData: true },
+          { signal: requestController.signal });
+        if (requestController.signal.aborted || json.code === 'REQUEST_CANCELLED') return;
         if (json.status === 'success' && json.user && json.token && json.expiresAt) {
           saveStoredCurrentUser(json.user, json.token, json.expiresAt);
           state.currentUser = sanitizeUser(json.user);
           document.getElementById('loginInputPassword').value = '';
           if (json.mustChangePin) {
             openChangePinModal(true);
-          } else if (await fetchData(false, json.data && Array.isArray(json.data.products) ? json : null)) {
-            showMainScreen();
-            showAlert(`✓ เข้าสู่ระบบสำเร็จ: ยินดีต้อนรับ ${state.currentUser.name}`, 'success');
-            if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
-            AppSoundFX.playSuccess();
           } else {
-            errBox.textContent = 'เข้าสู่ระบบแล้ว แต่โหลดข้อมูลจาก Google Sheet ไม่สำเร็จ กรุณาลองใหม่';
-            errBox.classList.remove('hidden');
+            const loaded = await fetchData(false, json.data && Array.isArray(json.data.products) ? json : null,
+              false, { signal: requestController.signal });
+            if (requestController.signal.aborted) {
+              clearClientSession();
+              return;
+            }
+            if (loaded) {
+              showMainScreen();
+              showAlert(`✓ เข้าสู่ระบบสำเร็จ: ยินดีต้อนรับ ${state.currentUser.name}`, 'success');
+              if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
+              AppSoundFX.playSuccess();
+            } else {
+              clearClientSession();
+              errBox.textContent = 'เข้าสู่ระบบแล้ว แต่ Google Sheet โหลดข้อมูลนานเกินไปหรือไม่สำเร็จ กรุณาตรวจสอบแล้วลองใหม่';
+              errBox.classList.remove('hidden');
+            }
           }
         } else {
           errBox.textContent = json.message || 'Username หรือ PIN ไม่ถูกต้อง';
@@ -3803,12 +3871,22 @@
     showLoginScreen();
     if (authSession) {
       state.currentUser = getStoredCurrentUser();
-      fetchData().then(ok => {
-        if (ok && authSession) showMainScreen();
+      const restoreToken = authSession.token;
+      const restoreController = new AbortController();
+      executeLogin.sessionRestoreController = restoreController;
+      // Defer until the read/version counters below have initialized.
+      Promise.resolve().then(() => fetchData(false, null, false,
+        { signal: restoreController.signal })).then(ok => {
+        if (restoreController.signal.aborted || executeLogin.sessionRestoreController !== restoreController) return;
+        if (ok && authSession && authSession.token === restoreToken) showMainScreen();
         else if (authSession && document.getElementById('changePinModal').classList.contains('hidden')) {
           const errBox = document.getElementById('loginErrorMsg');
           errBox.textContent = 'ยังโหลดข้อมูลจาก Google Sheet ไม่สำเร็จ กรุณาเชื่อมต่อแล้วเข้าสู่ระบบอีกครั้ง';
           errBox.classList.remove('hidden');
+        }
+      }).finally(() => {
+        if (executeLogin.sessionRestoreController === restoreController) {
+          executeLogin.sessionRestoreController = null;
         }
       });
     }
@@ -3850,8 +3928,9 @@
     }
 
     // ดึงข้อมูลล่าสุดจาก Google Apps Script
-    async function fetchData(isManual = false, initialResponse = null, background = false) {
+    async function fetchData(isManual = false, initialResponse = null, background = false, requestOptions = {}) {
       const refreshIcon = document.getElementById('refreshIcon');
+      if (requestOptions.signal && requestOptions.signal.aborted) return false;
       if (!authSession) return false;
       if (isManual && backgroundRefreshTimer) {
         clearTimeout(backgroundRefreshTimer);
@@ -3876,7 +3955,8 @@
         const requestToken = authSession.token;
         const requestVersion = confirmedStockWriteVersion;
         const requestSequence = ++dataReadRequestSequence;
-        const json = initialResponse || await sendToGAS({ action: 'getData' });
+        const json = initialResponse || await sendToGAS({ action: 'getData' }, requestOptions);
+        if (requestOptions.signal && requestOptions.signal.aborted) return false;
         if (!authSession || authSession.token !== requestToken) return false;
         if (requestVersion !== confirmedStockWriteVersion) return false;
         if (json.status === 'success') {
@@ -4871,6 +4951,7 @@
       if (err.code === 'STALE_BALANCE') return 'ยอดใน Sheet เปลี่ยนระหว่างตรวจสอบ กรุณาดูยอดใหม่แล้วทำรายการอีกครั้ง';
       if (err.code === 'INSUFFICIENT_STOCK') return 'ยอดใน Sheet ไม่พอ กรุณาตรวจนับและส่งคำขอปรับยอดก่อนเบิก';
       if (err.code === 'AUTH_REQUIRED') return 'หมดเวลาการเข้าสู่ระบบ กรุณาเข้าสู่ระบบอีกครั้ง';
+      if (err.code === 'REQUEST_TIMEOUT') return 'ยังยืนยันผลจาก Google Sheet ไม่ได้ กรุณารีเฟรชตรวจยอดก่อนลองส่งซ้ำ';
       if (err.code === 'UNCONFIRMED') return 'ยังยืนยันผลจาก Google Sheet ไม่ได้ กรุณารีเฟรชตรวจยอดก่อนลองส่งซ้ำ';
       return err.message || 'ไม่สามารถติดต่อ Google Sheet ได้ กรุณาลองอีกครั้ง';
     }
@@ -6794,7 +6875,7 @@
       } else if (tab === 'suppliers') {
         renderSuppliersView();
       } else if (tab === 'history') {
-        renderHistory();
+        renderHistoryList();
       } else if (tab === 'requests') {
         renderAdjustmentRequests();
       } else if (tab === 'users') {
