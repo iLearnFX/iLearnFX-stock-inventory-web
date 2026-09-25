@@ -271,6 +271,10 @@
         <button onclick="switchTab('history')" id="tab-history" class="py-2 px-3 sm:px-4 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-1.5 ios-btn-press text-blue-100 hover:text-white hover:bg-white/10 flex-shrink-0">
           <span>🕒</span><span>ประวัติ</span>
         </button>
+        <!-- แท็บจัดการพนักงาน (แสดงเฉพาะผู้ใช้ที่มีสิทธิ์ Admin) -->
+        <button onclick="switchTab('users')" id="tab-users" class="hidden py-2 px-3 sm:px-4 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-1.5 ios-btn-press text-amber-200 hover:text-white hover:bg-white/10 flex-shrink-0">
+          <span>👑</span><span>จัดการพนักงาน</span>
+        </button>
       </div>
 
       <!-- เงาเฟดขอบขวา + ปุ่มบอกว่าเลื่อนขวาได้ (แสดงเมื่อมีแท็บทางขวาที่ถูกบังอยู่) -->
@@ -817,6 +821,77 @@
       </div>
     </section>
 
+    <!-- TAB 6: จัดการผู้ใช้งานและรหัสผ่าน (เฉพาะสิทธิ์ Admin) -->
+    <section id="view-users" class="hidden space-y-4">
+      <div class="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/90 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3.5">
+          <div class="flex items-center gap-2.5">
+            <span class="w-10 h-10 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl flex-shrink-0 shadow-2xs border border-amber-200/60">👑</span>
+            <div>
+              <h2 class="font-bold text-sm sm:text-base text-slate-800 flex items-center gap-1.5">
+                <span>จัดการรายชื่อพนักงาน & รหัสผ่าน</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold">Admin Only</span>
+              </h2>
+              <p class="text-xs text-slate-400">ข้อมูลเชื่อมตรงกับแผ่นงาน <strong>Users</strong> ใน Google Sheet เพิ่ม/แก้รหัสผ่าน/ลบพนักงานได้ที่นี่</p>
+            </div>
+          </div>
+          <button type="button" onclick="openAddUserForm()" class="px-3.5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:scale-95 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-sm transition self-start sm:self-auto ios-btn-press">
+            <span>➕ เพิ่มพนักงานใหม่</span>
+          </button>
+        </div>
+
+        <!-- ฟอร์มเพิ่ม / แก้ไข พนักงาน -->
+        <div id="addUserFormContainer" class="hidden bg-slate-50 p-4 rounded-2xl border border-slate-200/90 space-y-3 ios-spring">
+          <div class="flex items-center justify-between">
+            <h3 id="userFormTitle" class="text-xs font-bold text-slate-700">➕ เพิ่มพนักงานใหม่</h3>
+            <button type="button" onclick="closeAddUserForm()" class="text-xs text-slate-400 hover:text-slate-600 font-bold p-1">✕ ปิด</button>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Username (ใช้ตอนล็อกอิน)</label>
+              <input type="text" id="newInputUserUsername" placeholder="เช่น barista2, staff2" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-blue-500 font-medium" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">PIN / รหัสผ่าน (ตัวเลข 4 หลัก)</label>
+              <input type="text" id="newInputUserPin" placeholder="เช่น 1234" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-blue-500 font-bold tracking-wider" />
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">ชื่อ-นามสกุล / ตำแหน่ง (จะแสดงใน Log ทุกครั้งที่ทำรายการ)</label>
+              <input type="text" id="newInputUserName" placeholder="เช่น น้องฟ้า (บาริสต้า)" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-blue-500 font-medium" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">สิทธิ์การใช้งาน (Role)</label>
+              <select id="newInputUserRole" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+                <option value="Staff">Staff (พนักงาน: เบิก/รับ/แจ้งของเสีย/ตรวจนับสต็อก)</option>
+                <option value="Admin">Admin (เจ้าของร้าน: จัดการทุกส่วน + แก้ไขพนักงาน)</option>
+              </select>
+            </div>
+          </div>
+          <div class="flex gap-2 pt-1">
+            <button type="button" onclick="submitAddNewUser()" id="btnSaveUserSubmit" class="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow-xs transition">
+              บันทึกข้อมูลพนักงานลง Google Sheet
+            </button>
+            <button type="button" onclick="closeAddUserForm()" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 active:scale-95 text-slate-700 font-bold rounded-xl text-xs transition">
+              ยกเลิก
+            </button>
+          </div>
+        </div>
+
+        <!-- รายการผู้ใช้งานทั้งหมด -->
+        <div class="space-y-2">
+          <div class="text-xs font-bold text-slate-600 flex items-center justify-between px-1">
+            <span>รายชื่อผู้ใช้งานในระบบทั้งหมด</span>
+            <span id="usersCountBadge" class="text-[10px] text-slate-400">0 คน</span>
+          </div>
+          <div id="usersViewListContainer" class="space-y-2">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- FIXED BOTTOM FOOTER BAR (ตรึงแถบหมวดหมู่เต็มความกว้างด้านล่าง สไลด์ซ้าย-ขวาได้อย่างสบายตา พร้อม Scroll Affordance สไตล์ iOS) -->
@@ -929,7 +1004,7 @@
 
           <div>
             <label class="block text-xs font-semibold text-slate-600 mb-1 flex items-center justify-between">
-              <span>รหัสผ่าน / PIN (ค่าเริ่มต้น: 1234)</span>
+              <span>รหัสผ่าน / PIN</span>
               <span id="loginPinHint" class="text-[10px] text-blue-600 font-medium">กดปุ่มตัวเลขได้</span>
             </label>
             <input type="password" id="loginInputPassword" placeholder="กรอกรหัสผ่านหรือ PIN 4 หลัก" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-blue-500 font-bold tracking-widest text-center text-sm" required />
@@ -958,65 +1033,6 @@
             <span>เข้าสู่ระบบ / ยืนยันผู้ใช้</span>
           </button>
         </form>
-
-        <!-- ส่วนของ Admin: จัดการรายชื่อพนักงาน -->
-        <div id="adminManageUsersSection" class="pt-3 border-t border-slate-100 text-center">
-          <button type="button" onclick="toggleUserManageModal()" class="text-xs text-blue-600 hover:text-blue-800 font-semibold flex items-center justify-center gap-1 mx-auto">
-            <span>⚙️</span><span>จัดการรายชื่อพนักงานและรหัสผ่าน (ชีต Users)</span>
-          </button>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: จัดการผู้ใช้งานและรหัสผ่านสำหรับ Admin (Manage Users Modal) -->
-  <div id="modalManageUsers" class="hidden fixed inset-0 bg-slate-900/65 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4">
-    <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-slate-200 overflow-hidden ios-sheet-anim flex flex-col max-h-[90vh]">
-      <div class="bg-slate-800 text-white p-4 flex items-center justify-between flex-shrink-0">
-        <h3 class="font-bold text-sm flex items-center gap-2">
-          <span>👥</span><span>จัดการรายชื่อพนักงาน (Sheet: Users)</span>
-        </h3>
-        <button type="button" onclick="toggleUserManageModal()" class="w-7 h-7 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center text-xs font-bold">✕</button>
-      </div>
-      <div class="p-4 overflow-y-auto space-y-4 no-scrollbar">
-        <p class="text-xs text-slate-500">ข้อมูลผู้ใช้งานทั้งหมดจะซิงค์ตรงกับชีต <strong>Users</strong> ใน Google Sheet เจ้าของร้านสามารถแก้ไขได้จากตรงนี้หรือในชีตได้โดยตรง</p>
-        
-        <!-- รายการผู้ใช้ -->
-        <div id="usersListContainer" class="space-y-2">
-          <!-- Rendered dynamically -->
-        </div>
-
-        <!-- ฟอร์มเพิ่มผู้ใช้ใหม่ -->
-        <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2.5">
-          <div class="text-xs font-bold text-slate-700">➕ เพิ่มพนักงานใหม่</div>
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Username</label>
-              <input type="text" id="newInputUserUsername" placeholder="เช่น staff2" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs outline-none focus:ring-2 focus:ring-blue-500" />
-            </div>
-            <div>
-              <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">PIN / รหัสผ่าน</label>
-              <input type="text" id="newInputUserPin" placeholder="เช่น 1234" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs outline-none focus:ring-2 focus:ring-blue-500 font-bold" />
-            </div>
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">ชื่อ-นามสกุล / ตำแหน่ง</label>
-              <input type="text" id="newInputUserName" placeholder="เช่น น้องน้ำ (แคชเชียร์)" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs outline-none focus:ring-2 focus:ring-blue-500" />
-            </div>
-            <div>
-              <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">สิทธิ์การใช้งาน (Role)</label>
-              <select id="newInputUserRole" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="Staff">Staff (เบิก/รับ/นับสต็อก)</option>
-                <option value="Admin">Admin (จัดการระบบทั้งหมด)</option>
-              </select>
-            </div>
-          </div>
-          <button type="button" onclick="submitAddNewUser()" class="w-full py-2 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow-xs transition">
-            บันทึกพนักงานใหม่ลง Google Sheet
-          </button>
-        </div>
       </div>
     </div>
   </div>
@@ -2447,7 +2463,7 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbyqHzcN4kJHOY5j_UXnGUhKtS7VqrsBLRMj3pBmEIKzo1ut2fAPlZ91jU0JaE0ojg206A/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbxToULZfnEkaHSYtyzY0_hoMBmSQqacSnlNQxp6FZ6moHqaH4K1fsUpSDa7WJBK5brK/exec";
 
     // ==========================================
     // AUDIO & SOUND FX ENGINE (Web Audio API Synthesizer - 0ms Latency, Full Offline)
@@ -3085,6 +3101,7 @@
     function updateCurrentUserUI() {
       const nameEl = document.getElementById('headerUserName');
       const roleEl = document.getElementById('headerUserRole');
+      const tabUsers = document.getElementById('tab-users');
       const cur = state.currentUser;
       if (cur) {
         if (nameEl) nameEl.textContent = cur.name;
@@ -3094,12 +3111,24 @@
             'hidden sm:inline-block px-1.5 py-0.2 rounded-md bg-amber-400 text-[10px] text-slate-900 font-bold shadow-xs' : 
             'hidden sm:inline-block px-1.5 py-0.2 rounded-md bg-blue-400/40 text-[10px] text-blue-100 font-medium';
         }
+        if (tabUsers) {
+          if (cur.role === 'Admin') {
+            tabUsers.classList.remove('hidden');
+          } else {
+            tabUsers.classList.add('hidden');
+            const viewUsers = document.getElementById('view-users');
+            if (viewUsers && !viewUsers.classList.contains('hidden')) {
+              switchTab('dashboard');
+            }
+          }
+        }
       } else {
         if (nameEl) nameEl.textContent = 'เข้าสู่ระบบ';
         if (roleEl) {
           roleEl.textContent = 'ยังไม่ล็อกอิน';
           roleEl.className = 'hidden sm:inline-block px-1.5 py-0.2 rounded-md bg-rose-500 text-[10px] text-white font-medium';
         }
+        if (tabUsers) tabUsers.classList.add('hidden');
       }
     }
 
@@ -3112,12 +3141,12 @@
         return `
           <button type="button" onclick="selectQuickUser('${u.username}')" class="p-2.5 rounded-2xl border text-left transition ios-btn-press ${isCurrent ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-200' : 'bg-slate-50 hover:bg-slate-100 border-slate-200'}">
             <div class="flex items-center gap-2">
-              <span class="w-7 h-7 rounded-xl ${u.role === 'Admin' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-700'} flex items-center justify-center text-xs font-bold flex-shrink-0">
+              <span class="w-8 h-8 rounded-xl ${u.role === 'Admin' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-700'} flex items-center justify-center text-sm font-bold flex-shrink-0">
                 ${u.role === 'Admin' ? '👑' : '👤'}
               </span>
               <div class="min-w-0">
                 <div class="text-xs font-bold text-slate-800 truncate">${u.name}</div>
-                <div class="text-[10px] text-slate-400">${u.role} (${u.username})</div>
+                <div class="text-[10px] text-slate-400 font-mono">${u.username} (${u.role})</div>
               </div>
             </div>
           </button>
@@ -3175,11 +3204,6 @@
         infoBox.classList.add('hidden');
       }
 
-      const adminSec = document.getElementById('adminManageUsersSection');
-      if (adminSec) {
-        adminSec.style.display = (cur && cur.role === 'Admin') ? 'block' : (cur ? 'none' : 'block');
-      }
-
       document.getElementById('loginInputPassword').value = '';
       document.getElementById('loginErrorMsg').classList.add('hidden');
       if (!cur) {
@@ -3212,7 +3236,7 @@
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<span class="animate-spin inline-block mr-1">⏳</span> กำลังตรวจสอบ...';
 
-      // 1. ตรวจสอบกับข้อมูลในเครื่องก่อน (Instant Login)
+      // 1. ตรวจสอบกับข้อมูลในเครื่องก่อน
       const localUsers = state.users && state.users.length > 0 ? state.users : DEFAULT_SYSTEM_USERS;
       const matchedLocal = localUsers.find(u => u.username.toLowerCase() === username.toLowerCase() && (u.pin === pin || (!u.pin && pin === '1234')));
 
@@ -3255,7 +3279,7 @@
           errBox.classList.remove('hidden');
         }
       } catch (err) {
-        errBox.textContent = 'รหัสผ่านหรือ PIN ไม่ถูกต้อง (ค่าเริ่มต้นพนักงานคือ 1234)';
+        errBox.textContent = 'รหัสผ่านหรือ PIN ไม่ถูกต้อง';
         errBox.classList.remove('hidden');
       } finally {
         submitBtn.disabled = false;
@@ -3274,37 +3298,83 @@
       }
     }
 
-    function toggleUserManageModal() {
-      const modal = document.getElementById('modalManageUsers');
-      if (!modal) return;
-      if (modal.classList.contains('hidden')) {
-        renderUsersList();
-        modal.classList.remove('hidden');
+    // ==========================================
+    // ฟังก์ชันจัดการพนักงานสำหรับ Admin (Admin Tab: view-users)
+    // ==========================================
+    function openAddUserForm(userToEdit = null) {
+      const form = document.getElementById('addUserFormContainer');
+      const title = document.getElementById('userFormTitle');
+      const submitBtn = document.getElementById('btnSaveUserSubmit');
+      if (!form) return;
+      form.classList.remove('hidden');
+
+      if (userToEdit) {
+        title.textContent = `✏️ แก้ไขข้อมูล / รหัสผ่าน: ${userToEdit.name}`;
+        submitBtn.textContent = 'บันทึกการแก้ไขลง Google Sheet';
+        document.getElementById('newInputUserUsername').value = userToEdit.username;
+        document.getElementById('newInputUserUsername').readOnly = true;
+        document.getElementById('newInputUserPin').value = userToEdit.pin || '';
+        document.getElementById('newInputUserName').value = userToEdit.name || '';
+        document.getElementById('newInputUserRole').value = userToEdit.role || 'Staff';
       } else {
-        modal.classList.add('hidden');
+        title.textContent = '➕ เพิ่มพนักงานใหม่';
+        submitBtn.textContent = 'บันทึกพนักงานใหม่ลง Google Sheet';
+        document.getElementById('newInputUserUsername').value = '';
+        document.getElementById('newInputUserUsername').readOnly = false;
+        document.getElementById('newInputUserPin').value = '1234';
+        document.getElementById('newInputUserName').value = '';
+        document.getElementById('newInputUserRole').value = 'Staff';
       }
+      document.getElementById('newInputUserUsername').focus();
     }
 
-    function renderUsersList() {
-      const container = document.getElementById('usersListContainer');
+    function closeAddUserForm() {
+      const form = document.getElementById('addUserFormContainer');
+      if (form) form.classList.add('hidden');
+    }
+
+    function renderUsersView() {
+      const container = document.getElementById('usersViewListContainer');
+      const countBadge = document.getElementById('usersCountBadge');
       if (!container) return;
       const users = state.users && state.users.length > 0 ? state.users : DEFAULT_SYSTEM_USERS;
-      container.innerHTML = users.map(u => `
-        <div class="bg-white p-3 rounded-2xl border border-slate-200 flex items-center justify-between text-xs shadow-2xs">
-          <div class="flex items-center gap-2.5">
-            <span class="w-8 h-8 rounded-xl ${u.role === 'Admin' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-700'} flex items-center justify-center font-bold">
-              ${u.role === 'Admin' ? '👑' : '👤'}
-            </span>
-            <div>
-              <div class="font-bold text-slate-800">${u.name}</div>
-              <div class="text-[10px] text-slate-400">User: <span class="font-mono text-slate-600">${u.username}</span> | PIN: <span class="font-mono text-slate-600">${u.pin || '1234'}</span> | ${u.role}</div>
+      if (countBadge) countBadge.textContent = `${users.length} คน`;
+
+      container.innerHTML = users.map(u => {
+        const isAdmin = u.role === 'Admin';
+        const isCurrent = state.currentUser && state.currentUser.username === u.username;
+        const uEscaped = JSON.stringify(u).replace(/"/g, '&quot;');
+        return `
+          <div class="bg-white p-3.5 rounded-2xl border border-slate-200/90 flex items-center justify-between transition gap-2 shadow-2xs">
+            <div class="flex items-center gap-3 min-w-0">
+              <span class="w-10 h-10 rounded-2xl ${isAdmin ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-blue-100 text-blue-700 border border-blue-200'} flex items-center justify-center font-bold text-base flex-shrink-0">
+                ${isAdmin ? '👑' : '👤'}
+              </span>
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="font-bold text-xs sm:text-sm text-slate-800 truncate">${u.name}</span>
+                  ${isCurrent ? '<span class="text-[9px] px-1.5 py-0.2 rounded-md bg-blue-600 text-white font-bold">คุณกำลังใช้งาน</span>' : ''}
+                </div>
+                <div class="text-[11px] text-slate-500 flex items-center gap-2 mt-0.5 flex-wrap">
+                  <span>Username: <strong class="font-mono text-slate-700">${u.username}</strong></span>
+                  <span>PIN: <strong class="font-mono text-indigo-700 bg-slate-50 px-1.5 py-0.2 rounded border border-slate-200">${u.pin || '1234'}</strong></span>
+                  <span class="px-1.5 py-0.2 rounded text-[10px] font-semibold ${isAdmin ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-700'}">${u.role}</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5 flex-shrink-0">
+              <button type="button" onclick="openAddUserForm(${uEscaped})" class="px-2.5 py-1.5 bg-slate-50 hover:bg-blue-50 text-blue-700 border border-slate-200 rounded-xl text-xs font-bold active:scale-95 transition shadow-2xs" title="แก้ไข / เปลี่ยน PIN">
+                ✏️ แก้ไข
+              </button>
+              ${u.username !== 'admin' ? `
+                <button type="button" onclick="deleteUserItem('${u.username}')" class="px-2 py-1.5 bg-slate-50 hover:bg-rose-50 text-rose-600 border border-slate-200 rounded-xl text-xs font-bold active:scale-95 transition shadow-2xs" title="ลบพนักงาน">
+                  🗑️
+                </button>
+              ` : '<span class="text-[10px] font-bold text-amber-600 px-2 py-1 rounded-xl bg-amber-50 border border-amber-200/60">แอดมินหลัก</span>'}
             </div>
           </div>
-          ${u.username !== 'admin' ? `
-            <button type="button" onclick="deleteUserItem('${u.username}')" class="text-rose-500 hover:text-rose-700 p-1 font-bold text-sm" title="ลบพนักงาน">✕</button>
-          ` : '<span class="text-[10px] font-bold text-amber-600 px-1.5 py-0.5 rounded-full bg-amber-50">หลัก</span>'}
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     async function submitAddNewUser() {
@@ -3317,11 +3387,15 @@
         alert('กรุณากรอก Username และชื่อพนักงาน');
         return;
       }
+      if (!pin) {
+        alert('กรุณากำหนด PIN / รหัสผ่าน');
+        return;
+      }
 
       const newUser = {
         id: 'U-' + String((state.users || []).length + 1).padStart(3, '0'),
         username: username,
-        pin: pin || '1234',
+        pin: pin,
         name: name,
         role: role,
         status: 'Active'
@@ -3330,19 +3404,16 @@
       if (!state.users) state.users = [...DEFAULT_SYSTEM_USERS];
       const existingIdx = state.users.findIndex(u => u.username.toLowerCase() === username.toLowerCase());
       if (existingIdx >= 0) {
-        state.users[existingIdx] = newUser;
+        state.users[existingIdx] = { ...state.users[existingIdx], ...newUser };
       } else {
         state.users.push(newUser);
       }
       saveStoredUsers(state.users);
-      renderUsersList();
+      renderUsersView();
       renderQuickUserGrid();
+      closeAddUserForm();
 
-      document.getElementById('newInputUserUsername').value = '';
-      document.getElementById('newInputUserPin').value = '';
-      document.getElementById('newInputUserName').value = '';
-
-      showAlert(`✓ บันทึกพนักงาน "${name}" เรียบร้อยแล้ว`, 'success');
+      showAlert(`✓ บันทึกข้อมูลพนักงาน "${name}" เรียบร้อยแล้ว`, 'success');
 
       try {
         await fetch(API_URL, {
@@ -3350,16 +3421,32 @@
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({ action: 'saveUser', ...newUser })
         });
-      } catch (e) {}
+      } catch (e) {
+        console.warn('Backend sync saveUser error:', e);
+      }
     }
 
-    function deleteUserItem(username) {
-      if (!confirm(`ต้องการลบผู้ใช้ "${username}" หรือไม่?`)) return;
+    async function deleteUserItem(username) {
+      if (username === 'admin') {
+        alert('ไม่สามารถลบผู้ดูแลระบบหลัก (admin) ได้');
+        return;
+      }
+      if (!confirm(`ต้องการลบพนักงาน "${username}" ออกจากระบบหรือไม่?`)) return;
       state.users = (state.users || DEFAULT_SYSTEM_USERS).filter(u => u.username !== username);
       saveStoredUsers(state.users);
-      renderUsersList();
+      renderUsersView();
       renderQuickUserGrid();
-      showAlert('ลบผู้ใช้เรียบร้อยแล้ว', 'info');
+      showAlert('ลบพนักงานเรียบร้อยแล้ว', 'info');
+
+      try {
+        await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'deleteUser', username: username })
+        });
+      } catch (e) {
+        console.warn('Backend sync deleteUser error:', e);
+      }
     }
 
     let activeModalProduct = null;
@@ -6091,15 +6178,15 @@
       if (navigator.vibrate) navigator.vibrate(10);
       AppSoundFX.playTab();
 
-      ['dashboard', 'lowstock', 'reports', 'suppliers', 'history'].forEach(t => {
+      ['dashboard', 'lowstock', 'reports', 'suppliers', 'history', 'users'].forEach(t => {
         const view = document.getElementById('view-' + t);
         if (view) view.classList.toggle('hidden', t !== tab);
         const tabBtn = document.getElementById('tab-' + t);
         if (tabBtn) {
           if (t === tab) {
-            tabBtn.className = "py-2 px-3 sm:px-4 rounded-xl font-bold transition-all duration-200 flex items-center justify-center gap-1.5 ios-btn-press bg-white text-blue-700 shadow-sm";
+            tabBtn.className = "py-2 px-3 sm:px-4 rounded-xl font-bold transition-all duration-200 flex items-center justify-center gap-1.5 ios-btn-press bg-white text-blue-700 shadow-sm flex-shrink-0";
           } else {
-            tabBtn.className = "relative py-2 px-3 sm:px-4 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-1.5 ios-btn-press text-blue-100 hover:text-white hover:bg-white/10";
+            tabBtn.className = "relative py-2 px-3 sm:px-4 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-1.5 ios-btn-press text-blue-100 hover:text-white hover:bg-white/10 flex-shrink-0";
           }
         }
       });
@@ -6115,6 +6202,13 @@
         renderSuppliersView();
       } else if (tab === 'history') {
         renderHistory();
+      } else if (tab === 'users') {
+        if (!state.currentUser || state.currentUser.role !== 'Admin') {
+          showAlert('⚠️ เฉพาะเจ้าของร้าน (Admin) เท่านั้นที่สามารถเข้าถึงส่วนจัดการพนักงานได้', 'error');
+          switchTab('dashboard');
+          return;
+        }
+        renderUsersView();
       }
 
       // จัดการแถบ Footer ด้านล่าง: ให้แสดงเฉพาะในหน้าแดชบอร์ดสต็อก (หรือซ่อนเมื่อดูแท็บอื่น)
