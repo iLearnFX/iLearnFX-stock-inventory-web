@@ -510,9 +510,9 @@
       <!-- สรุปภาพรวม KPI ด้านบน (Compact 2x2 Grid บนมือถือ / 4 Col บนจอใหญ่) -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
         <div class="bg-white p-2.5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
-          <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">ยอดเบิกใช้สะสม</div>
+          <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">เบิกย้อนหลัง 30 วัน</div>
           <div id="kpiReportTotalOut" class="text-base font-black text-slate-800 mt-0.5">0 รายการ</div>
-          <div class="text-[9px] text-slate-400">รวมทุกหมวดหมู่</div>
+          <div class="text-[9px] text-slate-400">จำนวนครั้ง ไม่รวมจำนวนต่างหน่วย</div>
         </div>
         <div class="bg-white p-2.5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
           <div class="text-[10px] text-blue-600 font-bold uppercase tracking-wider">🔥 เบิกบ่อยสุด</div>
@@ -520,14 +520,14 @@
           <div id="kpiReportTopQty" class="text-[9px] text-blue-500 truncate">-</div>
         </div>
         <div class="bg-white p-2.5 rounded-2xl border border-rose-200 bg-rose-50/40 shadow-sm flex flex-col justify-between">
-          <div class="text-[10px] text-rose-600 font-bold uppercase tracking-wider">🚨 สั่งซื้อด่วน</div>
+          <div class="text-[10px] text-rose-600 font-bold uppercase tracking-wider">🚨 ต้องติดตาม</div>
           <div id="kpiReportUrgent" class="text-base font-black text-rose-700 mt-0.5">0 รายการ</div>
-          <div class="text-[9px] text-rose-500">ต่ำกว่าเกณฑ์ Par</div>
+          <div class="text-[9px] text-rose-500">ถึงเกณฑ์ Par หรือถึงวันสั่ง</div>
         </div>
         <div class="bg-white p-2.5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
-          <div class="text-[10px] text-amber-600 font-bold uppercase tracking-wider">📅 รอบสั่ง 7 วันนี้</div>
+          <div class="text-[10px] text-amber-600 font-bold uppercase tracking-wider">📅 ควรสั่งใน 7 วัน</div>
           <div id="kpiReportAvgCycle" class="text-base font-black text-amber-700 mt-0.5">0 รายการ</div>
-          <div class="text-[9px] text-amber-500">ถึงรอบจัดซื้อ</div>
+          <div class="text-[9px] text-amber-500">มีจำนวนสั่งเพิ่มหลังหัก PO</div>
         </div>
       </div>
 
@@ -590,8 +590,7 @@
               <span id="dailyOutTxCount" class="text-[10px] font-semibold text-rose-500 bg-white/80 px-1.5 py-0.2 rounded-full">0 ครั้ง</span>
             </div>
             <div class="my-1">
-              <span id="dailyOutTotalQty" class="text-lg sm:text-2xl font-black text-rose-700">0</span>
-              <span class="text-[10px] sm:text-xs text-rose-600 font-medium">หน่วยรวม</span>
+              <span id="dailyOutTotalQty" class="text-xs sm:text-sm font-black text-rose-700 break-words">—</span>
             </div>
             <div id="dailyOutSkuCount" class="text-[10px] text-rose-500 truncate">0 รายการ SKU</div>
           </div>
@@ -603,8 +602,7 @@
               <span id="dailyInTxCount" class="text-[10px] font-semibold text-emerald-500 bg-white/80 px-1.5 py-0.2 rounded-full">0 ครั้ง</span>
             </div>
             <div class="my-1">
-              <span id="dailyInTotalQty" class="text-lg sm:text-2xl font-black text-emerald-700">0</span>
-              <span class="text-[10px] sm:text-xs text-emerald-600 font-medium">หน่วยรวม</span>
+              <span id="dailyInTotalQty" class="text-xs sm:text-sm font-black text-emerald-700 break-words">—</span>
             </div>
             <div id="dailyInSkuCount" class="text-[10px] text-emerald-500 truncate">0 รายการ SKU</div>
           </div>
@@ -616,8 +614,7 @@
               <span id="dailyWasteTxCount" class="text-[10px] font-semibold text-amber-500 bg-white/80 px-1.5 py-0.2 rounded-full">0 ครั้ง</span>
             </div>
             <div class="my-1">
-              <span id="dailyWasteTotalQty" class="text-lg sm:text-2xl font-black text-amber-700">0</span>
-              <span class="text-[10px] sm:text-xs text-amber-600 font-medium">หน่วยรวม</span>
+              <span id="dailyWasteTotalQty" class="text-xs sm:text-sm font-black text-amber-700 break-words">—</span>
             </div>
             <div id="dailyWasteSkuCount" class="text-[10px] text-amber-500 truncate">0 รายการ SKU</div>
           </div>
@@ -701,6 +698,7 @@
         <!-- Canvas สำหรับ Chart.js (Responsive บนมือถือ) -->
         <div class="relative w-full h-60 sm:h-72 bg-slate-50/50 rounded-2xl p-1.5 border border-slate-100 shadow-inner">
           <canvas id="consumptionChartCanvas"></canvas>
+          <div id="chartNoDataMessage" class="hidden absolute inset-0 flex items-center justify-center text-center text-xs text-slate-500 bg-slate-50/95 rounded-2xl p-4">ยังไม่มีรายการเบิกในช่วงวันที่เลือก</div>
         </div>
 
         <!-- กล่องไฮไลท์สถิติพีคของสัปดาห์ (Peak Day of Week Analysis Insight Card) -->
@@ -742,7 +740,7 @@
         <!-- 3 Quick Stats ใต้กราฟ -->
         <div class="grid grid-cols-3 gap-2 pt-1 border-t border-slate-100 text-center text-xs">
           <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-            <span class="text-[9px] sm:text-[10px] text-slate-400 block font-medium">เบิกใช้รวมช่วงนี้</span>
+            <span class="text-[9px] sm:text-[10px] text-slate-400 block font-medium">การเบิกช่วงนี้</span>
             <span id="chartStatTotal" class="font-black text-slate-800 text-xs sm:text-sm">0</span>
           </div>
           <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
@@ -788,8 +786,8 @@
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
             </span>
             <div>
-              <h3 class="font-bold text-xs text-slate-800">ตารางวิเคราะห์อัตราการเบิกใช้ & ความถี่ในการสั่งซื้อ (SKU Table)</h3>
-              <p class="text-[10px] text-slate-400">คำนวณการใช้เฉลี่ยต่อวัน สต็อกจะอยู่ได้อีกกี่วัน และสั่งเฉลี่ยกี่วันครั้ง</p>
+              <h3 class="font-bold text-xs text-slate-800">ตารางวิเคราะห์อัตราการเบิกใช้และรอบส่ง (SKU Table)</h3>
+              <p class="text-[10px] text-slate-400">ยอดเบิกย้อนหลัง 30 วัน; พยากรณ์เมื่อมีประวัติอย่างน้อย 14 วัน เบิกอย่างน้อย 3 วัน และกำหนดรอบส่ง</p>
             </div>
           </div>
         </div>
@@ -800,10 +798,10 @@
               <tr class="bg-slate-50 text-[10px] font-bold text-slate-500 uppercase border-b border-slate-200">
                 <th class="p-2.5">สินค้า / ซัพพลายเออร์</th>
                 <th class="p-2.5 text-right">คงเหลือ</th>
-                <th class="p-2.5 text-right">ยอดเบิก</th>
+                <th class="p-2.5 text-right">เบิก 30 วัน</th>
                 <th class="p-2.5 text-right">ใช้เฉลี่ย/วัน</th>
                 <th class="p-2.5 text-right">อยู่ได้อีก</th>
-                <th class="p-2.5 text-center">ความถี่สั่ง</th>
+                <th class="p-2.5 text-center">รอบส่ง</th>
                 <th class="p-2.5 text-center">วันที่ควรสั่ง</th>
                 <th class="p-2.5 text-center">สถานะ</th>
                 <th class="p-2.5 text-center">สั่งซื้อ</th>
@@ -886,15 +884,15 @@
           </div>
         </div>
 
-        <!-- ปุ่ม Action รวดเร็ว: สั่งของที่ใกล้หมดทั้งหมดเข้าตะกร้าในคลิกเดียว! -->
+        <!-- เพิ่มเฉพาะจำนวนสั่งที่มีประวัติและรอบส่งรองรับ -->
         <div class="flex items-center gap-2 flex-wrap">
-          <button type="button" onclick="addAllLowStockToCart()" class="flex-1 min-w-[170px] px-4 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:scale-95 text-white font-bold text-xs sm:text-sm rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 ios-btn-press" title="เพิ่มสินค้าที่ใกล้หมดทั้งหมดลงในตะกร้าสั่งซื้ออัตโนมัติ">
+          <button type="button" onclick="addAllLowStockToCart()" class="flex-1 min-w-[170px] px-4 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:scale-95 text-white font-bold text-xs sm:text-sm rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 ios-btn-press" title="เพิ่มเฉพาะสินค้าใกล้หมดที่คำนวณจำนวนสั่งได้จากประวัติการเบิก รอบส่ง และ PO รอรับ">
             <span>🛒</span>
-            <span>สั่งของใกล้หมดเข้าตะกร้าทั้งหมด</span>
+            <span>เพิ่มรายการที่คำนวณได้</span>
           </button>
-          <button type="button" onclick="addAllLowStockWithSmartReorder()" class="px-3.5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 active:scale-95 text-white font-bold text-xs sm:text-sm rounded-2xl shadow-md transition-all flex items-center justify-center gap-1.5 ios-btn-press flex-shrink-0" title="คำนวณยอดสั่งแนะนำอัจฉริยะตาม Lead Time และช่วงวันพีค">
+          <button type="button" onclick="openPurchaseCartModal()" class="px-3.5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 active:scale-95 text-white font-bold text-xs sm:text-sm rounded-2xl shadow-md transition-all flex items-center justify-center gap-1.5 ios-btn-press flex-shrink-0" title="เปิดตะกร้าเพื่อตรวจและระบุจำนวนสั่งเอง">
             <span>✨</span>
-            <span class="hidden sm:inline">คำนวณยอดสั่งอัจฉริยะ</span>
+            <span class="hidden sm:inline">ตรวจจำนวนในตะกร้า</span>
             <span class="sm:hidden">ยอดสั่งอัจฉริยะ</span>
           </button>
         </div>
@@ -1162,7 +1160,14 @@
               <button type="button" onclick="addQuickQty(10)" data-quick-qty="10" aria-label="เบิกออก 10" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700 ios-btn-press active:scale-90 transition">-10</button>
               <button type="button" onclick="addQuickQty(50)" data-quick-qty="50" aria-label="เบิกออก 50" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700 ios-btn-press active:scale-90 transition">-50</button>
             </div>
-            <input type="number" step="any" min="0.01" id="quickQty" required placeholder="ระบุจำนวน" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none transition-all" />
+            <input type="number" step="any" min="0.01" id="quickQty" required placeholder="ระบุจำนวน" oninput="updateQuickQtyConversionPreview()" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none transition-all" />
+            <div id="quickQtyUnitContainer" class="hidden mt-2">
+              <label for="quickQtyUnit" class="block text-xs font-semibold text-slate-700 mb-1">หน่วยที่เบิก</label>
+              <select id="quickQtyUnit" onchange="updateQuickQtyConversionPreview()" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                <option value="STOCK">หน่วยสต็อก</option>
+              </select>
+            </div>
+            <p id="quickQtyConversionHint" class="text-[11px] text-blue-700 mt-1.5" aria-live="polite"></p>
           </div>
 
           <div class="grid grid-cols-2 gap-2">
@@ -1197,7 +1202,8 @@
               <button type="button" onclick="addWasteQty(10)" aria-label="ตัดของเสีย 10" class="px-2.5 py-1 bg-white hover:bg-amber-100 border border-amber-200 rounded-lg text-xs font-bold text-amber-800 ios-btn-press active:scale-90 transition">-10</button>
               <button type="button" onclick="addWasteQty(50)" aria-label="ตัดของเสีย 50" class="px-2.5 py-1 bg-white hover:bg-amber-100 border border-amber-200 rounded-lg text-xs font-bold text-amber-800 ios-btn-press active:scale-90 transition">-50</button>
             </div>
-            <input type="number" step="any" min="0.01" id="quickWasteQty" required placeholder="ระบุจำนวนของเสีย" class="w-full border border-amber-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-amber-500 outline-none bg-white font-bold text-sm text-amber-950 transition-all" />
+            <input type="number" step="any" min="0.01" id="quickWasteQty" required placeholder="ระบุจำนวนของเสียในหน่วยสต็อก" class="w-full border border-amber-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-amber-500 outline-none bg-white font-bold text-sm text-amber-950 transition-all" />
+            <p id="quickWasteUnitHint" class="text-[11px] text-amber-800 mt-1.5"></p>
           </div>
 
           <div>
@@ -1369,7 +1375,7 @@
           <div class="flex items-center justify-between gap-2 flex-wrap">
             <span class="font-bold text-slate-700 text-xs">สินค้าที่เลือกไว้</span>
             <div class="flex items-center gap-2">
-              <button type="button" onclick="applySmartReorderToCart()" class="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1 rounded-lg transition active:scale-95 flex items-center gap-1" title="ปรับจำนวนสั่งซื้ออัตโนมัติตาม Lead Time และวันพีคสุดสัปดาห์">
+              <button type="button" onclick="applySmartReorderToCart()" class="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1 rounded-lg transition active:scale-95 flex items-center gap-1" title="ปรับจำนวนสั่งซื้อจากการเบิกจริง รอบส่ง และ PO รอรับ">
                 <span>✨</span><span>คำนวณยอดสั่งอัจฉริยะ</span>
               </button>
               <button onclick="clearCart()" class="text-[11px] text-rose-500 hover:text-rose-700 underline font-medium">ล้างตะกร้า</button>
@@ -1693,16 +1699,17 @@
         <div class="bg-blue-50/60 p-3 rounded-2xl border border-blue-200/80 space-y-1.5">
           <div class="flex items-center justify-between">
             <label class="block font-bold text-blue-950 text-xs">📦 ขนาดบรรจุต่อหน่วย (Pack Size / Spec)</label>
-            <span class="text-[10px] text-blue-600 font-medium">เช่น 500 กรัม, 1 กก.</span>
+            <span class="text-[10px] text-blue-600 font-medium">เช่น 500 กรัมต่อถุง</span>
           </div>
-          <input type="text" id="newProductPackSize" placeholder="เช่น 500 กรัม, 1 กก., 50 ใบ, 750 มล." class="w-full bg-white border border-blue-300 rounded-xl p-2 text-xs font-semibold outline-none focus:ring-2 focus:ring-blue-500" />
+          <input type="text" id="newProductPackSize" placeholder="เช่น 500 กรัมต่อถุง, 750 มล./ขวด" class="w-full bg-white border border-blue-300 rounded-xl p-2 text-xs font-semibold outline-none focus:ring-2 focus:ring-blue-500" />
+          <p class="text-[10px] text-blue-800">ถ้านับสต็อกเป็น กก./ลิตร แต่เบิกเป็นถุง/ขวด ให้ระบุบรรจุภัณฑ์ เช่น 500 กรัมต่อถุง หรือ 750 มล./ขวด; ค่าเดิมที่ระบุเพียง 500 กรัม จะถือเป็นถุง</p>
           <div class="flex items-center gap-1.5 flex-wrap pt-0.5">
             <span class="text-[10px] text-slate-400">เลือกด่วน:</span>
-            <button type="button" onclick="document.getElementById('newProductPackSize').value='500 กรัม'" class="text-[10px] px-2 py-0.5 bg-white hover:bg-blue-100 border border-blue-200 rounded-md text-blue-700 font-medium">500 กรัม</button>
-            <button type="button" onclick="document.getElementById('newProductPackSize').value='1 กก.'" class="text-[10px] px-2 py-0.5 bg-white hover:bg-blue-100 border border-blue-200 rounded-md text-blue-700 font-medium">1 กก.</button>
+            <button type="button" onclick="document.getElementById('newProductPackSize').value='500 กรัมต่อถุง'" class="text-[10px] px-2 py-0.5 bg-white hover:bg-blue-100 border border-blue-200 rounded-md text-blue-700 font-medium">500 กรัมต่อถุง</button>
+            <button type="button" onclick="document.getElementById('newProductPackSize').value='1 กก.ต่อถุง'" class="text-[10px] px-2 py-0.5 bg-white hover:bg-blue-100 border border-blue-200 rounded-md text-blue-700 font-medium">1 กก.ต่อถุง</button>
             <button type="button" onclick="document.getElementById('newProductPackSize').value='50 ใบ'" class="text-[10px] px-2 py-0.5 bg-white hover:bg-blue-100 border border-blue-200 rounded-md text-blue-700 font-medium">50 ใบ</button>
-            <button type="button" onclick="document.getElementById('newProductPackSize').value='750 มล.'" class="text-[10px] px-2 py-0.5 bg-white hover:bg-blue-100 border border-blue-200 rounded-md text-blue-700 font-medium">750 มล.</button>
-            <button type="button" onclick="document.getElementById('newProductPackSize').value='1,000 มล.'" class="text-[10px] px-2 py-0.5 bg-white hover:bg-blue-100 border border-blue-200 rounded-md text-blue-700 font-medium">1,000 มล.</button>
+            <button type="button" onclick="document.getElementById('newProductPackSize').value='750 มล./ขวด'" class="text-[10px] px-2 py-0.5 bg-white hover:bg-blue-100 border border-blue-200 rounded-md text-blue-700 font-medium">750 มล./ขวด</button>
+            <button type="button" onclick="document.getElementById('newProductPackSize').value='1,000 มล./ขวด'" class="text-[10px] px-2 py-0.5 bg-white hover:bg-blue-100 border border-blue-200 rounded-md text-blue-700 font-medium">1,000 มล./ขวด</button>
           </div>
         </div>
 
@@ -1815,6 +1822,7 @@
             <select id="editSkuUnit" required onchange="handleUnitSelectChange(this)" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-semibold outline-none focus:ring-2 focus:ring-blue-500">
               <!-- Rendered by JS -->
             </select>
+            <p class="text-[10px] text-slate-500 mt-1">เปลี่ยนหน่วยได้เฉพาะ SKU ยอด 0 ที่ยังไม่มีประวัติการเคลื่อนไหวหรือรายการค้าง</p>
           </div>
         </div>
 
@@ -1822,16 +1830,17 @@
         <div class="bg-blue-50/60 p-3 rounded-2xl border border-blue-200/80 space-y-1.5">
           <div class="flex items-center justify-between">
             <label class="block font-bold text-blue-950 text-xs">📦 ขนาดบรรจุต่อหน่วย (Pack Size / Spec)</label>
-            <span class="text-[10px] text-blue-600 font-medium">เช่น 500 กรัม, 1 กก.</span>
+            <span class="text-[10px] text-blue-600 font-medium">เช่น 500 กรัมต่อถุง</span>
           </div>
-          <input type="text" id="editSkuPackSize" placeholder="เช่น 500 กรัม, 1 กก., 50 ใบ, 750 มล." class="w-full bg-white border border-blue-300 rounded-xl p-2 text-xs font-semibold outline-none focus:ring-2 focus:ring-blue-500" />
+          <input type="text" id="editSkuPackSize" placeholder="เช่น 500 กรัมต่อถุง, 750 มล./ขวด" class="w-full bg-white border border-blue-300 rounded-xl p-2 text-xs font-semibold outline-none focus:ring-2 focus:ring-blue-500" />
+          <p class="text-[10px] text-blue-800">ถ้านับสต็อกเป็น กก./ลิตร แต่เบิกเป็นถุง/ขวด ให้ระบุบรรจุภัณฑ์ เช่น 500 กรัมต่อถุง หรือ 750 มล./ขวด; ค่าเดิมที่ระบุเพียง 500 กรัม จะถือเป็นถุง</p>
           <div class="flex items-center gap-1.5 flex-wrap pt-0.5">
             <span class="text-[10px] text-slate-400">เลือกด่วน:</span>
-            <button type="button" onclick="document.getElementById('editSkuPackSize').value='500 กรัม'" class="text-[10px] px-2 py-0.5 bg-white hover:bg-blue-100 border border-blue-200 rounded-md text-blue-700 font-medium">500 กรัม</button>
-            <button type="button" onclick="document.getElementById('editSkuPackSize').value='1 กก.'" class="text-[10px] px-2 py-0.5 bg-white hover:bg-blue-100 border border-blue-200 rounded-md text-blue-700 font-medium">1 กก.</button>
+            <button type="button" onclick="document.getElementById('editSkuPackSize').value='500 กรัมต่อถุง'" class="text-[10px] px-2 py-0.5 bg-white hover:bg-blue-100 border border-blue-200 rounded-md text-blue-700 font-medium">500 กรัมต่อถุง</button>
+            <button type="button" onclick="document.getElementById('editSkuPackSize').value='1 กก.ต่อถุง'" class="text-[10px] px-2 py-0.5 bg-white hover:bg-blue-100 border border-blue-200 rounded-md text-blue-700 font-medium">1 กก.ต่อถุง</button>
             <button type="button" onclick="document.getElementById('editSkuPackSize').value='50 ใบ'" class="text-[10px] px-2 py-0.5 bg-white hover:bg-blue-100 border border-blue-200 rounded-md text-blue-700 font-medium">50 ใบ</button>
-            <button type="button" onclick="document.getElementById('editSkuPackSize').value='750 มล.'" class="text-[10px] px-2 py-0.5 bg-white hover:bg-blue-100 border border-blue-200 rounded-md text-blue-700 font-medium">750 มล.</button>
-            <button type="button" onclick="document.getElementById('editSkuPackSize').value='1,000 มล.'" class="text-[10px] px-2 py-0.5 bg-white hover:bg-blue-100 border border-blue-200 rounded-md text-blue-700 font-medium">1,000 มล.</button>
+            <button type="button" onclick="document.getElementById('editSkuPackSize').value='750 มล./ขวด'" class="text-[10px] px-2 py-0.5 bg-white hover:bg-blue-100 border border-blue-200 rounded-md text-blue-700 font-medium">750 มล./ขวด</button>
+            <button type="button" onclick="document.getElementById('editSkuPackSize').value='1,000 มล./ขวด'" class="text-[10px] px-2 py-0.5 bg-white hover:bg-blue-100 border border-blue-200 rounded-md text-blue-700 font-medium">1,000 มล./ขวด</button>
           </div>
         </div>
 
@@ -2504,7 +2513,7 @@
   </div> <!-- /appMainScreen -->
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwWaHj8HRB9djUXm7kUuvArQ_P5gtu865RLcWFujIlrW7x51vFE4I64pXik05xhMCIluw/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbwPF_z0MBFd-PKc_SJSfUE9BagXRjvRrrrzJlXNQoY8Sb-V8oSjk801wOf1PyYLu5-SXQ/exec";
     let authSession = null;
 
     // ==========================================
@@ -3163,6 +3172,16 @@
       }
     }
 
+    function productUnitChangeBlocked(product) {
+      if (Number(product.openingBalance) !== 0 || Number(product.currentBalance) !== 0) return true;
+      if ((state.transactions || []).some(t => t.product === product.name && Math.abs(Number(t.quantity)) > 0)) return true;
+      if ((state.adjustmentRequests || []).some(request => request.productId === product.id &&
+          ['PENDING', 'RETURNED', 'APPROVING'].includes(request.status))) return true;
+      return (state.purchaseOrders || []).some(order => order.status === 'PENDING' &&
+        (order.items || []).some(item => String(item.productId || '') === String(product.id) ||
+          (!item.productId && (item.product || item.name) === product.name)));
+    }
+
     async function editUnitName(idx) {
       if (state.currentUser?.role !== 'Admin') {
         showAlert('เฉพาะ Admin ที่แก้หน่วยนับได้', 'error');
@@ -3177,6 +3196,11 @@
         return;
       }
       const affected = (state.products || []).filter(p => p.unit === oldVal);
+      const blocked = affected.filter(productUnitChangeBlocked);
+      if (blocked.length) {
+        showAlert(`เปลี่ยนชื่อหน่วยไม่ได้: ${blocked.length} SKU มียอด ประวัติ หรือรายการค้าง (${blocked.map(p => p.name).join(', ')})`, 'error');
+        return;
+      }
       if (!await reviewOperation('ตรวจสอบก่อนเปลี่ยนชื่อหน่วย', [
         ['หน่วยเดิม', oldVal], ['หน่วยใหม่', trimmed], ['SKU ที่จะเปลี่ยน', affected.length],
         ['รายการ', affected.map(p => p.name).join(', ') || '-'], ['ผู้ทำรายการ', state.currentUser?.name || '-']
@@ -3309,7 +3333,7 @@
       showOnlyLowStock: false,
       dashboardViewMode: localStorage.getItem('stock_view_mode_v1') || (typeof window !== 'undefined' && window.innerWidth < 768 ? 'swipe' : 'grid'),
       activeKpiMenu: 'daily',
-      dailySummaryDate: new Date().toISOString().split('T')[0],
+      dailySummaryDate: reportBangkokDateKey(new Date()),
       chartAnalysisMode: 'timeline', // 'timeline' (ตามวัน) | 'dow' (จันทร์ - อาทิตย์)
       chartGroupMode: 'BY_CATEGORY', // 'BY_CATEGORY' | 'ALL' | 'BY_PRODUCT'
       purchaseOrders: [], // โหลดรายการจริงจาก Google Sheet หลังตรวจเซสชัน
@@ -4675,7 +4699,7 @@
 
       document.getElementById('modalCardStock').textContent = prod.currentBalance;
       document.getElementById('modalCardUnit').textContent = prod.unit;
-      document.getElementById('modalUnitLabel').textContent = prod.packSize ? `(${prod.unit} - ขนาด ${prod.packSize})` : `(${prod.unit})`;
+      document.getElementById('modalUnitLabel').textContent = `(${prod.unit})`;
       document.getElementById('cartModalUnitLabel').textContent = `(${prod.unit})`;
 
       const imgBox = document.getElementById('modalCardImg');
@@ -4710,7 +4734,14 @@
 
       // รีเซ็ตฟอร์มของเสีย (WASTE)
       const wasteUnitEl = document.getElementById('wasteModalUnitLabel');
-      if (wasteUnitEl) wasteUnitEl.textContent = `(${prod.unit})`;
+      if (wasteUnitEl) wasteUnitEl.textContent = `(${prod.unit} หน่วยสต็อก)`;
+      const wasteUnitHint = document.getElementById('quickWasteUnitHint');
+      if (wasteUnitHint) {
+        const wastePack = parseQuickPackConversion(prod);
+        wasteUnitHint.textContent = wastePack
+          ? `กรอกเป็น ${prod.unit} เท่านั้น: ของเสีย 1 ${wastePack.label} (${wastePack.spec}) ให้กรอก ${wastePack.stockPerPack} ${prod.unit}`
+          : `กรอกจำนวนของเสียเป็นหน่วยสต็อก (${prod.unit}) เท่านั้น`;
+      }
       const wasteQty = document.getElementById('quickWasteQty');
       if (wasteQty) wasteQty.value = '';
       const wasteReason = document.getElementById('quickWasteReason');
@@ -4722,13 +4753,18 @@
 
       // ตะกร้าสั่งซื้อใน Modal
       const existingInCart = (state.cart || []).find(item => item.productName === prod.name);
-      const suggestedQty = Math.max(1, (Number(prod.minStock) * 2) - Number(prod.currentBalance));
-      document.getElementById('quickCartQty').value = existingInCart ? existingInCart.quantity : (isLow ? suggestedQty : 1);
+      const smartOrder = calculateSmartReorderQty(prod);
+      const suggestedQty = smartOrder.suggestedQty;
+      document.getElementById('quickCartQty').value = existingInCart ? existingInCart.quantity : (suggestedQty > 0 ? suggestedQty : '');
       document.getElementById('quickCartNote').value = existingInCart ? (existingInCart.note || '') : '';
       
       const suggestBox = document.getElementById('cartSuggestContainer');
-      if (isLow) {
-        suggestBox.innerHTML = `<button type="button" onclick="setCartQty(${suggestedQty})" class="text-[10px] bg-rose-100 text-rose-800 px-2 py-0.5 rounded-full font-bold hover:bg-rose-200 ios-btn-press">⚡ แนะนำซื้อ ${suggestedQty} ${escapeHtml(prod.unit)}</button>`;
+      if (suggestedQty > 0) {
+        suggestBox.innerHTML = `<button type="button" onclick="setCartQty(${suggestedQty})" class="text-[10px] bg-rose-100 text-rose-800 px-2 py-0.5 rounded-full font-bold hover:bg-rose-200 ios-btn-press">⚡ ตามยอดเบิกจริง แนะนำซื้อ ${suggestedQty} ${escapeHtml(prod.unit)}</button>`;
+      } else if (suggestedQty === 0 && smartOrder.pendingQty > 0) {
+        suggestBox.innerHTML = `<span class="text-[10px] text-emerald-700">PO รอรับ ${escapeHtml(smartOrder.pendingQty)} ${escapeHtml(prod.unit)} ครอบคลุมจำนวนสั่งเพิ่มแล้ว</span>`;
+      } else if (isLow) {
+        suggestBox.innerHTML = '<span class="text-[10px] text-amber-800">สต็อกต่ำ แต่ข้อมูลเบิกหรือรอบส่งยังไม่พอ กรุณาระบุจำนวนสั่งเอง</span>';
       } else {
         suggestBox.innerHTML = '';
       }
@@ -4779,6 +4815,7 @@
           button.textContent = `${isStockIn ? '+' : '-'}${qty}`;
           button.setAttribute('aria-label', `${isStockIn ? 'รับเข้า' : 'เบิกออก'} ${qty}`);
         });
+        updateQuickQtyUnitOptions();
       }
 
       // Apple Haptic Feedback สั่นตอบสนองเบาๆ + เสียงคลิกเลือกแท็บ
@@ -4853,7 +4890,7 @@
           hint.className = 'text-[10px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full';
         }
         const wUnit = document.getElementById('wasteModalUnitLabel');
-        if (wUnit && activeModalProduct) wUnit.textContent = `(${activeModalProduct.unit})`;
+        if (wUnit && activeModalProduct) wUnit.textContent = `(${activeModalProduct.unit} หน่วยสต็อก)`;
       } else if (action === 'ADJUST') {
         if (hint) {
           hint.textContent = 'นับสต็อกจริง / Audit';
@@ -4875,12 +4912,84 @@
       }
     }
 
+    // Pack Size is a free-text spec. Offer a package unit only when its measure
+    // can be converted exactly to the SKU's stock unit.
+    function parseQuickPackConversion(product) {
+      const stockUnit = String(product?.unit || '').trim().toLowerCase();
+      const stockMeasures = {
+        'กรัม': ['mass', 1], 'g': ['mass', 1],
+        'กก': ['mass', 1000], 'กก.': ['mass', 1000], 'kg': ['mass', 1000], 'กิโลกรัม': ['mass', 1000],
+        'มล': ['volume', 1], 'มล.': ['volume', 1], 'ml': ['volume', 1],
+        'ลิตร': ['volume', 1000], 'l': ['volume', 1000]
+      };
+      const stockMeasure = stockMeasures[stockUnit];
+      if (!stockMeasure) return null;
+      const match = String(product?.packSize || '').trim().match(/^(?:(ถุง|ซอง|ขวด|กล่อง|แพ็ค)\s*ละ\s*)?([\d,]+(?:\.\d+)?)\s*(กิโลกรัม|กรัม|กก\.|กก|kg|g|ลิตร|มล\.|มล|ml|l)(?:\s*(?:ต่อ|\/)\s*(ถุง|ซอง|ขวด|กล่อง|แพ็ค))?$/i);
+      if (!match || (match[1] && match[4] && match[1] !== match[4])) return null;
+      const amount = Number(match[2].replace(/,/g, ''));
+      const packMeasure = stockMeasures[match[3].toLowerCase()];
+      if (!Number.isFinite(amount) || amount <= 0 || !packMeasure || packMeasure[0] !== stockMeasure[0]) return null;
+      const stockPerPack = amount * packMeasure[1] / stockMeasure[1];
+      if (!Number.isFinite(stockPerPack) || stockPerPack <= 0) return null;
+      return {
+        label: match[1] || match[4] || (stockMeasure[0] === 'mass' ? 'ถุง' : 'ขวด'),
+        spec: `${amount} ${match[3]}`,
+        stockPerPack
+      };
+    }
+
+    function quickStockQuantity(input, selectedUnit, product) {
+      if (!Number.isFinite(input) || input <= 0) return NaN;
+      if (selectedUnit === 'STOCK') return input;
+      const pack = selectedUnit === 'PACK' ? parseQuickPackConversion(product) : null;
+      return pack ? Number((input * pack.stockPerPack).toPrecision(12)) : NaN;
+    }
+
+    function quickQuantityDescription(input, selectedUnit, product, stockQuantity) {
+      const pack = selectedUnit === 'PACK' ? parseQuickPackConversion(product) : null;
+      return pack
+        ? `${input} ${pack.label} (${pack.spec}) = ${stockQuantity} ${product.unit}`
+        : `${stockQuantity} ${product.unit || ''}`;
+    }
+
+    function updateQuickQtyUnitOptions() {
+      const select = document.getElementById('quickQtyUnit');
+      const container = document.getElementById('quickQtyUnitContainer');
+      if (!select || !container) return;
+      const product = activeModalProduct;
+      const pack = activeModalAction === 'OUT' ? parseQuickPackConversion(product) : null;
+      container.classList[pack ? 'remove' : 'add']('hidden');
+      select.innerHTML = pack
+        ? `<option value="PACK">${escapeHtml(pack.label)} (${escapeHtml(pack.spec)})</option><option value="STOCK">${escapeHtml(product.unit)} (หน่วยสต็อก)</option>`
+        : `<option value="STOCK">${escapeHtml(product?.unit || 'หน่วย')} (หน่วยสต็อก)</option>`;
+      select.value = pack ? 'PACK' : 'STOCK';
+      updateQuickQtyConversionPreview();
+    }
+
+    function updateQuickQtyConversionPreview() {
+      const product = activeModalProduct;
+      const mode = document.getElementById('quickQtyUnit')?.value || 'STOCK';
+      const hint = document.getElementById('quickQtyConversionHint');
+      const label = document.getElementById('modalUnitLabel');
+      const pack = mode === 'PACK' ? parseQuickPackConversion(product) : null;
+      if (label && product) label.textContent = pack ? `(${pack.label}; สต็อก ${product.unit})` : `(${product.unit})`;
+      if (!hint) return;
+      if (!pack) {
+        hint.textContent = '';
+        return;
+      }
+      const input = Number(document.getElementById('quickQty')?.value);
+      const requested = Number.isFinite(input) && input > 0 ? input : 1;
+      hint.textContent = `ตัดสต็อก ${quickQuantityDescription(requested, 'PACK', product, quickStockQuantity(requested, 'PACK', product))}`;
+    }
+
     function addQuickQty(val) {
       if (navigator.vibrate) navigator.vibrate(10);
       AppSoundFX.playTap();
       const input = document.getElementById('quickQty');
       const cur = Number(input.value) || 0;
       input.value = cur + val;
+      updateQuickQtyConversionPreview();
       input.classList.remove('ios-pulse-qty');
       void input.offsetWidth;
       input.classList.add('ios-pulse-qty');
@@ -4923,8 +5032,11 @@
 
     // ทุกการเขียนข้อมูลต้องให้ผู้ใช้เห็นรายการครบก่อน และใช้ยอดจาก Sheet เท่านั้น
     function localDateString(date = new Date()) {
-      const offset = date.getTimezoneOffset() * 60000;
-      return new Date(date.getTime() - offset).toISOString().slice(0, 10);
+      const parts = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'Asia/Bangkok', year: 'numeric', month: '2-digit', day: '2-digit'
+      }).formatToParts(date);
+      const part = type => parts.find(item => item.type === type)?.value || '';
+      return `${part('year')}-${part('month')}-${part('day')}`;
     }
 
     function escapeHtml(value) {
@@ -4969,6 +5081,8 @@
 
     function writeErrorMessage(err) {
       if (err.code === 'STALE_BALANCE') return 'ยอดใน Sheet เปลี่ยนระหว่างตรวจสอบ กรุณาดูยอดใหม่แล้วทำรายการอีกครั้ง';
+      if (err.code === 'STALE_PRODUCT_METADATA') return 'หน่วยสต็อกหรือขนาดบรรจุเปลี่ยนแล้ว กรุณาเปิดสินค้าใหม่อีกครั้ง';
+      if (err.code === 'UNIT_CHANGE_UNSAFE') return 'หน่วยสต็อกของ SKU ที่มียอด ประวัติ หรือรายการค้างเปลี่ยนไม่ได้ กรุณาสร้าง SKU ใหม่หลังตรวจยอด';
       if (err.code === 'INSUFFICIENT_STOCK') return 'ยอดใน Sheet ไม่พอ กรุณาตรวจนับและส่งคำขอปรับยอดก่อนเบิก';
       if (err.code === 'AUTH_REQUIRED') return 'หมดเวลาการเข้าสู่ระบบ กรุณาเข้าสู่ระบบอีกครั้ง';
       if (err.code === 'REQUEST_TIMEOUT') return 'ยังยืนยันผลจาก Google Sheet ไม่ได้ กรุณารีเฟรชตรวจยอดก่อนลองส่งซ้ำ';
@@ -5178,11 +5292,11 @@
       });
     }
 
-    function stockSummary(product, type, qty, before, after, reason, user) {
+    function stockSummary(product, type, qty, before, after, reason, user, quantityDescription = '') {
       return [
         ['SKU', product.name],
         ['รายการ', type],
-        ['จำนวน', `${qty} ${product.unit || ''}`],
+        ['จำนวน', quantityDescription || `${qty} ${product.unit || ''}`],
         ['ยอดใน Sheet', `${before} ${product.unit || ''}`],
         ['ยอดหลังทำรายการ', `${after} ${product.unit || ''}`],
         ['ผู้ทำรายการ', user],
@@ -5190,11 +5304,11 @@
       ];
     }
 
-    async function requestRecountBeforeIssue(product, snapshot, type, qty, notes, operatorName, loading = null) {
+    async function requestRecountBeforeIssue(product, snapshot, type, qty, notes, operatorName, loading = null, quantityDescription = '', expectedPackSize) {
       const observed = Number(snapshot.currentBalance);
-      const answer = await reviewOperation('ตรวจนับยอดจริงก่อนเบิก', stockSummary(product, type, qty, observed, 'รอปรับยอด', notes, operatorName), {
-        warning: `ยอดใน Sheet มี ${observed} ${product.unit || ''} ซึ่งไม่พอสำหรับ ${qty} กรุณาตรวจนับสินค้าจริงซ้ำก่อนดำเนินการ หากส่งคำขอแล้ว รายการเบิกจะยังรอ Admin อนุมัติและยอดสต็อกจะยังไม่เปลี่ยน`,
-        countInput: { label: 'ยอดที่ตรวจนับได้จริง', min: qty, placeholder: `ต้องไม่น้อยกว่า ${qty}` },
+      const answer = await reviewOperation('ตรวจนับยอดจริงก่อนเบิก', stockSummary(product, type, qty, observed, 'รอปรับยอด', notes, operatorName, quantityDescription), {
+        warning: `ยอดใน Sheet มี ${observed} ${product.unit || ''} ซึ่งไม่พอสำหรับ ${quantityDescription || `${qty} ${product.unit || ''}`} กรุณาตรวจนับสินค้าจริงซ้ำก่อนดำเนินการ หากส่งคำขอแล้ว รายการเบิกจะยังรอ Admin อนุมัติและยอดสต็อกจะยังไม่เปลี่ยน`,
+        countInput: { label: `ยอดที่ตรวจนับได้จริง (${product.unit || ''})`, min: qty, placeholder: `ต้องไม่น้อยกว่า ${qty} ${product.unit || ''}` },
         confirmText: 'ส่งคำขอปรับยอดและเบิก'
       });
       if (!answer) return false;
@@ -5203,7 +5317,9 @@
       const key = JSON.stringify(['linked', product.name, observed, countedBalance, type, qty, notes]);
       const result = await sendConfirmedWrite(key, {
         action: 'createAdjustmentRequest', product: product.name, observedBalance: observed,
-        countedBalance, linkedMovement: { type, quantity: qty }, notes,
+        countedBalance, linkedMovement: { type, quantity: qty, notes }, notes,
+        expectedUnit: snapshot.unit,
+        ...(expectedPackSize !== undefined ? { expectedPackSize } : {}),
         recordedBy: operatorName
       });
       if (state.currentUser?.role === 'Admin' && result.adjustmentRequest?.id) {
@@ -5234,13 +5350,18 @@
         return;
       }
       const targetProduct = { ...activeModalProduct };
-      const qty = Number(document.getElementById('quickQty').value);
+      const inputQty = Number(document.getElementById('quickQty').value);
       const user = document.getElementById('quickUser').value.trim();
       const notes = document.getElementById('quickNotes').value.trim();
       const type = activeModalAction === 'IN' ? 'รับเข้า (+)' : 'เบิกออก (-)';
+      const selectedUnit = type === 'เบิกออก (-)' ? (document.getElementById('quickQtyUnit')?.value || 'STOCK') : 'STOCK';
       const operatorName = (state.currentUser && state.currentUser.name) || user || 'ผู้ดูแลสต็อก';
-      if (!Number.isFinite(qty) || qty <= 0) {
+      if (!Number.isFinite(inputQty) || inputQty <= 0) {
         showAlert('กรุณากรอกจำนวนให้ถูกต้อง', 'error');
+        return;
+      }
+      if (selectedUnit === 'PACK' && !parseQuickPackConversion(targetProduct)) {
+        showAlert('ขนาดบรรจุหรือหน่วยสต็อกไม่รองรับการแปลงเป็นหน่วยเบิก', 'error');
         return;
       }
       const btn = document.getElementById('btnSubmitQuick');
@@ -5253,22 +5374,44 @@
             activeModalAction !== loading.action) return;
         const before = Number(snapshot.currentBalance);
         hideQuickActionLoading(loading, false);
+        if (String(snapshot.unit || '') !== String(targetProduct.unit || '') ||
+            (selectedUnit === 'PACK' && String(snapshot.packSize || '').trim() !== String(targetProduct.packSize || '').trim())) {
+          activeModalProduct = { ...snapshot };
+          document.getElementById('quickQty').value = '';
+          document.getElementById('modalCardStock').textContent = snapshot.currentBalance;
+          document.getElementById('modalCardUnit').textContent = snapshot.unit;
+          updateQuickQtyUnitOptions();
+          showAlert('หน่วยสต็อกหรือขนาดบรรจุใน Sheet เปลี่ยนแล้ว กรุณาตรวจขนาดใหม่และกรอกจำนวนอีกครั้ง', 'error');
+          return;
+        }
+        const qty = quickStockQuantity(inputQty, selectedUnit, snapshot);
+        if (!Number.isFinite(qty) || qty <= 0) {
+          showAlert('ขนาดบรรจุหรือหน่วยสต็อกไม่รองรับการแปลงเป็นหน่วยเบิก', 'error');
+          return;
+        }
+        const quantityDescription = quickQuantityDescription(inputQty, selectedUnit, snapshot, qty);
+        const savedNotes = selectedUnit === 'PACK'
+          ? [notes, `[เบิก ${quantityDescription}]`].filter(Boolean).join(' ')
+          : notes;
         if (type === 'เบิกออก (-)' && before < qty) {
-          const outcome = await requestRecountBeforeIssue(targetProduct, snapshot, type, qty, notes, operatorName, loading);
+          const outcome = await requestRecountBeforeIssue(snapshot, snapshot, type, qty, savedNotes, operatorName, loading,
+            quantityDescription, selectedUnit === 'PACK' ? snapshot.packSize : undefined);
           if (outcome === 'pending' || outcome === 'applied') closeCardActionModal();
           return;
         }
         const after = before + (type === 'รับเข้า (+)' ? qty : -qty);
-        if (!await reviewOperation('ตรวจสอบก่อนบันทึกรายการ', stockSummary(targetProduct, type, qty, before, after, notes, operatorName))) return;
+        if (!await reviewOperation('ตรวจสอบก่อนบันทึกรายการ', stockSummary(snapshot, type, qty, before, after, notes, operatorName, quantityDescription))) return;
         if (!showQuickActionLoading(btn, 'saving', loading)) return;
-        const result = await sendConfirmedWrite(JSON.stringify([type, targetProduct.name, qty, before, notes]), {
+        const result = await sendConfirmedWrite(JSON.stringify([type, targetProduct.name, qty, before, savedNotes]), {
           action: 'addTransaction',
           date: localDateString(),
           category: String(snapshot.category || targetProduct.category || '').trim() || 'ทั่วไป',
           product: targetProduct.name,
           type, quantity: qty, expectedBalance: before,
+          expectedUnit: snapshot.unit,
+          ...(selectedUnit === 'PACK' ? { expectedPackSize: snapshot.packSize } : {}),
           recordedBy: operatorName,
-          notes
+          notes: savedNotes
         });
         confirmedStockWriteVersion++;
         const applied = applyConfirmedStockWrite(result);
@@ -5278,7 +5421,7 @@
         if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
         if (type === 'รับเข้า (+)') AppSoundFX.playStockIn();
         else AppSoundFX.playStockOut();
-        showAlert(confirmedWriteMessage(refreshed, `✓ บันทึก ${type} ${qty} ${targetProduct.unit || ''} "${targetProduct.name}" ลง Google Sheet แล้ว`), refreshed ? 'success' : 'error');
+        showAlert(confirmedWriteMessage(refreshed, `✓ บันทึก ${type} ${quantityDescription} "${targetProduct.name}" ลง Google Sheet แล้ว`), refreshed ? 'success' : 'error');
       } catch (err) {
         if (!loading.cancelled && showQuickActionLoading.active === loading) {
           showAlert(`⚠️ ${writeErrorMessage(err)} — แบบฟอร์มยังอยู่`, 'error');
@@ -5350,8 +5493,21 @@
             activeModalAction !== loading.action) return;
         const before = Number(snapshot.currentBalance);
         hideQuickActionLoading(loading, false);
+        if (String(snapshot.unit || '') !== String(targetProduct.unit || '') ||
+            String(snapshot.packSize || '').trim() !== String(targetProduct.packSize || '').trim()) {
+          activeModalProduct = { ...snapshot };
+          document.getElementById('quickWasteQty').value = '';
+          document.getElementById('wasteModalUnitLabel').textContent = `(${snapshot.unit} หน่วยสต็อก)`;
+          const freshPack = parseQuickPackConversion(snapshot);
+          document.getElementById('quickWasteUnitHint').textContent = freshPack
+            ? `กรอกเป็น ${snapshot.unit} เท่านั้น: ของเสีย 1 ${freshPack.label} (${freshPack.spec}) ให้กรอก ${freshPack.stockPerPack} ${snapshot.unit}`
+            : `กรอกจำนวนของเสียเป็นหน่วยสต็อก (${snapshot.unit}) เท่านั้น`;
+          showAlert('หน่วยสต็อกหรือขนาดบรรจุใน Sheet เปลี่ยนแล้ว กรุณาตรวจขนาดใหม่และกรอกจำนวนของเสียอีกครั้ง', 'error');
+          return;
+        }
         if (before < qty) {
-          const outcome = await requestRecountBeforeIssue(targetProduct, snapshot, 'ของเสีย (x)', qty, fullNotes, operatorName, loading);
+          const outcome = await requestRecountBeforeIssue(targetProduct, snapshot, 'ของเสีย (x)', qty, fullNotes, operatorName, loading,
+            '', snapshot.packSize);
           if (outcome === 'pending' || outcome === 'applied') closeCardActionModal();
           return;
         }
@@ -5364,6 +5520,7 @@
           product: targetProduct.name,
           type: 'ของเสีย (x)',
           quantity: qty, expectedBalance: before,
+          expectedUnit: snapshot.unit, expectedPackSize: snapshot.packSize,
           recordedBy: operatorName,
           notes: fullNotes
         });
@@ -5829,11 +5986,20 @@
       const prod = state.products.find(p => p.name === productName);
       if (!prod) return;
 
-      const isLow = Number(prod.currentBalance) <= Number(prod.minStock);
-      const suggestedQty = Math.max(1, (Number(prod.minStock) * 2) - Number(prod.currentBalance));
-      const addQty = isLow ? suggestedQty : 1;
+      const smartOrder = calculateSmartReorderQty(prod);
+      const addQty = smartOrder.suggestedQty;
+      if (addQty === 0 && smartOrder.pendingQty > 0) {
+        showAlert(`PO ที่รอรับของ "${prod.name}" ครอบคลุมจำนวนสั่งเพิ่มแล้ว กรุณาติดตามการตรวจรับ`, 'info');
+        return;
+      }
+      if (!(addQty > 0)) {
+        openCardActionModal(productName);
+        setModalAction('CART');
+        showAlert('ข้อมูลเบิกหรือรอบส่งยังไม่พอสำหรับแนะนำจำนวนสั่ง กรุณาระบุจำนวนเอง', 'info');
+        return;
+      }
 
-      addToCart(prod, addQty, '');
+      if (!addToCart(prod, addQty, 'สั่งตามยอดเบิกจริงและรอบส่ง')) return;
       if (navigator.vibrate) navigator.vibrate(30);
       AppSoundFX.playCart();
       showAlert(`เพิ่ม "${prod.name}" (${addQty} ${prod.unit}) เข้าตะกร้าสั่งซื้อแล้ว`, 'success');
@@ -5869,12 +6035,17 @@
     }
 
     function addToCart(product, qty, note = '') {
+      const quantity = Number(qty);
+      if (!product || !Number.isFinite(quantity) || quantity <= 0) {
+        showAlert('⚠️ ไม่สามารถเพิ่มรายการที่ไม่มีสินค้าหรือจำนวนสั่งซื้อที่ถูกต้อง', 'error');
+        return false;
+      }
       if (!state.cart) state.cart = [];
       const existingIdx = state.cart.findIndex(item => item.productName === product.name);
       const supplierName = product.supplier || getItemSupplier(product);
 
       if (existingIdx >= 0) {
-        state.cart[existingIdx].quantity = qty;
+        state.cart[existingIdx].quantity = quantity;
         state.cart[existingIdx].supplier = supplierName;
         if (note) state.cart[existingIdx].note = note;
       } else {
@@ -5884,7 +6055,7 @@
           currentStock: product.currentBalance,
           minStock: product.minStock,
           unit: product.unit,
-          quantity: qty,
+          quantity,
           note: note,
           imageUrl: product.imageUrl || '',
           supplier: supplierName
@@ -5893,6 +6064,7 @@
 
       saveCart(state.cart);
       renderDashboard();
+      return true;
     }
 
     function updateCartItemQty(productName, delta) {
@@ -6151,10 +6323,8 @@
       // กำหนดเลขที่ PO และ วันที่ภาษาไทย
       const dateObj = new Date();
       const thaiMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
-      const thaiYear = dateObj.getFullYear() + 543;
-      const y = dateObj.getFullYear();
-      const m = String(dateObj.getMonth() + 1).padStart(2, '0');
-      const d = String(dateObj.getDate()).padStart(2, '0');
+      const [y, m, d] = localDateString(dateObj).split('-');
+      const thaiYear = Number(y) + 543;
       
       const poNumEl = document.getElementById('poNumber');
       if (poNumEl && !poNumEl.dataset.generated) {
@@ -6165,9 +6335,7 @@
 
       const dateTextEl = document.getElementById('poDateText');
       if (dateTextEl) {
-        const hours = String(dateObj.getHours()).padStart(2, '0');
-        const mins = String(dateObj.getMinutes()).padStart(2, '0');
-        dateTextEl.textContent = `${dateObj.getDate()} ${thaiMonths[dateObj.getMonth()]} ${thaiYear} (${hours}:${mins} น.)`;
+        dateTextEl.textContent = `${Number(d)} ${thaiMonths[Number(m) - 1]} ${thaiYear} (${reportBangkokTimeLabel(dateObj)} น.)`;
       }
 
       document.getElementById('poOrdererDisplay').textContent = orderer;
@@ -6599,6 +6767,8 @@
       }
 
       list.innerHTML = filtered.map(t => {
+        const dateLabel = reportThaiDateLabel(reportBangkokDateKey(t.date || t.timestamp));
+        const timeLabel = reportBangkokTimeLabel(t.timestamp) || 'ไม่ทราบเวลา';
         const isAdjust = (t.notes && t.notes.includes('[ปรับปรุงยอด]')) || (t.type && t.type.includes('ปรับยอด'));
         const badgeColor = isAdjust ? 'bg-amber-100 text-amber-900 border-amber-300 font-bold' :
                            t.type.includes('+') ? 'bg-emerald-50 text-emerald-800 border-emerald-200 font-medium' :
@@ -6614,8 +6784,8 @@
               </span>
             </div>
             <div class="flex justify-between text-slate-400 text-[11px]">
-              <span>วันที่: ${escapeHtml(t.date)}</span>
-              <span>โดย: <strong class="text-slate-600">${escapeHtml(t.recordedBy || '-')}</strong></span>
+              <span>วันที่: ${escapeHtml(dateLabel)} · เวลา: ${escapeHtml(timeLabel)}${timeLabel === 'ไม่ทราบเวลา' ? '' : ' น.'}</span>
+              <span>โดย: <strong class="text-slate-600">${escapeHtml(t.recordedBy || t.user || t.actorName || 'ไม่ระบุผู้ทำรายการ')}</strong></span>
             </div>
             ${t.notes ? `
               <div class="p-2 rounded-lg text-xs leading-relaxed ${isAdjust ? 'bg-amber-50 text-amber-900 border border-amber-100' : 'bg-slate-50 text-slate-600'}">
@@ -7261,6 +7431,10 @@
         showAlert('กรุณาตรวจชื่อสินค้าและยอดขั้นต่ำ', 'error');
         return;
       }
+      if (newUnit !== original.unit && productUnitChangeBlocked(original)) {
+        showAlert('หน่วยสต็อกของ SKU ที่มียอด ประวัติ หรือรายการค้างเปลี่ยนไม่ได้ กรุณาสร้าง SKU ใหม่หลังตรวจยอด', 'error');
+        return;
+      }
       try {
         const snapshot = await getFreshProduct(origName);
         const summary = stockSummary(snapshot, `แก้ไข SKU${origName !== newName ? `: ${origName} → ${newName}` : ''}`, 0,
@@ -7353,6 +7527,7 @@
       }
 
       // เรนเดอร์การ์ดสินค้าใกล้หมดสไตล์ iOS 27
+      const usageContext = buildReportUsageContext();
       container.innerHTML = `
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           ${lowItems.map(p => {
@@ -7363,7 +7538,8 @@
             const balanceNum = Math.max(0, Number(p.currentBalance));
             const stockRatio = Math.min(100, Math.round((balanceNum / minStockNum) * 100));
             const deficit = Math.max(0, minStockNum - balanceNum);
-            const suggestedOrder = Math.max(1, (minStockNum * 2) - balanceNum);
+            const smartOrder = calculateSmartReorderQty(p, usageContext);
+            const suggestedOrder = smartOrder.suggestedQty;
 
             return `
               <div class="ios-card rounded-3xl p-3.5 sm:p-4 flex flex-col justify-between space-y-3 border-2 ${isOut ? 'border-rose-400 bg-rose-50/15' : 'border-amber-300 bg-amber-50/10'} shadow-sm">
@@ -7405,7 +7581,7 @@
 
                   <div class="flex items-center justify-between text-[10px] text-slate-400 pt-0.5">
                     <span>ขาดอีก: <strong>${deficit} ${escapeHtml(p.unit)}</strong></span>
-                    <span class="text-blue-600 font-semibold">แนะนำสั่ง: <strong>${suggestedOrder} ${escapeHtml(p.unit)}</strong></span>
+                    <span class="text-blue-600 font-semibold">${suggestedOrder > 0 ? `แนะนำสั่ง: <strong>${suggestedOrder} ${escapeHtml(p.unit)}</strong>` : suggestedOrder === 0 && smartOrder.pendingQty > 0 ? 'PO รอรับครอบคลุมแล้ว' : 'จำนวนสั่ง: ต้องระบุเอง'}</span>
                   </div>
                 </div>
 
@@ -7434,15 +7610,20 @@
         return;
       }
 
-      let addedCount = 0;
+      if (!state.cart) state.cart = [];
+      let suggestedCount = 0;
+      let coveredCount = 0;
+      const context = buildReportUsageContext();
       lowItems.forEach(p => {
-        const minStockNum = Number(p.minStock) || 1;
-        const balanceNum = Math.max(0, Number(p.currentBalance));
-        const suggestedQty = Math.max(1, (minStockNum * 2) - balanceNum);
+        const smartOrder = calculateSmartReorderQty(p, context);
+        const suggestedQty = smartOrder.suggestedQty;
+        if (suggestedQty === 0 && smartOrder.pendingQty > 0) coveredCount++;
+        if (!(suggestedQty > 0)) return;
+        suggestedCount++;
 
         const existing = (state.cart || []).find(item => item.productName === p.name);
         if (existing) {
-          existing.quantity = Math.max(existing.quantity, suggestedQty);
+          existing.quantity = Math.max(Number(existing.quantity) || 0, suggestedQty);
         } else {
           state.cart.push({
             productName: p.name,
@@ -7451,13 +7632,19 @@
             supplier: p.supplier || 'ทั่วไป',
             category: p.category || 'ทั่วไป'
           });
-          addedCount++;
         }
       });
 
+      if (!suggestedCount) {
+        showAlert(coveredCount === lowItems.length
+          ? 'สินค้าใกล้หมดมี PO รอรับครอบคลุมแล้ว กรุณาติดตามการตรวจรับ'
+          : `สินค้าใกล้หมด ${lowItems.length} รายการ: PO รอรับครอบคลุม ${coveredCount} รายการ ที่เหลือกรุณาระบุจำนวนเอง`, 'info');
+        openPurchaseCartModal();
+        return;
+      }
       saveCart(state.cart);
       updateCartBadge();
-      showAlert(`เพิ่มสินค้าใกล้หมด ${lowItems.length} รายการลงตะกร้าเรียบร้อยแล้ว`, 'success');
+      showAlert(`อัปเดตจำนวนสั่งที่มีข้อมูลรองรับ ${suggestedCount} จาก ${lowItems.length} รายการ ตรวจจำนวนในตะกร้าก่อนออก PO`, 'success');
       openPurchaseCartModal();
     }
 
@@ -7670,11 +7857,20 @@
       const lowItems = linked.filter(p => Number(p.currentBalance) <= Number(p.minStock));
       
       if (lowItems.length > 0) {
+        const context = buildReportUsageContext();
+        let addedCount = 0;
+        let coveredCount = 0;
         lowItems.forEach(p => {
-          const qty = Math.max(1, (Number(p.minStock) * 2) - Number(p.currentBalance));
-          addToCart(p, qty, 'สั่งตามรอบจัดซื้อ');
+          const smartOrder = calculateSmartReorderQty(p, context);
+          const qty = smartOrder.suggestedQty;
+          if (qty === 0 && smartOrder.pendingQty > 0) coveredCount++;
+          if (qty > 0 && addToCart(p, qty, 'สั่งตามยอดเบิกจริงและรอบส่ง')) addedCount++;
         });
-        showAlert(`เพิ่มสินค้าสต็อกต่ำของ "${supName}" (${lowItems.length} รายการ) เข้าตะกร้าแล้ว`, 'success');
+        showAlert(addedCount
+          ? `เพิ่มสินค้าของ "${supName}" ที่คำนวณจำนวนได้ ${addedCount} รายการ ตรวจจำนวนก่อนออก PO`
+          : coveredCount === lowItems.length
+            ? `สินค้าของ "${supName}" มี PO รอรับครอบคลุมแล้ว กรุณาติดตามการตรวจรับ`
+            : `สินค้าของ "${supName}" ใกล้หมด: PO รอรับครอบคลุม ${coveredCount} รายการ ที่เหลือกรุณาระบุจำนวนสั่งเอง`, addedCount ? 'success' : 'info');
       }
 
       openPurchaseCartModal();
@@ -7686,64 +7882,158 @@
     // ==========================================
     // ระบบรายงานวิเคราะห์ & ปฏิทินรอบจัดซื้อ (REPORTS & INTELLIGENCE)
     // ==========================================
-    function calculateProductUsageMetrics(product) {
-      // วิเคราะห์จาก Transactions ที่เป็น 'เบิกออก (-)' หรือ 'ของเสีย (x)'
-      const outTxs = state.transactions.filter(t => 
-        t.product === product.name && 
-        (String(t.type).includes('เบิก') || String(t.type).includes('เสีย'))
-      );
+    // GAS ส่งวันที่ทำรายการเป็นวันของไทยอยู่แล้ว ส่วน timestamp ที่มี zone
+    // ให้แปลงเป็นวันไทยก่อนใช้ทำรายงาน (ไม่อาศัยวัน UTC ของเบราว์เซอร์)
+    function reportBangkokDateKey(value) {
+      const raw = String(value || '').trim();
+      if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+      // GAS also emits Bangkok wall time without an offset. Preserve that date.
+      if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?$/.test(raw)) return raw.slice(0, 10);
+      const date = value instanceof Date ? value : new Date(raw);
+      if (!Number.isFinite(date.getTime())) return '';
+      const parts = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'Asia/Bangkok', year: 'numeric', month: '2-digit', day: '2-digit'
+      }).formatToParts(date);
+      const part = type => parts.find(item => item.type === type)?.value || '';
+      return `${part('year')}-${part('month')}-${part('day')}`;
+    }
 
-      const totalOut = outTxs.reduce((sum, t) => sum + (Number(t.quantity) || 0), 0);
-      const currentBalance = Number(product.currentBalance) || 0;
-      const minStock = Number(product.minStock) || 0;
+    function reportDateDaysBetween(fromKey, toKey) {
+      const from = Date.parse(`${fromKey}T00:00:00Z`);
+      const to = Date.parse(`${toKey}T00:00:00Z`);
+      return Number.isFinite(from) && Number.isFinite(to) ? Math.round((to - from) / 86400000) : 0;
+    }
 
-      // ประมาณการอัตราการใช้งานต่อวัน (Daily Usage Rate)
-      let dailyUsage = 0;
-      if (outTxs.length > 0) {
-        // นับจำนวนวันที่มีการเคลื่อนไหว
-        const uniqueDates = new Set(outTxs.map(t => String(t.date || '').split('T')[0]));
-        const days = Math.max(7, uniqueDates.size * 2);
-        dailyUsage = Math.round((totalOut / days) * 10) / 10;
-      }
-      if (dailyUsage <= 0) {
-        dailyUsage = Math.round((Math.max(0.5, minStock / 4)) * 10) / 10;
-      }
+    function reportDateAddDays(dateKey, days) {
+      return new Date(Date.parse(`${dateKey}T00:00:00Z`) + days * 86400000).toISOString().slice(0, 10);
+    }
 
-      // คำนวณสต็อกคงเหลืออยู่ได้อีกกี่วัน (Days of Inventory Remaining)
-      const daysRemaining = dailyUsage > 0 ? Math.round((currentBalance / dailyUsage) * 10) / 10 : 99;
-
-      // ค่าเฉลี่ยการสั่งซื้อ (Order Frequency: ทุกๆ กี่วัน)
-      const orderFrequency = dailyUsage > 0 ? Math.max(3, Math.round((minStock * 2) / dailyUsage)) : 7;
-
-      // วันที่ควรสั่งซื้อรอบถัดไป
-      const daysUntilOrder = Math.max(0, Math.floor(daysRemaining - 1));
-      const targetDate = new Date();
-      targetDate.setDate(targetDate.getDate() + daysUntilOrder);
+    function reportThaiDateLabel(dateKey) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(dateKey || '')) return 'ไม่ทราบวันที่';
+      const [year, month, day] = dateKey.split('-').map(Number);
       const thaiMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
-      const targetDateStr = daysUntilOrder === 0 ? 'วันนี้' : daysUntilOrder === 1 ? 'พรุ่งนี้' : `อีก ${daysUntilOrder} วัน (${targetDate.getDate()} ${thaiMonths[targetDate.getMonth()]})`;
+      return `${day} ${thaiMonths[month - 1]} ${year + 543}`;
+    }
 
-      // ระดับความเร่งด่วน
-      let status = 'SAFE'; // ปลอดภัย
-      if (currentBalance <= 0) {
-        status = 'OUT'; // หมด
-      } else if (currentBalance <= minStock || daysRemaining <= 2) {
-        status = 'URGENT'; // สั่งด่วน
-      } else if (daysRemaining <= 5) {
-        status = 'UPCOMING'; // ใกล้ถึงรอบ
-      }
+    function reportBangkokTimeLabel(value) {
+      if (value instanceof Date) return Number.isFinite(value.getTime()) ? new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Asia/Bangkok', hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
+      }).format(value) : '';
+      const raw = String(value || '').trim();
+      if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(raw)) return '';
+      if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?$/.test(raw)) return raw.slice(11, 16);
+      const date = new Date(raw);
+      return Number.isFinite(date.getTime()) ? new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Asia/Bangkok', hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
+      }).format(date) : '';
+    }
 
-      // ปริมาณสั่งซื้อที่แนะนำ (สำหรับรองรับ 1 สัปดาห์)
-      const suggestedQty = Math.max(1, Math.round(dailyUsage * 7));
+    function reportTransactionUnit(transaction) {
+      return String(transaction.unit || (state.products || []).find(p => p.name === transaction.product)?.unit || 'ไม่ระบุหน่วย');
+    }
+
+    function reportUnitBreakdown(transactions) {
+      if (!transactions.length) return '—';
+      const totals = new Map();
+      transactions.forEach(t => {
+        const qty = Number(t.quantity);
+        if (!Number.isFinite(qty) || qty <= 0) return;
+        const unit = reportTransactionUnit(t);
+        totals.set(unit, (totals.get(unit) || 0) + qty);
+      });
+      return [...totals].map(([unit, qty]) => `${Math.round(qty * 1000) / 1000} ${unit}`).join(' · ') || '—';
+    }
+
+    function buildReportUsageContext() {
+      const todayKey = reportBangkokDateKey(new Date());
+      const windowStart = reportDateAddDays(todayKey, -29);
+      const usageByProduct = new Map();
+      const pendingByProduct = new Map();
+      const currentIdByName = new Map((state.products || []).map(product => [String(product.name || ''), String(product.id || '')]));
+      (state.transactions || []).forEach(t => {
+        const name = String(t.product || '');
+        const createdId = String(t.notes || '').match(/\[สร้าง SKU ใหม่\s+([^\]]+)\]/)?.[1] || '';
+        if (String(t.type || '') === 'เพิ่มสินค้าใหม่' && createdId && currentIdByName.get(name) === createdId) {
+          // A deleted SKU may be created again under the same name. Its earlier
+          // withdrawals belong to the old SKU and must not drive this forecast.
+          usageByProduct.delete(name);
+          return;
+        }
+        if (!String(t.type || '').includes('เบิก') || String(t.type || '').includes('เสีย')) return; // ของเสียแสดงแยกในสรุปวัน
+        const qty = Number(t.quantity);
+        const dateKey = reportBangkokDateKey(t.date || t.timestamp);
+        if (!name || !dateKey || dateKey > todayKey || !Number.isFinite(qty) || qty <= 0) return;
+        let entry = usageByProduct.get(name);
+        if (!entry) {
+          entry = { totalOut: 0, recentOut: 0, firstDate: dateKey, activeDates: new Set(), transactionCount: 0, recentTransactions: 0 };
+          usageByProduct.set(name, entry);
+        }
+        entry.totalOut += qty;
+        entry.transactionCount++;
+        if (dateKey < entry.firstDate) entry.firstDate = dateKey;
+        if (dateKey >= windowStart) {
+          entry.recentOut += qty;
+          entry.activeDates.add(dateKey);
+          entry.recentTransactions++;
+        }
+      });
+      (state.purchaseOrders || []).forEach(po => {
+        if (po.status !== 'PENDING') return;
+        (po.items || []).forEach(item => {
+          const key = String(item.productId || item.product || item.name || '');
+          const qty = Number(item.quantity);
+          if (key && Number.isFinite(qty) && qty > 0) pendingByProduct.set(key, (pendingByProduct.get(key) || 0) + qty);
+        });
+      });
+      return { todayKey, usageByProduct, pendingByProduct };
+    }
+
+    function calculateProductUsageMetrics(product, context = buildReportUsageContext()) {
+      const usage = context.usageByProduct.get(product.name);
+      const totalOut = usage?.totalOut || 0;
+      const currentBalance = Number(product.currentBalance) || 0;
+      const minStock = Math.max(0, Number(product.minStock) || 0);
+      const pendingQty = (context.pendingByProduct.get(String(product.id)) || 0)
+        + (context.pendingByProduct.get(String(product.name)) || 0);
+      const historyDays = usage ? Math.min(30, Math.max(1, reportDateDaysBetween(usage.firstDate, context.todayKey) + 1)) : 0;
+      const activeDays = usage?.activeDates.size || 0;
+      const hasUsageEvidence = historyDays >= 14 && activeDays >= 3;
+      const dailyUsage = hasUsageEvidence ? Math.round((usage.recentOut / historyDays) * 1000) / 1000 : null;
+      const daysRemaining = dailyUsage > 0 ? Math.round((currentBalance / dailyUsage) * 10) / 10 : null;
+
+      const supplier = (state.suppliers || []).find(s => s.name === product.supplier);
+      const leadMatch = String(supplier?.leadTime || '').match(/^\s*(\d+)\s*วัน(?:\s|$)/);
+      const leadDays = leadMatch ? Math.max(0, Number(leadMatch[1])) : null;
+      const canForecast = dailyUsage > 0 && leadDays !== null;
+      const daysUntilOrder = canForecast
+        ? Math.max(0, Math.floor((currentBalance - minStock) / dailyUsage - leadDays))
+        : null;
+      const targetKey = daysUntilOrder === null ? null : reportDateAddDays(context.todayKey, daysUntilOrder);
+      const targetParts = targetKey?.split('-').map(Number);
+      const thaiMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+      const targetDateStr = daysUntilOrder === null
+        ? (currentBalance <= minStock ? 'ตรวจสต็อก' : leadDays === null && dailyUsage > 0 ? 'ตั้งรอบส่ง' : 'ข้อมูลยังไม่พอ')
+        : daysUntilOrder === 0 ? 'วันนี้'
+        : daysUntilOrder === 1 ? 'พรุ่งนี้'
+        : `อีก ${daysUntilOrder} วัน (${targetParts[2]} ${thaiMonths[targetParts[1] - 1]})`;
+
+      let status = canForecast ? 'SAFE' : 'NEEDS_DATA';
+      if (currentBalance <= 0) status = 'OUT';
+      else if (currentBalance <= minStock || daysUntilOrder === 0) status = 'URGENT';
+      else if (daysUntilOrder !== null && daysUntilOrder <= 7) status = 'UPCOMING';
+
+      // เป้าสต็อก = Par + ความต้องการระหว่างรอส่งและอีก 7 วัน; PO ที่รอรับลดจำนวนสั่งเพิ่ม
+      const targetStock = canForecast ? minStock + dailyUsage * (leadDays + 7) : null;
+      const suggestedQty = canForecast
+        ? Math.max(0, Math.ceil((targetStock - currentBalance - pendingQty) * 1000) / 1000)
+        : null;
+      const forecastReason = !hasUsageEvidence ? 'ประวัติเบิกยังไม่พอ' : leadDays === null ? 'ยังไม่กำหนดรอบส่ง' : '';
 
       return {
-        product,
-        totalOut,
-        dailyUsage,
-        daysRemaining,
-        orderFrequency,
-        daysUntilOrder,
-        targetDateStr,
-        status,
+        product, totalOut, recentOut: usage?.recentOut || 0, transactionCount: usage?.transactionCount || 0,
+        recentTransactions: usage?.recentTransactions || 0, forecastReason,
+        historyDays, activeDays, hasUsageEvidence, dailyUsage, daysRemaining,
+        leadDays, canForecast, daysUntilOrder, targetDateStr, status, pendingQty, targetStock,
         suggestedQty
       };
     }
@@ -7785,9 +8075,7 @@
 
     // ฟังก์ชันจัดการสรุปความเคลื่อนไหวประจำวัน (Daily Stock Movement Engine)
     function setDailySummaryDateQuick(offsetDays) {
-      const d = new Date();
-      d.setDate(d.getDate() + offsetDays);
-      const iso = d.toISOString().split('T')[0];
+      const iso = reportDateAddDays(reportBangkokDateKey(new Date()), offsetDays);
       state.dailySummaryDate = iso;
       const picker = document.getElementById('dailySummaryDatePicker');
       if (picker) picker.value = iso;
@@ -7803,17 +8091,15 @@
     }
 
     function renderDailySummary() {
-      const selectedDate = state.dailySummaryDate || new Date().toISOString().split('T')[0];
+      const selectedDate = state.dailySummaryDate || reportBangkokDateKey(new Date());
       
       const picker = document.getElementById('dailySummaryDatePicker');
       if (picker) picker.value = selectedDate;
 
       // ป้ายแสดงวันที่ภาษาไทย
       const labelEl = document.getElementById('dailySummarySelectedDateLabel');
-      const todayIso = new Date().toISOString().split('T')[0];
-      const yesterdayObj = new Date();
-      yesterdayObj.setDate(yesterdayObj.getDate() - 1);
-      const yesterdayIso = yesterdayObj.toISOString().split('T')[0];
+      const todayIso = reportBangkokDateKey(new Date());
+      const yesterdayIso = reportDateAddDays(todayIso, -1);
 
       const thaiMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
       const dateParts = selectedDate.split('-');
@@ -7833,21 +8119,17 @@
 
       // กรอง transactions ในวันที่เลือก
       const dayTxs = (state.transactions || []).filter(t => {
-        const tDate = String(t.date || '').split('T')[0];
+        const tDate = reportBangkokDateKey(t.date || t.timestamp);
         return tDate === selectedDate;
       });
 
       // จำแนกประเภท
-      const outTxs = dayTxs.filter(t => String(t.type || '').includes('เบิก'));
+      const outTxs = dayTxs.filter(t => String(t.type || '').includes('เบิก') && !String(t.type || '').includes('เสีย'));
       const inTxs = dayTxs.filter(t => String(t.type || '').includes('รับ'));
       const wasteTxs = dayTxs.filter(t => String(t.type || '').includes('ของเสีย') || String(t.type || '').includes('เสีย'));
       const adjustTxs = dayTxs.filter(t => String(t.type || '').includes('ปรับ'));
 
       // คำนวณยอดรวม
-      const outTotalQty = outTxs.reduce((sum, t) => sum + (Number(t.quantity) || 0), 0);
-      const inTotalQty = inTxs.reduce((sum, t) => sum + (Number(t.quantity) || 0), 0);
-      const wasteTotalQty = wasteTxs.reduce((sum, t) => sum + (Number(t.quantity) || 0), 0);
-
       const outSkus = new Set(outTxs.map(t => t.product)).size;
       const inSkus = new Set(inTxs.map(t => t.product)).size;
       const wasteSkus = new Set(wasteTxs.map(t => t.product)).size;
@@ -7857,21 +8139,21 @@
       const elOutQty = document.getElementById('dailyOutTotalQty');
       const elOutSku = document.getElementById('dailyOutSkuCount');
       if (elOutCount) elOutCount.textContent = `${outTxs.length} ครั้ง`;
-      if (elOutQty) elOutQty.textContent = Math.round(outTotalQty * 100) / 100;
+      if (elOutQty) elOutQty.textContent = reportUnitBreakdown(outTxs);
       if (elOutSku) elOutSku.textContent = `${outSkus} รายการ SKU`;
 
       const elInCount = document.getElementById('dailyInTxCount');
       const elInQty = document.getElementById('dailyInTotalQty');
       const elInSku = document.getElementById('dailyInSkuCount');
       if (elInCount) elInCount.textContent = `${inTxs.length} ครั้ง`;
-      if (elInQty) elInQty.textContent = Math.round(inTotalQty * 100) / 100;
+      if (elInQty) elInQty.textContent = reportUnitBreakdown(inTxs);
       if (elInSku) elInSku.textContent = `${inSkus} รายการ SKU`;
 
       const elWasteCount = document.getElementById('dailyWasteTxCount');
       const elWasteQty = document.getElementById('dailyWasteTotalQty');
       const elWasteSku = document.getElementById('dailyWasteSkuCount');
       if (elWasteCount) elWasteCount.textContent = `${wasteTxs.length} ครั้ง`;
-      if (elWasteQty) elWasteQty.textContent = Math.round(wasteTotalQty * 100) / 100;
+      if (elWasteQty) elWasteQty.textContent = reportUnitBreakdown(wasteTxs);
       if (elWasteSku) elWasteSku.textContent = `${wasteSkus} รายการ SKU`;
 
       const elAdjCount = document.getElementById('dailyAdjustTxCount');
@@ -7897,68 +8179,94 @@
         return;
       }
 
-      // เรียงลำดับเวลาล่าสุดขึ้นก่อน
-      const sortedTxs = [...dayTxs].reverse();
-
-      container.innerHTML = sortedTxs.map(t => {
-        const isOut = String(t.type || '').includes('เบิก');
-        const isIn = String(t.type || '').includes('รับ');
-        const isWaste = String(t.type || '').includes('ของเสีย') || String(t.type || '').includes('เสีย');
-        
+      const groups = groupDailyTransactions(dayTxs);
+      container.innerHTML = groups.map(group => {
+        const t = group.transactions[0];
+        const isWaste = group.type === 'ของเสีย (x)';
+        const isOut = group.type === 'เบิกออก (-)';
+        const isIn = group.type === 'รับเข้า (+)';
         let typeBadgeClass = 'bg-slate-100 text-slate-700';
         let typeIcon = '🔄';
         let qtyColor = 'text-slate-800';
-        let sign = '';
 
         if (isOut) {
           typeBadgeClass = 'bg-rose-100 text-rose-700 border border-rose-200';
           typeIcon = '🔴';
           qtyColor = 'text-rose-600';
-          sign = '-';
         } else if (isIn) {
           typeBadgeClass = 'bg-emerald-100 text-emerald-700 border border-emerald-200';
           typeIcon = '🟢';
           qtyColor = 'text-emerald-600';
-          sign = '+';
         } else if (isWaste) {
           typeBadgeClass = 'bg-amber-100 text-amber-800 border border-amber-200';
           typeIcon = '🟡';
           qtyColor = 'text-amber-600';
-          sign = 'x';
         }
 
         const colorData = getCategoryColorData(t.category);
-        const timeStr = String(t.date || '').includes('T') ? String(t.date).split('T')[1].substring(0, 5) : '';
+        const latestTime = reportBangkokTimeLabel(t.timestamp) || 'ไม่ทราบเวลา';
+        const knownTimes = group.transactions.map(item => reportBangkokTimeLabel(item.timestamp)).filter(Boolean);
+        const completeTimeRange = knownTimes.length === group.transactions.length && knownTimes.length > 1;
+        const timeSummary = completeTimeRange ? `${knownTimes[knownTimes.length - 1]}–${knownTimes[0]}` : latestTime;
 
         return `
-          <div class="ios-card p-2.5 sm:p-3 rounded-2xl flex items-center justify-between gap-3 hover:border-blue-300 transition">
-            <div class="flex items-center gap-2.5 min-w-0 flex-1">
-              <span class="w-8 h-8 rounded-xl flex items-center justify-center text-sm ${isOut ? 'bg-rose-50' : isIn ? 'bg-emerald-50' : 'bg-amber-50'} flex-shrink-0">
-                ${typeIcon}
-              </span>
-              <div class="min-w-0 flex-1">
-                <div class="flex items-center gap-2">
-                  <h4 class="font-bold text-xs sm:text-sm text-slate-900 truncate">${escapeHtml(t.product)}</h4>
-                  <span class="px-1.5 py-0.2 rounded text-[9px] font-bold" style="${colorData.badgeStyle}">${escapeHtml(t.category || 'ทั่วไป')}</span>
-                </div>
-                <div class="flex items-center gap-2 text-[10px] text-slate-400 mt-0.5">
-                  ${timeStr ? `<span>🕒 ${escapeHtml(timeStr)} น.</span><span>•</span>` : ''}
-                  <span>👤 ${escapeHtml(t.user || 'พนักงาน')}</span>
-                  ${t.notes ? `<span>• 📝 ${escapeHtml(t.notes)}</span>` : ''}
+          <details class="ios-card rounded-2xl hover:border-blue-300 transition group">
+            <summary class="list-none cursor-pointer p-2.5 sm:p-3 flex items-center justify-between gap-3 focus-visible:outline-blue-500">
+              <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                <span class="w-8 h-8 rounded-xl flex items-center justify-center text-sm ${isOut ? 'bg-rose-50' : isIn ? 'bg-emerald-50' : 'bg-amber-50'} flex-shrink-0">${typeIcon}</span>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-2">
+                    <h4 class="font-bold text-xs sm:text-sm text-slate-900 truncate">${escapeHtml(t.product)}</h4>
+                    <span class="px-1.5 py-0.2 rounded text-[9px] font-bold" style="${colorData.badgeStyle}">${escapeHtml(t.category || 'ทั่วไป')}</span>
+                  </div>
+                  <div class="flex items-center gap-2 text-[10px] text-slate-500 mt-0.5">
+                    <span>${escapeHtml(group.type)} ${group.transactions.length} ครั้ง</span>
+                    <span>· ${completeTimeRange ? 'ช่วง' : 'ล่าสุด'} ${escapeHtml(timeSummary)}${timeSummary === 'ไม่ทราบเวลา' ? '' : ' น.'}</span>
+                    <span class="text-blue-600 font-semibold">ดูรายละเอียด ▾</span>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <!-- จำนวนที่เคลื่อนไหว -->
-            <div class="text-right flex-shrink-0 px-1">
-              <div class="font-black text-sm sm:text-base ${qtyColor}">
-                ${sign}${escapeHtml(t.quantity)} <span class="text-[10px] font-medium text-slate-500">${escapeHtml(t.unit || '')}</span>
+              <div class="text-right flex-shrink-0 px-1">
+                <div class="font-black text-xs sm:text-sm ${qtyColor}">${escapeHtml(reportUnitBreakdown(group.transactions))}</div>
+                <span class="text-[9px] font-bold px-1.5 py-0.2 rounded-full ${typeBadgeClass}">${escapeHtml(group.type)}</span>
               </div>
-              <span class="text-[9px] font-bold px-1.5 py-0.2 rounded-full ${typeBadgeClass}">${escapeHtml(t.type)}</span>
+            </summary>
+            <div class="border-t border-slate-100 px-3 pb-2 pt-1 space-y-1">
+              ${group.transactions.map(item => {
+                const time = reportBangkokTimeLabel(item.timestamp) || 'ไม่ทราบเวลา';
+                return `<div class="flex flex-wrap items-center justify-between gap-x-2 gap-y-0.5 py-1 text-[11px] text-slate-600 border-b border-slate-50 last:border-0">
+                  <span>🕒 ${escapeHtml(time)}${time === 'ไม่ทราบเวลา' ? '' : ' น.'} · 👤 ${escapeHtml(item.recordedBy || item.user || item.actorName || 'ไม่ระบุผู้ทำรายการ')}</span>
+                  <span class="font-bold ${qtyColor}">${escapeHtml(item.quantity)} ${escapeHtml(reportTransactionUnit(item))}</span>
+                  ${item.notes ? `<span class="w-full text-slate-400">📝 ${escapeHtml(item.notes)}</span>` : ''}
+                </div>`;
+              }).join('')}
             </div>
-          </div>
+          </details>
         `;
       }).join('');
+    }
+
+    function reportMovementType(type) {
+      const value = String(type || '').trim();
+      if (value === 'เบิกออก' || value === 'เบิกออก (-)') return 'เบิกออก (-)';
+      if (value === 'รับเข้า' || value === 'รับเข้า (+)') return 'รับเข้า (+)';
+      if (value === 'ของเสีย' || value === 'ของเสีย (x)') return 'ของเสีย (x)';
+      return value || 'ไม่ระบุประเภท';
+    }
+
+    function groupDailyTransactions(transactions) {
+      const grouped = new Map();
+      transactions.forEach(t => {
+        const type = reportMovementType(t.type);
+        const key = JSON.stringify([String(t.product || ''), type]);
+        if (!grouped.has(key)) grouped.set(key, { type, transactions: [] });
+        grouped.get(key).transactions.push(t);
+      });
+      const timeKey = t => `${reportBangkokDateKey(t.date || t.timestamp)}T${reportBangkokTimeLabel(t.timestamp) || '00:00'}`;
+      return [...grouped.values()].map(group => {
+        group.transactions.sort((a, b) => timeKey(b).localeCompare(timeKey(a)));
+        return group;
+      }).sort((a, b) => timeKey(b.transactions[0]).localeCompare(timeKey(a.transactions[0])));
     }
 
     // ==========================================
@@ -8021,15 +8329,12 @@
       const dateLabels = [];
       const thaiMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
       
+      const todayKey = reportBangkokDateKey(new Date());
       for (let i = timeframe - 1; i >= 0; i--) {
-        const d = new Date();
-        d.setDate(d.getDate() - i);
-        const yyyy = d.getFullYear();
-        const mm = String(d.getMonth() + 1).padStart(2, '0');
-        const dd = String(d.getDate()).padStart(2, '0');
-        const isoDate = `${yyyy}-${mm}-${dd}`;
+        const isoDate = reportDateAddDays(todayKey, -i);
+        const d = new Date(`${isoDate}T00:00:00Z`);
         dates.push(isoDate);
-        dateLabels.push(`${d.getDate()} ${thaiMonths[d.getMonth()]}`);
+        dateLabels.push(`${d.getUTCDate()} ${thaiMonths[d.getUTCMonth()]}`);
       }
 
       // การกำหนดค่า 7 วันในสัปดาห์ (จันทร์ - อาทิตย์)
@@ -8046,52 +8351,55 @@
       // นับจำนวนครั้งที่แต่ละวันในสัปดาห์เกิดขึ้นจริงในรอบ timeframe
       const dowOccurrence = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
       dates.forEach(iso => {
-        const d = new Date(iso + 'T00:00:00');
-        dowOccurrence[d.getDay()] = (dowOccurrence[d.getDay()] || 0) + 1;
+        const d = new Date(iso + 'T00:00:00Z');
+        dowOccurrence[d.getUTCDay()] = (dowOccurrence[d.getUTCDay()] || 0) + 1;
       });
 
       // ดึงหมวดหมู่ทั้งหมดที่มี
-      const categories = state.categories.length > 0 
-        ? state.categories 
-        : [{ name: 'วัตถุดิบ' }, { name: 'บรรจุภัณฑ์' }, { name: 'อุปกรณ์/เครื่องใช้' }];
+      const categoryNames = new Set([
+        ...(state.categories || []).map(c => c.name),
+        ...(state.products || []).map(p => p.category || 'ทั่วไป')
+      ]);
+      const categories = [...categoryNames].map(name => ({ name }));
 
-      // กรองรายการธุรกรรมที่มีการเบิกออกหรือของเสีย
-      const outTxs = state.transactions.filter(t => {
-        const isOut = String(t.type || '').includes('เบิก') || String(t.type || '').includes('เสีย');
-        return isOut;
-      });
-
-      const totalActualOut = outTxs.reduce((sum, t) => sum + (Number(t.quantity) || 0), 0);
+      // กราฟหลาย SKU นับ "ครั้งเบิก" เพื่อไม่บวกจำนวนคนละหน่วย; SKU เดี่ยวแสดงจำนวนในหน่วยของสินค้า
+      const outTxs = (state.transactions || []).filter(t =>
+        String(t.type || '').includes('เบิก') && !String(t.type || '').includes('เสีย') &&
+        Number.isFinite(Number(t.quantity)) && Number(t.quantity) > 0 &&
+        reportBangkokDateKey(t.date || t.timestamp) >= dates[0] &&
+        reportBangkokDateKey(t.date || t.timestamp) <= todayKey
+      );
+      outTxs.forEach(t => categoryNames.add(t.category || state.products.find(p => p.name === t.product)?.category || 'ทั่วไป'));
+      categories.splice(0, categories.length, ...[...categoryNames].map(name => ({ name })));
+      const singleProductMode = groupMode === 'BY_PRODUCT' && selectedProd !== 'ALL';
+      const chartUnit = singleProductMode
+        ? (state.products.find(p => p.name === selectedProd)?.unit || 'หน่วย')
+        : 'ครั้ง';
+      const chartTxs = groupMode === 'BY_PRODUCT'
+        ? (singleProductMode ? outTxs.filter(t => t.product === selectedProd) : [])
+        : outTxs;
+      const hasChartData = chartTxs.length > 0;
+      const subtitle = document.getElementById('chartHeadingSubtitle');
+      if (subtitle) subtitle.textContent = singleProductMode
+        ? `จำนวนเบิก ${selectedProd} ตามหน่วยของสินค้าใน ${timeframe} วันล่าสุด`
+        : `หลายสินค้าแสดงจำนวนครั้งเบิก เพื่อไม่รวมจำนวนต่างหน่วย · ${timeframe} วันล่าสุด`;
 
       // โครงสร้างเก็บข้อมูลยอดเบิกใช้แยกรายหมวด:
       const dailyByCat = {};
       const dowByCat = {};
       const catTotals = {};
 
-      categories.forEach((c, cIdx) => {
+      categories.forEach(c => {
         const catName = c.name;
         dailyByCat[catName] = dates.map(isoDate => {
           const txs = outTxs.filter(t => {
-            const tDate = String(t.date || '').split('T')[0];
+            const tDate = reportBangkokDateKey(t.date || t.timestamp);
             const prod = state.products.find(p => p.name === t.product);
             const itemCat = t.category || (prod ? prod.category : 'ทั่วไป');
             return tDate === isoDate && itemCat === catName;
           });
-          return txs.reduce((sum, t) => sum + (Number(t.quantity) || 0), 0);
+          return txs.length;
         });
-
-        // จำลองข้อมูลพื้นฐานเมื่อยังไม่มีบันทึกเบิกใช้จริงในหมวดนี้ เพื่อให้กราฟสวยงามพร้อมใช้งานทันที
-        const catSum = dailyByCat[catName].reduce((a, b) => a + b, 0);
-        if (catSum === 0 && totalActualOut === 0) {
-          const baseCatQty = cIdx === 0 ? 5.5 : cIdx === 1 ? 3.5 : 1.8;
-          dailyByCat[catName] = dates.map((isoDate, idx) => {
-            const d = new Date(isoDate + 'T00:00:00');
-            const dayOfWeek = d.getDay();
-            const weekendMultiplier = (dayOfWeek === 5 || dayOfWeek === 6 || dayOfWeek === 0) ? 1.6 : 0.85;
-            const wave = Math.sin((idx + cIdx * 2) * 0.9) * 1.2;
-            return Math.max(0.5, Math.round((baseCatQty * weekendMultiplier + wave) * 10) / 10);
-          });
-        }
 
         catTotals[catName] = dailyByCat[catName].reduce((a, b) => a + b, 0);
 
@@ -8101,8 +8409,8 @@
           let countForThisDay = 0;
 
           dates.forEach((isoDate, dIdx) => {
-            const d = new Date(isoDate + 'T00:00:00');
-            if (d.getDay() === dow.dayIndex) {
+            const d = new Date(isoDate + 'T00:00:00Z');
+            if (d.getUTCDay() === dow.dayIndex) {
               sumForThisDay += dailyByCat[catName][dIdx];
               countForThisDay++;
             }
@@ -8128,25 +8436,16 @@
       if (selectedProd !== 'ALL') {
         singleProductDaily = dates.map(isoDate => {
           const txs = outTxs.filter(t => {
-            const tDate = String(t.date || '').split('T')[0];
+            const tDate = reportBangkokDateKey(t.date || t.timestamp);
             return tDate === isoDate && t.product === selectedProd;
           });
           return txs.reduce((sum, t) => sum + (Number(t.quantity) || 0), 0);
         });
-        const pSum = singleProductDaily.reduce((a, b) => a + b, 0);
-        if (pSum === 0 && totalActualOut === 0) {
-          singleProductDaily = dates.map((isoDate, idx) => {
-            const d = new Date(isoDate + 'T00:00:00');
-            const dayOfWeek = d.getDay();
-            const weekendMultiplier = (dayOfWeek === 5 || dayOfWeek === 6 || dayOfWeek === 0) ? 1.5 : 0.8;
-            return Math.max(0.2, Math.round((2.0 * weekendMultiplier + Math.sin(idx) * 0.7) * 10) / 10);
-          });
-        }
         singleProductDow = dowConfig.map(dow => {
           let sum = 0, cnt = 0;
           dates.forEach((iso, idx) => {
-            const d = new Date(iso + 'T00:00:00');
-            if (d.getDay() === dow.dayIndex) { sum += singleProductDaily[idx]; cnt++; }
+            const d = new Date(iso + 'T00:00:00Z');
+            if (d.getUTCDay() === dow.dayIndex) { sum += singleProductDaily[idx]; cnt++; }
           });
           return Math.round((sum / (cnt || 1)) * 10) / 10;
         });
@@ -8165,7 +8464,7 @@
               <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl border text-[11px] font-semibold transition shadow-2xs" style="${escapeHtml(cData.badgeStyle)}">
                 <span class="w-2.5 h-2.5 rounded-full flex-shrink-0 shadow-2xs" style="${escapeHtml(cData.dotStyle)}"></span>
                 <span class="font-medium">${escapeHtml(c.name)}</span>
-                <span class="text-[10px] opacity-80 font-normal">(${sumVal} หน่วย)</span>
+                <span class="text-[10px] opacity-80 font-normal">(${sumVal} ครั้ง)</span>
               </div>
             `;
           }).join('');
@@ -8207,14 +8506,16 @@
       const bannerLowText = document.getElementById('bannerLowDayText');
       const bannerNote = document.getElementById('bannerPeakDayNote');
 
-      if (bannerPeakName) bannerPeakName.textContent = peakDow.name;
-      if (bannerPeakAvg) bannerPeakAvg.textContent = `(เฉลี่ย ${Math.round(maxAvgVal * 10) / 10} หน่วย/วัน)`;
-      if (bannerLowText) bannerLowText.textContent = `${lowestDow.name} (${Math.round(minAvgVal * 10) / 10} หน่วย/วัน)`;
+      if (bannerPeakName) bannerPeakName.textContent = hasChartData ? peakDow.name : '—';
+      if (bannerPeakAvg) bannerPeakAvg.textContent = hasChartData ? `(เฉลี่ย ${Math.round(maxAvgVal * 10) / 10} ${chartUnit}/วัน)` : 'ไม่มีข้อมูลเบิกในช่วงที่เลือก';
+      if (bannerLowText) bannerLowText.textContent = hasChartData ? `${lowestDow.name} (${Math.round(minAvgVal * 10) / 10} ${chartUnit}/วัน)` : '—';
 
       if (bannerNote) {
         const weekendAvg = Math.round(((activeDowAverages[4] + activeDowAverages[5] + activeDowAverages[6]) / 3) * 10) / 10;
         const weekdayAvg = Math.round(((activeDowAverages[0] + activeDowAverages[1] + activeDowAverages[2] + activeDowAverages[3]) / 4) * 10) / 10;
-        bannerNote.textContent = `วันศุกร์ - อาทิตย์ เบิกเฉลี่ย ${weekendAvg} หน่วย/วัน (วันธรรมดา จันทร์ - พฤหัสบดี เฉลี่ย ${weekdayAvg} หน่วย/วัน)`;
+        bannerNote.textContent = hasChartData
+          ? `ศุกร์ - อาทิตย์เฉลี่ย ${weekendAvg} ${chartUnit}/วัน; จันทร์ - พฤหัสบดีเฉลี่ย ${weekdayAvg} ${chartUnit}/วัน`
+          : 'สถิตินี้ใช้เฉพาะรายการเบิกจริงในช่วงวันที่เลือก';
       }
 
       // เรนเดอร์การ์ด 7 วันในสัปดาห์ (จันทร์ - อาทิตย์)
@@ -8222,9 +8523,9 @@
       if (dowGrid) {
         dowGrid.innerHTML = dowConfig.map((dow, idx) => {
           const val = activeDowAverages[idx];
-          const isPeak = idx === peakDowIdx;
-          const isLowest = idx === lowestDowIdx && !isPeak;
-          const pct = maxAvgVal > 0 ? Math.min(100, Math.max(12, Math.round((val / maxAvgVal) * 100))) : 20;
+          const isPeak = hasChartData && idx === peakDowIdx;
+          const isLowest = hasChartData && idx === lowestDowIdx && !isPeak;
+          const pct = hasChartData && maxAvgVal > 0 ? Math.min(100, Math.round((val / maxAvgVal) * 100)) : 0;
 
           return `
             <div class="rounded-2xl p-1.5 sm:p-2.5 flex flex-col items-center justify-between text-center border transition ${
@@ -8236,9 +8537,9 @@
               </span>
               <div class="my-1 sm:my-1.5 w-full">
                 <div class="text-xs sm:text-base font-black ${isPeak ? 'text-blue-800' : 'text-slate-800'}">
-                  ${Math.round(val * 10) / 10}
+                  ${hasChartData ? Math.round(val * 10) / 10 : '—'}
                 </div>
-                <div class="text-[9px] text-slate-400 leading-none hidden sm:block">หน่วย/วัน</div>
+                <div class="text-[9px] text-slate-400 leading-none hidden sm:block">${chartUnit}/วัน</div>
               </div>
               <!-- Mini progress bar -->
               <div class="w-full bg-slate-200/80 h-1 sm:h-1.5 rounded-full overflow-hidden mt-0.5">
@@ -8268,24 +8569,22 @@
       });
 
       const avgPerDay = Math.round((totalPeriodQty / timeframe) * 10) / 10;
-      const unitLabel = selectedProd !== 'ALL'
-        ? (state.products.find(p => p.name === selectedProd)?.unit || 'หน่วย')
-        : 'หน่วย';
+      const unitLabel = chartUnit;
 
       const statTotalEl = document.getElementById('chartStatTotal');
       const statPeakLabelEl = document.getElementById('chartStatPeakLabel');
       const statPeakEl = document.getElementById('chartStatPeak');
       const statAvgEl = document.getElementById('chartStatAvg');
 
-      if (statTotalEl) statTotalEl.textContent = `${totalPeriodQty} ${unitLabel}`;
-      if (statAvgEl) statAvgEl.textContent = `${avgPerDay} ${unitLabel}/วัน`;
+      if (statTotalEl) statTotalEl.textContent = hasChartData ? `${totalPeriodQty} ${unitLabel}` : '—';
+      if (statAvgEl) statAvgEl.textContent = hasChartData ? `${avgPerDay} ${unitLabel}/วัน` : '—';
 
       if (analysisMode === 'timeline') {
         if (statPeakLabelEl) statPeakLabelEl.textContent = 'วันที่เบิกใช้สูงสุด';
-        if (statPeakEl) statPeakEl.textContent = maxDayIdx >= 0 ? `${dateLabels[maxDayIdx]} (${maxDayVal} ${unitLabel})` : '-';
+        if (statPeakEl) statPeakEl.textContent = hasChartData && maxDayIdx >= 0 ? `${dateLabels[maxDayIdx]} (${maxDayVal} ${unitLabel})` : '—';
       } else {
         if (statPeakLabelEl) statPeakLabelEl.textContent = 'วันในสัปดาห์ที่พีคสุด';
-        if (statPeakEl) statPeakEl.textContent = `${peakDow.name} (${Math.round(maxAvgVal * 10) / 10} ${unitLabel}/วัน)`;
+        if (statPeakEl) statPeakEl.textContent = hasChartData ? `${peakDow.name} (${Math.round(maxAvgVal * 10) / 10} ${unitLabel}/วัน)` : '—';
       }
 
       // ==========================================
@@ -8295,6 +8594,16 @@
         consumptionChartInstance.destroy();
         consumptionChartInstance = null;
       }
+
+      const noDataMessage = document.getElementById('chartNoDataMessage');
+      if (noDataMessage) {
+        noDataMessage.textContent = groupMode === 'BY_PRODUCT' && selectedProd === 'ALL'
+          ? 'เลือกสินค้าเพื่อดูจำนวนเบิกตามหน่วยของสินค้านั้น'
+          : 'ยังไม่มีรายการเบิกในช่วงวันที่เลือก';
+        noDataMessage.classList.toggle('hidden', hasChartData);
+      }
+      canvas.classList.toggle('hidden', !hasChartData);
+      if (!hasChartData) return;
 
       const ctx = canvas.getContext('2d');
       let chartDatasets = [];
@@ -8348,7 +8657,7 @@
           gradient.addColorStop(1, 'rgba(37, 99, 235, 0.00)');
 
           chartDatasets = [{
-            label: 'ยอดเบิกใช้รวมทุกหมวด',
+            label: 'จำนวนครั้งเบิกทุกหมวด',
             data: totalDailyData,
             borderColor: '#2563eb',
             borderWidth: 2.5,
@@ -8386,7 +8695,7 @@
           const barColors = dowConfig.map((_, idx) => idx === peakDowIdx ? catColor : hexToRgba(catColor, 0.45));
 
           chartDatasets = [{
-            label: `เฉลี่ย ${selectedProd} (หน่วย/วัน)`,
+            label: `เฉลี่ย ${selectedProd} (${chartUnit}/วัน)`,
             data: singleProductDow,
             backgroundColor: barColors,
             borderColor: catColor,
@@ -8399,7 +8708,7 @@
           const borderColors = dowConfig.map((_, idx) => idx === peakDowIdx ? '#1d4ed8' : '#60a5fa');
 
           chartDatasets = [{
-            label: 'ยอดเบิกใช้เฉลี่ยรายวัน (รวมทุกหมวด)',
+            label: 'จำนวนครั้งเบิกเฉลี่ยรายวัน (ทุกหมวด)',
             data: totalDowData,
             backgroundColor: barColors,
             borderColor: borderColors,
@@ -8445,7 +8754,7 @@
               callbacks: {
                 label: function(context) {
                   const val = Math.round((context.parsed.y || 0) * 10) / 10;
-                  const unit = analysisMode === 'dow' ? 'หน่วย/วัน' : unitLabel;
+                  const unit = analysisMode === 'dow' ? `${unitLabel}/วัน` : unitLabel;
                   return ` ${context.dataset.label}: ${val} ${unit}`;
                 }
               }
@@ -8464,6 +8773,7 @@
             },
             y: {
               beginAtZero: true,
+              title: { display: true, text: chartType === 'bar' ? `${chartUnit}/วัน` : chartUnit },
               grid: { color: '#f1f5f9' },
               ticks: {
                 font: { family: "'Prompt', sans-serif", size: 9 },
@@ -8497,13 +8807,13 @@
                 <span class="text-xs font-bold text-slate-800">🏢 ${escapeHtml(s.name)}</span>
               </div>
               <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full ${lowItems.length > 0 ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}">
-                ${lowItems.length > 0 ? `ต้องสั่ง ${lowItems.length} SKU` : 'สต็อกพร้อม'}
+                ${lowItems.length > 0 ? `ถึงเกณฑ์ ${lowItems.length} SKU` : 'เหนือเกณฑ์ Par'}
               </span>
             </div>
 
             <div class="text-[11px] text-slate-500 flex items-center justify-between">
               <span>สินค้าในสังกัด: <strong>${totalItems}</strong> รายการ</span>
-              <span>รอบส่ง: <strong>${escapeHtml(s.leadTime || '1 วัน')}</strong></span>
+              <span>รอบส่ง: <strong>${escapeHtml(s.leadTime || 'ยังไม่กำหนด')}</strong></span>
             </div>
 
             <div class="pt-1.5 border-t border-slate-200/80 flex items-center justify-between">
@@ -8518,26 +8828,28 @@
     }
 
     function renderReportsAndAnalytics() {
-      const allMetrics = state.products.map(p => calculateProductUsageMetrics(p));
+      const context = buildReportUsageContext();
+      const allMetrics = state.products.map(p => calculateProductUsageMetrics(p, context));
 
       // 1. คำนวณสรุป KPI ด้านบน
-      const totalOutAll = allMetrics.reduce((sum, m) => sum + m.totalOut, 0);
-      document.getElementById('kpiReportTotalOut').textContent = totalOutAll.toLocaleString() + ' หน่วย';
+      const totalOutTransactions = allMetrics.reduce((sum, m) => sum + m.recentTransactions, 0);
+      document.getElementById('kpiReportTotalOut').textContent = state.products.length
+        ? `${totalOutTransactions.toLocaleString()} ครั้ง` : '—';
 
-      const sortedByOut = [...allMetrics].sort((a, b) => b.totalOut - a.totalOut);
+      const sortedByOut = [...allMetrics].sort((a, b) => b.recentTransactions - a.recentTransactions);
       const topUsed = sortedByOut[0];
-      if (topUsed && topUsed.totalOut > 0) {
+      if (topUsed && topUsed.recentTransactions > 0) {
         document.getElementById('kpiReportTopUsed').textContent = topUsed.product.name;
-        document.getElementById('kpiReportTopQty').textContent = `เบิกไปแล้ว ${topUsed.totalOut} ${topUsed.product.unit} (ใช้ ~${topUsed.dailyUsage} ${topUsed.product.unit}/วัน)`;
+        document.getElementById('kpiReportTopQty').textContent = `${topUsed.recentTransactions} ครั้ง · ${Math.round(topUsed.recentOut * 1000) / 1000} ${topUsed.product.unit} ใน 30 วัน`;
       } else {
-        document.getElementById('kpiReportTopUsed').textContent = state.products[0]?.name || '-';
-        document.getElementById('kpiReportTopQty').textContent = 'รอข้อมูลเบิกใช้';
+        document.getElementById('kpiReportTopUsed').textContent = '—';
+        document.getElementById('kpiReportTopQty').textContent = 'ยังไม่มีรายการเบิกใน 30 วัน';
       }
 
       const urgentCount = allMetrics.filter(m => m.status === 'URGENT' || m.status === 'OUT').length;
       document.getElementById('kpiReportUrgent').textContent = urgentCount + ' รายการ';
 
-      const dueIn7Days = allMetrics.filter(m => m.daysUntilOrder <= 7).length;
+      const dueIn7Days = allMetrics.filter(m => m.canForecast && m.daysUntilOrder !== null && m.daysUntilOrder <= 7 && m.suggestedQty > 0).length;
       document.getElementById('kpiReportAvgCycle').textContent = dueIn7Days + ' รายการ';
 
       // 2. เรนเดอร์กล่องปฏิทินรอบจัดซื้อ (Purchasing Schedule)
@@ -8561,8 +8873,9 @@
       if (!container) return;
 
       const dueToday = allMetrics.filter(m => m.status === 'OUT' || m.status === 'URGENT');
-      const dueNext3Days = allMetrics.filter(m => m.status === 'UPCOMING');
-      const dueNextWeek = allMetrics.filter(m => m.status === 'SAFE' && m.daysUntilOrder <= 7);
+      const dueNext3Days = allMetrics.filter(m => m.canForecast && m.daysUntilOrder >= 1 && m.daysUntilOrder <= 3);
+      const dueNextWeek = allMetrics.filter(m => m.canForecast && m.daysUntilOrder >= 4 && m.daysUntilOrder <= 7);
+      const needsData = allMetrics.filter(m => m.status === 'NEEDS_DATA');
 
       // จัดกลุ่มตามซัพพลายเออร์
       const groupBySupplier = (list) => {
@@ -8593,19 +8906,17 @@
                 <div class="bg-white/80 p-2.5 rounded-xl border border-slate-200/80">
                   <div class="text-[11px] font-bold text-slate-800 flex items-center justify-between mb-1.5">
                     <span class="flex items-center gap-1">🏢 <strong>${escapeHtml(supName)}</strong></span>
-                    <button type="button" onclick="addSupplierItemsToCart(${inlineJsString(supName)})" class="text-[10px] text-blue-600 hover:text-blue-800 font-bold underline">
-                      + ใส่ตะกร้าเจ้านี้
-                    </button>
+                    ${supGroups[supName].some(m => m.suggestedQty > 0) ? `<button type="button" onclick="addSupplierItemsToCart(${inlineJsString(supName)})" class="text-[10px] text-blue-600 hover:text-blue-800 font-bold underline">+ ใส่ตะกร้าเจ้านี้</button>` : ''}
                   </div>
                   <div class="flex flex-wrap gap-1.5">
                     ${supGroups[supName].map(m => `
                       <div class="text-[10px] bg-white border border-slate-200 px-2 py-1 rounded-lg flex items-center gap-2 shadow-2xs">
                         <span class="font-medium text-slate-700">${escapeHtml(m.product.name)}</span>
                         <span class="text-slate-400">|</span>
-                        <span class="text-slate-500">เหลือ ${m.product.currentBalance}</span>
-                        <button type="button" onclick="addToCart(state.products.find(p => p.name === ${inlineJsString(m.product.name)}), ${Number(m.suggestedQty)}, 'สั่งตามรอบจัดซื้อ')" class="font-bold text-amber-700 hover:text-orange-800 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
-                          +สั่ง ${Number(m.suggestedQty)} ${escapeHtml(m.product.unit)}
-                        </button>
+                        <span class="text-slate-500">เหลือ ${escapeHtml(m.product.currentBalance)} ${escapeHtml(m.product.unit)}</span>
+                        <span class="text-slate-500">${m.canForecast ? `ใช้ ${m.dailyUsage} ${escapeHtml(m.product.unit)}/วัน · ส่ง ${m.leadDays} วัน` : escapeHtml(m.forecastReason)}</span>
+                        ${m.pendingQty > 0 ? `<span class="text-blue-700">PO รอรับ ${m.pendingQty} ${escapeHtml(m.product.unit)}</span>` : ''}
+                        ${m.suggestedQty > 0 ? `<button type="button" onclick="addToCart(state.products.find(p => p.name === ${inlineJsString(m.product.name)}), ${Number(m.suggestedQty)}, 'สั่งตามรอบจัดซื้อ')" class="font-bold text-amber-700 hover:text-orange-800 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">+สั่ง ${m.suggestedQty} ${escapeHtml(m.product.unit)}</button>` : `<span class="font-bold text-slate-500">${m.pendingQty > 0 ? 'ติดตาม PO รอรับ' : 'ตรวจข้อมูลก่อนสั่ง'}</span>`}
                       </div>
                     `).join('')}
                   </div>
@@ -8618,12 +8929,13 @@
 
       container.innerHTML = `
         <div class="space-y-3">
-          ${renderGroupItems(dueToday, 'bg-rose-50/70 border-rose-200 text-rose-800', 'ต้องสั่งซื้อทันที / สต็อกหมด-ใกล้หมด (Due Today)', '🚨')}
-          ${renderGroupItems(dueNext3Days, 'bg-amber-50/70 border-amber-200 text-amber-800', 'รอบสั่งซื้อภายใน 3 วันข้างหน้า (Next 1-3 Days)', '⏳')}
-          ${renderGroupItems(dueNextWeek, 'bg-blue-50/60 border-blue-200 text-blue-800', 'รอบสั่งซื้อสัปดาห์หน้า (Next 4-7 Days)', '📅')}
-          ${dueToday.length === 0 && dueNext3Days.length === 0 && dueNextWeek.length === 0 ? `
+          ${renderGroupItems(dueToday, 'bg-rose-50/70 border-rose-200 text-rose-800', 'ถึงเกณฑ์หรือถึงวันสั่งแล้ว', '🚨')}
+          ${renderGroupItems(dueNext3Days, 'bg-amber-50/70 border-amber-200 text-amber-800', 'ควรสั่งในอีก 1–3 วัน', '⏳')}
+          ${renderGroupItems(dueNextWeek, 'bg-blue-50/60 border-blue-200 text-blue-800', 'ควรสั่งในอีก 4–7 วัน', '📅')}
+          ${renderGroupItems(needsData, 'bg-slate-50 border-slate-200 text-slate-700', 'ข้อมูลยังไม่พอสำหรับพยากรณ์', 'ℹ️')}
+          ${dueToday.length === 0 && dueNext3Days.length === 0 && dueNextWeek.length === 0 && needsData.length === 0 ? `
             <div class="p-6 text-center text-slate-400 text-xs bg-slate-50 rounded-2xl border border-slate-200">
-              ✅ สต็อกสินค้าทุกรายการอยู่ในระดับปลอดภัย ยังไม่มีรายการที่ต้องสั่งซื้อด่วน
+              ${allMetrics.length ? 'ยังไม่มี SKU ที่ถึงรอบสั่งใน 7 วัน' : 'ยังไม่มีสินค้าให้วิเคราะห์รอบสั่ง'}
             </div>
           ` : ''}
         </div>
@@ -8633,6 +8945,10 @@
     function renderSkuConsumptionTable(allMetrics) {
       const tbody = document.getElementById('reportTableBody');
       if (!tbody) return;
+      if (!allMetrics.length) {
+        tbody.innerHTML = '<tr><td colspan="9" class="p-6 text-center text-slate-500">ยังไม่มีสินค้าให้วิเคราะห์</td></tr>';
+        return;
+      }
 
       tbody.innerHTML = allMetrics.map(m => {
         const p = m.product;
@@ -8640,9 +8956,11 @@
         if (m.status === 'OUT') {
           badgeHtml = '<span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-rose-600 text-white">หมด</span>';
         } else if (m.status === 'URGENT') {
-          badgeHtml = '<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-rose-100 text-rose-700 border border-rose-300">สั่งด่วน</span>';
+          badgeHtml = '<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-rose-100 text-rose-700 border border-rose-300">ถึงเกณฑ์</span>';
         } else if (m.status === 'UPCOMING') {
           badgeHtml = '<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-800 border border-amber-300">เตรียมสั่ง</span>';
+        } else if (m.status === 'NEEDS_DATA') {
+          badgeHtml = '<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-slate-100 text-slate-600 border border-slate-300">ข้อมูลไม่พอ</span>';
         } else {
           badgeHtml = '<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">ปกติ</span>';
         }
@@ -8666,29 +8984,29 @@
             </td>
             <td class="p-2.5 text-right font-bold ${m.status === 'OUT' || m.status === 'URGENT' ? 'text-rose-600' : 'text-slate-800'}">
               ${escapeHtml(p.currentBalance)} <span class="text-[10px] text-slate-400 font-normal">${escapeHtml(p.unit)}</span>
+              ${m.pendingQty > 0 ? `<div class="text-[9px] text-blue-600 font-normal">PO รอรับ ${m.pendingQty} ${escapeHtml(p.unit)}</div>` : ''}
             </td>
             <td class="p-2.5 text-right font-semibold text-slate-600">
-              ${m.totalOut} <span class="text-[10px] text-slate-400 font-normal">${escapeHtml(p.unit)}</span>
+              ${Math.round(m.recentOut * 1000) / 1000} <span class="text-[10px] text-slate-400 font-normal">${escapeHtml(p.unit)}</span>
             </td>
             <td class="p-2.5 text-right font-bold text-blue-600">
-              ${m.dailyUsage} <span class="text-[9px] text-slate-400 font-normal">${escapeHtml(p.unit)}/วัน</span>
+              ${m.dailyUsage === null ? '—' : m.dailyUsage} <span class="text-[9px] text-slate-400 font-normal">${m.dailyUsage === null ? '' : `${escapeHtml(p.unit)}/วัน`}</span>
             </td>
-            <td class="p-2.5 text-right font-bold ${m.daysRemaining <= 2 ? 'text-rose-600' : m.daysRemaining <= 5 ? 'text-amber-600' : 'text-slate-700'}">
-              ${m.daysRemaining > 90 ? '> 90 วัน' : m.daysRemaining + ' วัน'}
+            <td class="p-2.5 text-right font-bold ${m.daysRemaining !== null && m.daysRemaining <= 2 ? 'text-rose-600' : m.daysRemaining !== null && m.daysRemaining <= 5 ? 'text-amber-600' : 'text-slate-700'}">
+              ${m.daysRemaining === null ? '—' : m.daysRemaining > 90 ? '> 90 วัน' : m.daysRemaining + ' วัน'}
             </td>
             <td class="p-2.5 text-center text-slate-600 text-[11px]">
-              ทุก ~${m.orderFrequency} วัน
+              ${m.leadDays === null ? 'ยังไม่กำหนด' : `${m.leadDays} วัน`}
             </td>
-            <td class="p-2.5 text-center font-bold text-xs ${m.daysUntilOrder <= 1 ? 'text-rose-600' : 'text-slate-700'}">
-              ${m.targetDateStr}
+            <td class="p-2.5 text-center font-bold text-xs ${m.daysUntilOrder !== null && m.daysUntilOrder <= 1 ? 'text-rose-600' : 'text-slate-700'}">
+              ${escapeHtml(m.targetDateStr)}
+              ${m.forecastReason ? `<div class="text-[9px] font-normal text-slate-400">${escapeHtml(m.forecastReason)}</div>` : ''}
             </td>
             <td class="p-2.5 text-center">
               ${badgeHtml}
             </td>
             <td class="p-2.5 text-center">
-              <button type="button" onclick="addToCart(state.products.find(x => x.name === ${inlineJsString(p.name)}), ${Number(m.suggestedQty)}, 'สั่งตามรอบวิเคราะห์')" class="px-2 py-1 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 rounded-lg text-[10px] font-bold shadow-2xs transition active:scale-95" title="ใส่ตะกร้าสั่งซื้อ ${Number(m.suggestedQty)} ${escapeHtml(p.unit)}">
-                🛒 +${m.suggestedQty}
-              </button>
+              ${m.suggestedQty > 0 ? `<button type="button" onclick="addToCart(state.products.find(x => x.name === ${inlineJsString(p.name)}), ${Number(m.suggestedQty)}, 'สั่งตามรอบวิเคราะห์')" class="px-2 py-1 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 rounded-lg text-[10px] font-bold shadow-2xs transition active:scale-95" title="ใส่ตะกร้าสั่งซื้อ ${Number(m.suggestedQty)} ${escapeHtml(p.unit)}">🛒 +${m.suggestedQty}</button>` : `<span class="text-[10px] text-slate-400">${m.pendingQty > 0 ? 'ติดตาม PO' : 'ตรวจข้อมูล'}</span>`}
             </td>
           </tr>
         `;
@@ -8696,11 +9014,12 @@
     }
 
     function batchAddDueItemsToCart() {
-      const allMetrics = state.products.map(p => calculateProductUsageMetrics(p));
-      const dueItems = allMetrics.filter(m => m.status === 'OUT' || m.status === 'URGENT' || m.status === 'UPCOMING');
+      const context = buildReportUsageContext();
+      const allMetrics = state.products.map(p => calculateProductUsageMetrics(p, context));
+      const dueItems = allMetrics.filter(m => (m.status === 'OUT' || m.status === 'URGENT' || m.status === 'UPCOMING') && m.suggestedQty > 0);
 
       if (dueItems.length === 0) {
-        showAlert('ไม่มีรายการที่ถึงรอบจัดซื้อในขณะนี้ สต็อกทุกรายการยังเพียงพอครับ', 'success');
+        showAlert('ยังไม่มีรายการที่มีจำนวนสั่งเพิ่มแนะนำ ตรวจรายการที่ข้อมูลไม่พอหรือ PO รอรับในปฏิทิน', 'info');
         return;
       }
 
@@ -8713,20 +9032,18 @@
     }
 
     function addSupplierItemsToCart(supName) {
-      const allMetrics = state.products.map(p => calculateProductUsageMetrics(p));
-      const targetItems = allMetrics.filter(m => (m.product.supplier || 'ซัพพลายเออร์ทั่วไป') === supName && (m.status !== 'SAFE' || m.daysUntilOrder <= 7));
+      const context = buildReportUsageContext();
+      const allMetrics = state.products.map(p => calculateProductUsageMetrics(p, context));
+      const targetItems = allMetrics.filter(m =>
+        (m.product.supplier || 'ซัพพลายเออร์ทั่วไป') === supName &&
+        m.daysUntilOrder !== null && m.daysUntilOrder <= 7 && m.suggestedQty > 0
+      );
 
       if (targetItems.length === 0) {
-        // ถ้าไม่มีรายการสต็อกต่ำ ใส่รายการแรกที่มี
-        const any = state.products.filter(p => p.supplier === supName);
-        if (any.length > 0) {
-          addToCart(any[0], Number(any[0].minStock) || 1, 'สั่งตามรอบร้าน');
-        }
-      } else {
-        targetItems.forEach(m => {
-          addToCart(m.product, m.suggestedQty, 'สั่งตามรอบของ ' + supName);
-        });
+        showAlert(`ยังไม่มีรายการของ ${supName} ที่มีจำนวนสั่งเพิ่มแนะนำ`, 'info');
+        return;
       }
+      targetItems.forEach(m => addToCart(m.product, m.suggestedQty, 'สั่งตามรอบของ ' + supName));
 
       showAlert(`เพิ่มสินค้าของ "${supName}" เข้าตะกร้าแล้ว`, 'success');
       openPurchaseCartModal();
@@ -8788,8 +9105,7 @@
       if (!saved && savedPONumber) {
         const number = document.getElementById('poNumber');
         if (number && number.textContent === savedPONumber) {
-          const d = new Date();
-          number.textContent = `PO-${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}-${Math.floor(100000 + Math.random() * 900000)}`;
+          number.textContent = `PO-${localDateString().replaceAll('-', '')}-${Math.floor(100000 + Math.random() * 900000)}`;
         }
       }
       status.textContent = saved
@@ -8875,8 +9191,7 @@
         } catch (confirmationError) { /* ใช้ข้อผิดพลาดเดิม */ }
         if (err.code === 'DUPLICATE_PO') {
           const numberEl = document.getElementById('poNumber');
-          const d = new Date();
-          if (numberEl) numberEl.textContent = `PO-${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}-${Math.floor(100000 + Math.random() * 900000)}`;
+          if (numberEl) numberEl.textContent = `PO-${localDateString().replaceAll('-', '')}-${Math.floor(100000 + Math.random() * 900000)}`;
           showAlert('เลข PO ซ้ำกับใบสั่งซื้อใน Sheet ระบบสร้างเลขใหม่ให้แล้ว กรุณาตรวจสอบและยืนยันอีกครั้ง', 'error');
         } else {
           showAlert(`⚠️ ${writeErrorMessage(err)} — ยังไม่ยืนยันการสร้างใบสั่งซื้อ`, 'error');
@@ -8907,7 +9222,7 @@
       container.innerHTML = pos.map(po => {
         const isPending = po.status === 'PENDING';
         const d = new Date(po.createdAt || po.date);
-        const dateStr = d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        const dateStr = d.toLocaleDateString('th-TH', { timeZone: 'Asia/Bangkok', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
         return `
           <div class="ios-card p-3.5 sm:p-4 rounded-2xl border ${isPending ? 'border-amber-200 bg-amber-50/20' : 'border-slate-200 bg-white'} space-y-2.5 shadow-2xs">
@@ -9022,34 +9337,14 @@
     // ==========================================
     // 2. คำนวณจำนวนสั่งซื้อแนะนำอัจฉริยะ (SMART REORDER CALCULATION)
     // ==========================================
-    function calculateSmartReorderQty(product) {
-      const current = Number(product.currentBalance) || 0;
-      const min = Number(product.minStock) || 0;
-
-      const sup = state.suppliers.find(s => s.name === product.supplier);
-      let leadDays = 1;
-      if (sup && sup.leadTime) {
-        const matched = sup.leadTime.match(/(\d+)/);
-        if (matched) leadDays = Math.max(1, parseInt(matched[1], 10));
-      }
-
-      const metrics = calculateProductUsageMetrics(product);
-      const dailyUsage = metrics.dailyUsage > 0 ? metrics.dailyUsage : Math.max(1, min / 4);
-
-      const todayDay = new Date().getDay();
-      const isApproachingPeak = (todayDay >= 3 && todayDay <= 6);
-      const peakMultiplier = isApproachingPeak ? 1.4 : 1.15;
-
-      const usageDuringLead = dailyUsage * (leadDays + 1) * peakMultiplier;
-      const deficit = Math.max(0, min - current);
-      let suggested = Math.ceil(usageDuringLead + deficit);
-
-      if (suggested <= 0) suggested = Math.max(1, min);
+    function calculateSmartReorderQty(product, context = buildReportUsageContext()) {
+      const metrics = calculateProductUsageMetrics(product, context);
       return {
-        suggestedQty: suggested,
-        leadDays: leadDays,
-        dailyUsage: dailyUsage,
-        isPeakBuffer: isApproachingPeak
+        suggestedQty: metrics.suggestedQty,
+        leadDays: metrics.leadDays,
+        dailyUsage: metrics.dailyUsage,
+        pendingQty: metrics.pendingQty,
+        forecastReason: metrics.forecastReason
       };
     }
 
@@ -9061,20 +9356,27 @@
       }
 
       let countChanged = 0;
+      const context = buildReportUsageContext();
       state.cart = cart.map(item => {
-        const prod = state.products.find(p => p.name === item.name);
+        const prod = state.products.find(p => p.name === (item.productName || item.name));
         if (prod) {
-          const smart = calculateSmartReorderQty(prod);
-          countChanged++;
-          return { ...item, quantity: smart.suggestedQty, isSmartSuggested: true };
+          const smart = calculateSmartReorderQty(prod, context);
+          if (smart.suggestedQty > 0) {
+            countChanged++;
+            return { ...item, quantity: smart.suggestedQty, isSmartSuggested: true };
+          }
         }
         return item;
       });
 
-      saveCart(state.cart);
-      renderCartItemsList();
-      renderPurchaseOrderDocument();
-      showAlert(`✨ คำนวณยอดสั่งแนะนำอัจฉริยะตามรอบส่งและวันพีคสำเร็จ (${countChanged} รายการ)`, 'success');
+      if (countChanged > 0) {
+        saveCart(state.cart);
+        renderCartItemsList();
+        renderPurchaseOrderDocument();
+        showAlert(`ปรับจำนวนสั่งตามการเบิกจริง รอบส่ง และ PO รอรับแล้ว ${countChanged} รายการ`, 'success');
+      } else {
+        showAlert('ยังไม่มีจำนวนสั่งเพิ่มที่คำนวณได้จากข้อมูลเบิกและรอบส่ง', 'info');
+      }
     }
 
     function addAllLowStockWithSmartReorder() {
@@ -9084,29 +9386,18 @@
         return;
       }
 
-      let cart = getStoredCart();
+      const context = buildReportUsageContext();
+      let added = 0;
       lowItems.forEach(p => {
-        const smart = calculateSmartReorderQty(p);
-        const existingIndex = cart.findIndex(c => c.name === p.name);
-        if (existingIndex >= 0) {
-          cart[existingIndex].quantity = smart.suggestedQty;
-          cart[existingIndex].isSmartSuggested = true;
-        } else {
-          cart.push({
-            name: p.name,
-            category: p.category,
-            unit: p.unit,
-            quantity: smart.suggestedQty,
-            supplier: p.supplier || 'ซัพพลายเออร์ทั่วไป',
-            isSmartSuggested: true
-          });
-        }
+        const smart = calculateSmartReorderQty(p, context);
+        if (smart.suggestedQty > 0 && addToCart(p, smart.suggestedQty, 'สั่งตามการเบิกจริงและรอบส่ง')) added++;
       });
 
-      saveCart(cart);
-      updateCartBadgeUI();
-      renderDashboard();
-      showAlert(`✨ เพิ่มสินค้าใกล้หมด ${lowItems.length} รายการลงในตะกร้าพร้อมยอดสั่งอัจฉริยะแล้ว`, 'success');
+      if (!added) {
+        showAlert('สินค้าใกล้หมด แต่ยังคำนวณจำนวนสั่งเพิ่มไม่ได้ ตรวจประวัติเบิก รอบส่ง และ PO รอรับ', 'info');
+        return;
+      }
+      showAlert(`เพิ่มสินค้าใกล้หมด ${added} รายการตามการเบิกจริงและรอบส่ง`, 'success');
       openPurchaseCartModal();
     }
 
