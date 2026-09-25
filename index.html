@@ -2504,7 +2504,7 @@
   </div> <!-- /appMainScreen -->
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbz7QWJLTCh8qf0jxTOk9KP1WGMbBUqS89biPBhN_KZ1B5BSCseLowVmgzosxt8nfnWRmw/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbwWaHj8HRB9djUXm7kUuvArQ_P5gtu865RLcWFujIlrW7x51vFE4I64pXik05xhMCIluw/exec";
     let authSession = null;
 
     // ==========================================
@@ -2565,37 +2565,48 @@
             body: JSON.stringify(body),
             ...(controller ? { signal: controller.signal } : {})
           });
-          return res.text();
+          return { res, text: await res.text() };
         })();
-        const text = await Promise.race(cancellation ? [request, deadline, cancellation] : [request, deadline]);
+        const { res, text } = await Promise.race(cancellation ? [request, deadline, cancellation] : [request, deadline]);
+        const httpStatus = Number(res.status) || null;
+        const contentType = res.headers && typeof res.headers.get === 'function'
+          ? String(res.headers.get('content-type') || '') : '';
+        let json;
         try {
-          const json = JSON.parse(text);
-          if (!publicAction && json && json.status === 'error') {
-            if (['AUTH_REQUIRED', 'SESSION_EXPIRED', 'USER_DISABLED'].includes(json.code)) {
-              clearClientSession();
-              showLoginScreen();
-              const loginError = document.getElementById('loginErrorMsg');
-              if (loginError) {
-                loginError.textContent = json.message || 'เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่';
-                loginError.className = 'text-xs text-rose-600 font-semibold bg-rose-50 border border-rose-200 p-2.5 rounded-xl text-center';
-              }
-            } else if (json.code === 'PIN_CHANGE_REQUIRED') {
-              openChangePinModal(true);
-            }
-          }
-          return json;
+          json = JSON.parse(text);
         } catch (pe) {
           if (text.includes('Authorization') || text.includes('สิทธิ์') || text.includes('accounts.google.com')) {
             return {
               status: 'error',
+              code: 'AUTHORIZATION_REQUIRED', httpStatus, contentType,
               message: 'Google Apps Script ต้องการให้กดยืนยันสิทธิ์ (Authorization Required) หรือ Deploy ตั้งค่า Who has access เป็น Anyone'
             };
           }
+          const responseKind = !text.trim() ? 'ข้อความว่าง' :
+            (contentType.includes('html') || /^\s*</.test(text) ? 'หน้า HTML' : 'ข้อมูลที่ไม่ใช่ JSON');
           return {
-            status: 'error',
-            message: 'Google Apps Script ตอบกลับข้อมูลไม่ถูกต้อง (โปรดตรวจสอบการ Deploy New Version)'
+            status: 'error', code: 'INVALID_RESPONSE', httpStatus, contentType,
+            message: `Google Apps Script ตอบกลับเป็น${responseKind}${httpStatus ? ` (HTTP ${httpStatus})` : ''} กรุณาตรวจ Apps Script > Executions และการ Deploy`
           };
         }
+        if (!json || typeof json !== 'object' || typeof json.status !== 'string') {
+          return { status: 'error', code: 'INVALID_RESPONSE', httpStatus, contentType,
+            message: `Google Apps Script ตอบกลับข้อมูล JSON ไม่ครบ${httpStatus ? ` (HTTP ${httpStatus})` : ''} กรุณาตรวจ Apps Script > Executions` };
+        }
+        if (!publicAction && json.status === 'error') {
+          if (['AUTH_REQUIRED', 'SESSION_EXPIRED', 'USER_DISABLED'].includes(json.code)) {
+            clearClientSession();
+            showLoginScreen();
+            const loginError = document.getElementById('loginErrorMsg');
+            if (loginError) {
+              loginError.textContent = json.message || 'เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่';
+              loginError.className = 'text-xs text-rose-600 font-semibold bg-rose-50 border border-rose-200 p-2.5 rounded-xl text-center';
+            }
+          } else if (json.code === 'PIN_CHANGE_REQUIRED') {
+            openChangePinModal(true);
+          }
+        }
+        return json;
       } catch (err) {
         if (timedOut) {
           return { status: 'error', code: 'REQUEST_TIMEOUT',
@@ -3473,8 +3484,14 @@
       const requestController = new AbortController();
       const loadingOverlay = showLoginLoading(() => requestController.abort());
       try {
-        const json = await sendToGAS({ action: 'login', username, pin, includeData: true },
+        let json = await sendToGAS({ action: 'login', username, pin, includeData: true },
           { signal: requestController.signal });
+        // If Google returns a non-JSON page only for the larger bundled
+        // login reply, try once with a small login reply and load data next.
+        if (json.code === 'INVALID_RESPONSE' && !requestController.signal.aborted) {
+          json = await sendToGAS({ action: 'login', username, pin, includeData: false },
+            { signal: requestController.signal });
+        }
         if (requestController.signal.aborted || json.code === 'REQUEST_CANCELLED') return;
         if (json.status === 'success' && json.user && json.token && json.expiresAt) {
           saveStoredCurrentUser(json.user, json.token, json.expiresAt);
@@ -3483,8 +3500,9 @@
           if (json.mustChangePin) {
             openChangePinModal(true);
           } else {
+            let dataError = null;
             const loaded = await fetchData(false, json.data && Array.isArray(json.data.products) ? json : null,
-              false, { signal: requestController.signal });
+              false, { signal: requestController.signal, onError: error => { dataError = error; } });
             if (requestController.signal.aborted) {
               clearClientSession();
               return;
@@ -3496,7 +3514,8 @@
               AppSoundFX.playSuccess();
             } else {
               clearClientSession();
-              errBox.textContent = 'เข้าสู่ระบบแล้ว แต่ Google Sheet โหลดข้อมูลนานเกินไปหรือไม่สำเร็จ กรุณาตรวจสอบแล้วลองใหม่';
+              errBox.textContent = dataError?.message ||
+                'เข้าสู่ระบบแล้ว แต่ Google Sheet โหลดข้อมูลนานเกินไปหรือไม่สำเร็จ กรุณาตรวจสอบแล้วลองใหม่';
               errBox.classList.remove('hidden');
             }
           }
@@ -3996,6 +4015,7 @@
           if (isManual) showAlert('อัปเดตข้อมูลล่าสุดเรียบร้อยแล้ว', 'success');
           return true;
         }
+        if (typeof requestOptions.onError === 'function') requestOptions.onError(json);
         if (isManual && json.code !== 'AUTH_REQUIRED' && json.code !== 'PIN_CHANGE_REQUIRED') {
           showAlert(json.message || 'ดึงข้อมูลจาก Google Sheet ไม่สำเร็จ', 'error');
         }
