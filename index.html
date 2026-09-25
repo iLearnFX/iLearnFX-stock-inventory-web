@@ -223,6 +223,13 @@
           <span id="headerCartBadge" class="hidden absolute -top-1 -right-1 bg-amber-400 text-slate-900 font-black text-[11px] w-5 h-5 rounded-full flex items-center justify-center shadow ring-2 ring-blue-700">0</span>
         </button>
 
+        <!-- ปุ่มผู้ใช้งาน / สลับผู้ใช้งาน (User Profile & Switcher) -->
+        <button onclick="openUserModal()" id="btnHeaderUser" class="p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl hover:bg-blue-700 active:scale-95 transition bg-blue-500/60 border border-blue-400/40 flex items-center gap-1.5 text-xs font-semibold shadow-xs" title="ผู้ปฏิบัติงานปัจจุบัน / สลับผู้ใช้งาน">
+          <span class="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-white/20 flex items-center justify-center text-xs">👤</span>
+          <span id="headerUserName" class="max-w-[70px] sm:max-w-[120px] truncate">เข้าสู่ระบบ</span>
+          <span id="headerUserRole" class="hidden sm:inline-block px-1.5 py-0.2 rounded-md bg-blue-400/30 text-[10px] text-blue-100 font-medium">Staff</span>
+        </button>
+
         <!-- ปุ่มเปิด/ปิดเสียงเอฟเฟกต์ (Sound FX Toggle) -->
         <button onclick="toggleAppSound()" id="btnHeaderSound" class="p-2 rounded-xl hover:bg-blue-700 active:scale-95 transition bg-blue-500/50 flex items-center gap-1 text-xs font-medium" title="เปิด/ปิดเสียงเอฟเฟกต์">
           <span id="headerSoundIcon" class="text-sm">🔊</span>
@@ -870,6 +877,147 @@
         <span id="floatingCartSummary" class="text-[9px] sm:text-[10px] font-semibold text-amber-100/90">0 รายการ</span>
       </div>
       <svg class="w-3.5 h-3.5 text-white/75 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+    </div>
+  </div>
+
+  <!-- MODAL: เข้าสู่ระบบ / สลับผู้ใช้งาน (User Login & Switcher Modal) -->
+  <div id="modalUserLogin" class="hidden fixed inset-0 bg-slate-900/65 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-200/80 overflow-hidden ios-sheet-anim flex flex-col max-h-[92vh]">
+      
+      <!-- Modal Header -->
+      <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white p-5 text-center relative flex-shrink-0">
+        <button type="button" onclick="closeUserModal()" class="absolute right-3.5 top-3.5 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center text-sm font-bold active:scale-95 transition">✕</button>
+        <div class="w-12 h-12 rounded-2xl bg-white p-1 mx-auto mb-2 shadow-md flex items-center justify-center border-2 border-white/60">
+          <img src="logo.png" class="w-full h-full object-cover rounded-xl" alt="Ground Cafe" />
+        </div>
+        <h2 class="text-base sm:text-lg font-bold">เข้าสู่ระบบผู้ปฏิบัติงาน</h2>
+        <p class="text-xs text-blue-100 mt-0.5">ระบุตัวตนเพื่อลง Log การเบิก-รับ-แก้ไขสต็อก</p>
+      </div>
+
+      <div class="p-4 sm:p-5 overflow-y-auto space-y-4 no-scrollbar">
+        
+        <!-- สถานะผู้ใช้ปัจจุบัน (ถ้าล็อกอินอยู่แล้ว) -->
+        <div id="loginCurrentUserInfoBox" class="hidden bg-blue-50 border border-blue-200 rounded-2xl p-3 flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center text-base font-bold shadow-xs">👤</div>
+            <div>
+              <div class="text-[10px] text-blue-600 font-bold uppercase tracking-wider">กำลังใช้งานโดย</div>
+              <div id="loginCurrentUserName" class="text-xs sm:text-sm font-bold text-slate-800">-</div>
+              <div id="loginCurrentUserRole" class="text-[10px] text-slate-500 font-medium">-</div>
+            </div>
+          </div>
+          <button type="button" onclick="executeLogout()" class="px-2.5 py-1.5 rounded-xl bg-white hover:bg-rose-50 text-rose-600 border border-slate-200 text-xs font-bold active:scale-95 transition shadow-2xs">ออกจากระบบ</button>
+        </div>
+
+        <!-- ตัวเลือกผู้ใช้งานแบบแตะเลือกด่วน (Quick Employee Selection) -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-2 flex items-center justify-between">
+            <span>แตะเลือกพนักงาน / ผู้ปฏิบัติงาน</span>
+            <span class="text-[10px] font-normal text-slate-400">หรือกรอก Username ด้านล่าง</span>
+          </label>
+          <div id="quickUserGrid" class="grid grid-cols-2 gap-2">
+            <!-- Rendered dynamically from state.users -->
+          </div>
+        </div>
+
+        <!-- ฟอร์มกรอกรหัสผ่าน PIN -->
+        <form onsubmit="executeLogin(event)" class="space-y-3 pt-1 border-t border-slate-100">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Username</label>
+            <input type="text" id="loginInputUsername" placeholder="เช่น admin, barista1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-blue-500 font-medium" required />
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1 flex items-center justify-between">
+              <span>รหัสผ่าน / PIN (ค่าเริ่มต้น: 1234)</span>
+              <span id="loginPinHint" class="text-[10px] text-blue-600 font-medium">กดปุ่มตัวเลขได้</span>
+            </label>
+            <input type="password" id="loginInputPassword" placeholder="กรอกรหัสผ่านหรือ PIN 4 หลัก" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-blue-500 font-bold tracking-widest text-center text-sm" required />
+          </div>
+
+          <!-- แป้นตัวเลขด่วนสำหรับ Tablet / Mobile -->
+          <div class="grid grid-cols-3 gap-1.5 pt-1">
+            <button type="button" onclick="appendLoginPin('1')" class="py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-xs font-bold text-slate-700 ios-btn-press">1</button>
+            <button type="button" onclick="appendLoginPin('2')" class="py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-xs font-bold text-slate-700 ios-btn-press">2</button>
+            <button type="button" onclick="appendLoginPin('3')" class="py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-xs font-bold text-slate-700 ios-btn-press">3</button>
+            <button type="button" onclick="appendLoginPin('4')" class="py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-xs font-bold text-slate-700 ios-btn-press">4</button>
+            <button type="button" onclick="appendLoginPin('5')" class="py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-xs font-bold text-slate-700 ios-btn-press">5</button>
+            <button type="button" onclick="appendLoginPin('6')" class="py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-xs font-bold text-slate-700 ios-btn-press">6</button>
+            <button type="button" onclick="appendLoginPin('7')" class="py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-xs font-bold text-slate-700 ios-btn-press">7</button>
+            <button type="button" onclick="appendLoginPin('8')" class="py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-xs font-bold text-slate-700 ios-btn-press">8</button>
+            <button type="button" onclick="appendLoginPin('9')" class="py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-xs font-bold text-slate-700 ios-btn-press">9</button>
+            <button type="button" onclick="clearLoginPin()" class="py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 active:scale-95 text-xs font-bold ios-btn-press">ลบ</button>
+            <button type="button" onclick="appendLoginPin('0')" class="py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-xs font-bold text-slate-700 ios-btn-press">0</button>
+            <button type="button" onclick="backspaceLoginPin()" class="py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-xs font-bold text-slate-700 ios-btn-press">⌫</button>
+          </div>
+
+          <!-- ข้อความแจ้งเตือน Error ในฟอร์ม -->
+          <div id="loginErrorMsg" class="hidden text-xs text-rose-600 font-semibold bg-rose-50 border border-rose-200 p-2 rounded-xl text-center"></div>
+
+          <button type="submit" id="btnLoginSubmit" class="w-full py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:scale-95 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md transition flex items-center justify-center gap-1.5 ios-btn-press">
+            <span>เข้าสู่ระบบ / ยืนยันผู้ใช้</span>
+          </button>
+        </form>
+
+        <!-- ส่วนของ Admin: จัดการรายชื่อพนักงาน -->
+        <div id="adminManageUsersSection" class="pt-3 border-t border-slate-100 text-center">
+          <button type="button" onclick="toggleUserManageModal()" class="text-xs text-blue-600 hover:text-blue-800 font-semibold flex items-center justify-center gap-1 mx-auto">
+            <span>⚙️</span><span>จัดการรายชื่อพนักงานและรหัสผ่าน (ชีต Users)</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: จัดการผู้ใช้งานและรหัสผ่านสำหรับ Admin (Manage Users Modal) -->
+  <div id="modalManageUsers" class="hidden fixed inset-0 bg-slate-900/65 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-slate-200 overflow-hidden ios-sheet-anim flex flex-col max-h-[90vh]">
+      <div class="bg-slate-800 text-white p-4 flex items-center justify-between flex-shrink-0">
+        <h3 class="font-bold text-sm flex items-center gap-2">
+          <span>👥</span><span>จัดการรายชื่อพนักงาน (Sheet: Users)</span>
+        </h3>
+        <button type="button" onclick="toggleUserManageModal()" class="w-7 h-7 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center text-xs font-bold">✕</button>
+      </div>
+      <div class="p-4 overflow-y-auto space-y-4 no-scrollbar">
+        <p class="text-xs text-slate-500">ข้อมูลผู้ใช้งานทั้งหมดจะซิงค์ตรงกับชีต <strong>Users</strong> ใน Google Sheet เจ้าของร้านสามารถแก้ไขได้จากตรงนี้หรือในชีตได้โดยตรง</p>
+        
+        <!-- รายการผู้ใช้ -->
+        <div id="usersListContainer" class="space-y-2">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <!-- ฟอร์มเพิ่มผู้ใช้ใหม่ -->
+        <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2.5">
+          <div class="text-xs font-bold text-slate-700">➕ เพิ่มพนักงานใหม่</div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Username</label>
+              <input type="text" id="newInputUserUsername" placeholder="เช่น staff2" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">PIN / รหัสผ่าน</label>
+              <input type="text" id="newInputUserPin" placeholder="เช่น 1234" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs outline-none focus:ring-2 focus:ring-blue-500 font-bold" />
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">ชื่อ-นามสกุล / ตำแหน่ง</label>
+              <input type="text" id="newInputUserName" placeholder="เช่น น้องน้ำ (แคชเชียร์)" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">สิทธิ์การใช้งาน (Role)</label>
+              <select id="newInputUserRole" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="Staff">Staff (เบิก/รับ/นับสต็อก)</option>
+                <option value="Admin">Admin (จัดการระบบทั้งหมด)</option>
+              </select>
+            </div>
+          </div>
+          <button type="button" onclick="submitAddNewUser()" class="w-full py-2 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow-xs transition">
+            บันทึกพนักงานใหม่ลง Google Sheet
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -2299,7 +2447,7 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwjEBH98-lSDSMEhes-PMGX7MmZ2CanawbtysGXhsPWZBmvRzrZaofjURfKbN1kHTJysQ/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbyqHzcN4kJHOY5j_UXnGUhKtS7VqrsBLRMj3pBmEIKzo1ut2fAPlZ91jU0JaE0ojg206A/exec";
 
     // ==========================================
     // AUDIO & SOUND FX ENGINE (Web Audio API Synthesizer - 0ms Latency, Full Offline)
@@ -2871,12 +3019,55 @@
       showAlert(`ลบหน่วย "${unitToDelete}" เรียบร้อยแล้ว`, 'success');
     }
 
+    const DEFAULT_SYSTEM_USERS = [
+      { id: 'U-001', username: 'admin', pin: '1234', name: 'เจ้าของร้าน (Admin)', role: 'Admin', status: 'Active' },
+      { id: 'U-002', username: 'barista1', pin: '1234', name: 'บาริสต้า (Barista 1)', role: 'Staff', status: 'Active' },
+      { id: 'U-003', username: 'kitchen', pin: '1234', name: 'ทีมครัว / วัตถุดิบ', role: 'Staff', status: 'Active' },
+      { id: 'U-004', username: 'staff', pin: '1234', name: 'พนักงานประจำร้าน', role: 'Staff', status: 'Active' }
+    ];
+
+    function getStoredUsers() {
+      try {
+        const u = localStorage.getItem('stock_app_users_v1');
+        return u ? JSON.parse(u) : DEFAULT_SYSTEM_USERS;
+      } catch (e) {
+        return DEFAULT_SYSTEM_USERS;
+      }
+    }
+
+    function saveStoredUsers(users) {
+      try {
+        localStorage.setItem('stock_app_users_v1', JSON.stringify(users));
+      } catch (e) {}
+    }
+
+    function getStoredCurrentUser() {
+      try {
+        const u = localStorage.getItem('stock_app_current_user_v1');
+        return u ? JSON.parse(u) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function saveStoredCurrentUser(user) {
+      try {
+        if (user) {
+          localStorage.setItem('stock_app_current_user_v1', JSON.stringify(user));
+        } else {
+          localStorage.removeItem('stock_app_current_user_v1');
+        }
+      } catch (e) {}
+    }
+
     let state = {
       categories: [],
       units: getStoredUnits(),
       products: [],
       transactions: [],
       suppliers: getStoredSuppliers(),
+      users: getStoredUsers(),
+      currentUser: getStoredCurrentUser(),
       cart: [], // ตะกร้าสั่งซื้อสินค้า
       selectedType: 'เบิกออก (-)',
       historyFilter: 'ALL',
@@ -2890,6 +3081,286 @@
       purchaseOrders: getStoredPOs(), // รายการใบสั่งซื้อ & ตรวจรับของ
       stockTakeState: {} // ชั่วคราวสำหรับโหมดตรวจนับสต็อกจริง
     };
+
+    function updateCurrentUserUI() {
+      const nameEl = document.getElementById('headerUserName');
+      const roleEl = document.getElementById('headerUserRole');
+      const cur = state.currentUser;
+      if (cur) {
+        if (nameEl) nameEl.textContent = cur.name;
+        if (roleEl) {
+          roleEl.textContent = cur.role;
+          roleEl.className = cur.role === 'Admin' ? 
+            'hidden sm:inline-block px-1.5 py-0.2 rounded-md bg-amber-400 text-[10px] text-slate-900 font-bold shadow-xs' : 
+            'hidden sm:inline-block px-1.5 py-0.2 rounded-md bg-blue-400/40 text-[10px] text-blue-100 font-medium';
+        }
+      } else {
+        if (nameEl) nameEl.textContent = 'เข้าสู่ระบบ';
+        if (roleEl) {
+          roleEl.textContent = 'ยังไม่ล็อกอิน';
+          roleEl.className = 'hidden sm:inline-block px-1.5 py-0.2 rounded-md bg-rose-500 text-[10px] text-white font-medium';
+        }
+      }
+    }
+
+    function renderQuickUserGrid() {
+      const grid = document.getElementById('quickUserGrid');
+      if (!grid) return;
+      const users = state.users && state.users.length > 0 ? state.users : DEFAULT_SYSTEM_USERS;
+      grid.innerHTML = users.map(u => {
+        const isCurrent = state.currentUser && state.currentUser.username === u.username;
+        return `
+          <button type="button" onclick="selectQuickUser('${u.username}')" class="p-2.5 rounded-2xl border text-left transition ios-btn-press ${isCurrent ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-200' : 'bg-slate-50 hover:bg-slate-100 border-slate-200'}">
+            <div class="flex items-center gap-2">
+              <span class="w-7 h-7 rounded-xl ${u.role === 'Admin' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-700'} flex items-center justify-center text-xs font-bold flex-shrink-0">
+                ${u.role === 'Admin' ? '👑' : '👤'}
+              </span>
+              <div class="min-w-0">
+                <div class="text-xs font-bold text-slate-800 truncate">${u.name}</div>
+                <div class="text-[10px] text-slate-400">${u.role} (${u.username})</div>
+              </div>
+            </div>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function selectQuickUser(username) {
+      const user = (state.users || DEFAULT_SYSTEM_USERS).find(u => u.username === username);
+      if (!user) return;
+      document.getElementById('loginInputUsername').value = user.username;
+      const pwdInput = document.getElementById('loginInputPassword');
+      pwdInput.value = '';
+      pwdInput.focus();
+      document.getElementById('loginErrorMsg').classList.add('hidden');
+      if (navigator.vibrate) navigator.vibrate(15);
+      AppSoundFX.playTap();
+    }
+
+    function appendLoginPin(val) {
+      const pwdInput = document.getElementById('loginInputPassword');
+      if (!pwdInput) return;
+      pwdInput.value = (pwdInput.value || '') + val;
+      if (navigator.vibrate) navigator.vibrate(10);
+      AppSoundFX.playTap();
+    }
+
+    function clearLoginPin() {
+      const pwdInput = document.getElementById('loginInputPassword');
+      if (pwdInput) pwdInput.value = '';
+      if (navigator.vibrate) navigator.vibrate(20);
+      AppSoundFX.playTap();
+    }
+
+    function backspaceLoginPin() {
+      const pwdInput = document.getElementById('loginInputPassword');
+      if (pwdInput && pwdInput.value) {
+        pwdInput.value = pwdInput.value.slice(0, -1);
+      }
+      if (navigator.vibrate) navigator.vibrate(10);
+      AppSoundFX.playTap();
+    }
+
+    function openUserModal() {
+      const modal = document.getElementById('modalUserLogin');
+      if (!modal) return;
+      renderQuickUserGrid();
+      const infoBox = document.getElementById('loginCurrentUserInfoBox');
+      const cur = state.currentUser;
+      if (cur && infoBox) {
+        infoBox.classList.remove('hidden');
+        document.getElementById('loginCurrentUserName').textContent = cur.name;
+        document.getElementById('loginCurrentUserRole').textContent = `สิทธิ์: ${cur.role} (${cur.username})`;
+      } else if (infoBox) {
+        infoBox.classList.add('hidden');
+      }
+
+      const adminSec = document.getElementById('adminManageUsersSection');
+      if (adminSec) {
+        adminSec.style.display = (cur && cur.role === 'Admin') ? 'block' : (cur ? 'none' : 'block');
+      }
+
+      document.getElementById('loginInputPassword').value = '';
+      document.getElementById('loginErrorMsg').classList.add('hidden');
+      if (!cur) {
+        document.getElementById('loginInputUsername').value = 'admin';
+      } else {
+        document.getElementById('loginInputUsername').value = cur.username;
+      }
+      modal.classList.remove('hidden');
+    }
+
+    function closeUserModal() {
+      const modal = document.getElementById('modalUserLogin');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    async function executeLogin(e) {
+      if (e) e.preventDefault();
+      const username = document.getElementById('loginInputUsername').value.trim();
+      const pin = document.getElementById('loginInputPassword').value.trim();
+      const errBox = document.getElementById('loginErrorMsg');
+      const submitBtn = document.getElementById('btnLoginSubmit');
+
+      if (!username || !pin) {
+        errBox.textContent = 'กรุณาระบุ Username และ PIN / รหัสผ่าน';
+        errBox.classList.remove('hidden');
+        return;
+      }
+
+      const oldBtnHtml = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="animate-spin inline-block mr-1">⏳</span> กำลังตรวจสอบ...';
+
+      // 1. ตรวจสอบกับข้อมูลในเครื่องก่อน (Instant Login)
+      const localUsers = state.users && state.users.length > 0 ? state.users : DEFAULT_SYSTEM_USERS;
+      const matchedLocal = localUsers.find(u => u.username.toLowerCase() === username.toLowerCase() && (u.pin === pin || (!u.pin && pin === '1234')));
+
+      if (matchedLocal) {
+        state.currentUser = {
+          id: matchedLocal.id,
+          username: matchedLocal.username,
+          name: matchedLocal.name,
+          role: matchedLocal.role || 'Staff'
+        };
+        saveStoredCurrentUser(state.currentUser);
+        updateCurrentUserUI();
+        closeUserModal();
+        showAlert(`✓ เข้าสู่ระบบสำเร็จ: ยินดีต้อนรับ ${state.currentUser.name}`, 'success');
+        if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
+        AppSoundFX.playSuccess();
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = oldBtnHtml;
+        return;
+      }
+
+      // 2. ถ้าในเครื่องไม่พบ ลองตรวจสอบผ่าน Google Apps Script API
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'login', username: username, pin: pin, password: pin })
+        });
+        const json = await res.json();
+        if (json.status === 'success' && json.user) {
+          state.currentUser = json.user;
+          saveStoredCurrentUser(state.currentUser);
+          updateCurrentUserUI();
+          closeUserModal();
+          showAlert(`✓ เข้าสู่ระบบสำเร็จ: ยินดีต้อนรับ ${state.currentUser.name}`, 'success');
+          if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
+          AppSoundFX.playSuccess();
+        } else {
+          errBox.textContent = json.message || 'Username หรือ PIN ไม่ถูกต้อง';
+          errBox.classList.remove('hidden');
+        }
+      } catch (err) {
+        errBox.textContent = 'รหัสผ่านหรือ PIN ไม่ถูกต้อง (ค่าเริ่มต้นพนักงานคือ 1234)';
+        errBox.classList.remove('hidden');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = oldBtnHtml;
+      }
+    }
+
+    function executeLogout() {
+      if (confirm('ต้องการออกจากระบบหรือไม่?')) {
+        state.currentUser = null;
+        saveStoredCurrentUser(null);
+        updateCurrentUserUI();
+        closeUserModal();
+        showAlert('ออกจากระบบเรียบร้อยแล้ว', 'info');
+        openUserModal();
+      }
+    }
+
+    function toggleUserManageModal() {
+      const modal = document.getElementById('modalManageUsers');
+      if (!modal) return;
+      if (modal.classList.contains('hidden')) {
+        renderUsersList();
+        modal.classList.remove('hidden');
+      } else {
+        modal.classList.add('hidden');
+      }
+    }
+
+    function renderUsersList() {
+      const container = document.getElementById('usersListContainer');
+      if (!container) return;
+      const users = state.users && state.users.length > 0 ? state.users : DEFAULT_SYSTEM_USERS;
+      container.innerHTML = users.map(u => `
+        <div class="bg-white p-3 rounded-2xl border border-slate-200 flex items-center justify-between text-xs shadow-2xs">
+          <div class="flex items-center gap-2.5">
+            <span class="w-8 h-8 rounded-xl ${u.role === 'Admin' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-700'} flex items-center justify-center font-bold">
+              ${u.role === 'Admin' ? '👑' : '👤'}
+            </span>
+            <div>
+              <div class="font-bold text-slate-800">${u.name}</div>
+              <div class="text-[10px] text-slate-400">User: <span class="font-mono text-slate-600">${u.username}</span> | PIN: <span class="font-mono text-slate-600">${u.pin || '1234'}</span> | ${u.role}</div>
+            </div>
+          </div>
+          ${u.username !== 'admin' ? `
+            <button type="button" onclick="deleteUserItem('${u.username}')" class="text-rose-500 hover:text-rose-700 p-1 font-bold text-sm" title="ลบพนักงาน">✕</button>
+          ` : '<span class="text-[10px] font-bold text-amber-600 px-1.5 py-0.5 rounded-full bg-amber-50">หลัก</span>'}
+        </div>
+      `).join('');
+    }
+
+    async function submitAddNewUser() {
+      const username = document.getElementById('newInputUserUsername').value.trim();
+      const pin = document.getElementById('newInputUserPin').value.trim();
+      const name = document.getElementById('newInputUserName').value.trim();
+      const role = document.getElementById('newInputUserRole').value;
+
+      if (!username || !name) {
+        alert('กรุณากรอก Username และชื่อพนักงาน');
+        return;
+      }
+
+      const newUser = {
+        id: 'U-' + String((state.users || []).length + 1).padStart(3, '0'),
+        username: username,
+        pin: pin || '1234',
+        name: name,
+        role: role,
+        status: 'Active'
+      };
+
+      if (!state.users) state.users = [...DEFAULT_SYSTEM_USERS];
+      const existingIdx = state.users.findIndex(u => u.username.toLowerCase() === username.toLowerCase());
+      if (existingIdx >= 0) {
+        state.users[existingIdx] = newUser;
+      } else {
+        state.users.push(newUser);
+      }
+      saveStoredUsers(state.users);
+      renderUsersList();
+      renderQuickUserGrid();
+
+      document.getElementById('newInputUserUsername').value = '';
+      document.getElementById('newInputUserPin').value = '';
+      document.getElementById('newInputUserName').value = '';
+
+      showAlert(`✓ บันทึกพนักงาน "${name}" เรียบร้อยแล้ว`, 'success');
+
+      try {
+        await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'saveUser', ...newUser })
+        });
+      } catch (e) {}
+    }
+
+    function deleteUserItem(username) {
+      if (!confirm(`ต้องการลบผู้ใช้ "${username}" หรือไม่?`)) return;
+      state.users = (state.users || DEFAULT_SYSTEM_USERS).filter(u => u.username !== username);
+      saveStoredUsers(state.users);
+      renderUsersList();
+      renderQuickUserGrid();
+      showAlert('ลบผู้ใช้เรียบร้อยแล้ว', 'info');
+    }
 
     let activeModalProduct = null;
     let activeModalAction = 'OUT'; // 'OUT' | 'IN' | 'ADJUST' | 'CART' | 'IMAGE'
@@ -3056,6 +3527,10 @@
       }
       state.cart = getStoredCart();
       updateUI();
+      updateCurrentUserUI();
+      if (!state.currentUser) {
+        setTimeout(() => { openUserModal(); }, 350);
+      }
     } catch (e) {}
 
     // ดึงข้อมูลล่าสุดจาก Google Apps Script
@@ -3082,6 +3557,13 @@
           if (json.data.suppliers && json.data.suppliers.length > 0) {
             saveSuppliers(json.data.suppliers);
           }
+
+          if (json.data.users && json.data.users.length > 0) {
+            state.users = json.data.users;
+            saveStoredUsers(json.data.users);
+            renderQuickUserGrid();
+          }
+
           state.products = (json.data.products || []).map(p => {
             let dp = p.packSize || '';
             if (!dp) {
@@ -3117,6 +3599,7 @@
     }
 
     function updateUI() {
+      updateCurrentUserUI();
       renderCategoryLegend();
       renderCategoryChips();
       renderDashboard();
@@ -3764,12 +4247,19 @@
         badgeBox.innerHTML = `<span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-100 text-emerald-800">สต็อกปกติ</span>`;
       }
 
-      // รีเซ็ตฟอร์มต่างๆ
+      // รีเซ็ตฟอร์มต่างๆ พร้อมใส่ชื่อผู้ใช้งานปัจจุบันอัตโนมัติ
+      const currentOpName = state.currentUser ? state.currentUser.name : '';
       document.getElementById('quickQty').value = '';
       document.getElementById('quickNotes').value = '';
+      const quickUserEl = document.getElementById('quickUser');
+      if (quickUserEl) quickUserEl.value = currentOpName;
+
       document.getElementById('quickAdjNewVal').value = prod.currentBalance;
       document.getElementById('quickAdjReason').value = '';
       document.getElementById('quickAdjDiffText').classList.add('hidden');
+      const quickAdjUserEl = document.getElementById('quickAdjUser');
+      if (quickAdjUserEl) quickAdjUserEl.value = currentOpName;
+
       document.getElementById('quickImageUrl').value = prod.imageUrl || '';
       previewQuickImage();
 
@@ -3783,7 +4273,7 @@
       const wasteNotes = document.getElementById('quickWasteNotes');
       if (wasteNotes) wasteNotes.value = '';
       const wasteUser = document.getElementById('quickWasteUser');
-      if (wasteUser) wasteUser.value = '';
+      if (wasteUser) wasteUser.value = currentOpName;
 
       // ตะกร้าสั่งซื้อใน Modal
       const existingInCart = (state.cart || []).find(item => item.productName === prod.name);
@@ -3975,6 +4465,7 @@
       const user = document.getElementById('quickUser').value.trim();
       const notes = document.getElementById('quickNotes').value.trim();
       const type = activeModalAction === 'IN' ? 'รับเข้า (+)' : 'เบิกออก (-)';
+      const operatorName = (state.currentUser && state.currentUser.name) || user || 'ผู้ดูแลสต็อก';
 
       if (!qty || qty <= 0) {
         showAlert('กรุณากรอกจำนวนให้ถูกต้อง', 'error');
@@ -3987,12 +4478,33 @@
       btn.innerHTML = '<span class="animate-spin inline-block mr-1">⏳</span> กำลังบันทึก...';
 
       const diff = activeModalAction === 'IN' ? qty : -qty;
+      const txId = 'TX-' + new Date().toISOString().replace(/[-:T.]/g, '').slice(0, 14);
+      const todayDate = new Date().toISOString().split('T')[0];
+
+      // 1. ปรับยอดคงเหลือในเครื่องทันที
       state.products = state.products.map(p => {
         if (p.name === activeModalProduct.name) {
-          return { ...p, currentBalance: Number(p.currentBalance) + diff };
+          return { ...p, currentBalance: Math.max(0, Number(p.currentBalance) + diff) };
         }
         return p;
       });
+
+      // 2. บันทึกลง Log ประวัติในเครื่องทันที
+      const newTx = {
+        id: txId,
+        timestamp: new Date().toISOString(),
+        date: todayDate,
+        category: activeModalProduct.category || '',
+        product: activeModalProduct.name,
+        type: type,
+        quantity: qty,
+        recordedBy: operatorName,
+        notes: notes
+      };
+      state.transactions.unshift(newTx);
+
+      // 3. เซฟลง LocalStorage ทันที
+      localStorage.setItem('stock_app_cache_v4', JSON.stringify(state));
       updateUI();
       closeCardActionModal();
 
@@ -4006,12 +4518,12 @@
       try {
         const payload = {
           action: 'addTransaction',
-          date: new Date().toISOString().split('T')[0],
+          date: todayDate,
           category: activeModalProduct.category,
           product: activeModalProduct.name,
           type: type,
           quantity: qty,
-          recordedBy: user || 'ผู้ดูแลสต็อก',
+          recordedBy: operatorName,
           notes: notes
         };
 
@@ -4023,13 +4535,14 @@
 
         const json = await res.json();
         if (json.status === 'success') {
-          showAlert(`✓ บันทึก ${type} ${qty} ${activeModalProduct.unit} "${activeModalProduct.name}" สำเร็จ`, 'success');
+          showAlert(`✓ บันทึก ${type} ${qty} ${activeModalProduct.unit} "${activeModalProduct.name}" สำเร็จ (ซิงค์ลง Google Sheet แล้ว)`, 'success');
           fetchData();
         } else {
-          showAlert('เกิดข้อผิดพลาด: ' + json.message, 'error');
+          showAlert('⚠️ บันทึกในเครื่องแล้ว แต่ Google Sheet แจ้งเตือน: ' + (json.message || 'เกิดข้อผิดพลาด'), 'error');
         }
       } catch (err) {
-        showAlert('✓ บันทึกสำเร็จ (ข้อมูลกำลังซิงค์เข้า Google Sheet)', 'success');
+        console.error('Fetch error:', err);
+        showAlert(`⚠️ บันทึกในเครื่องแล้ว แต่ส่งข้อมูลไป Google Sheet ไม่สำเร็จ (โปรดตรวจสอบเน็ตหรือการ Deploy New Version บน Apps Script)`, 'error');
       } finally {
         btn.disabled = false;
         btn.innerHTML = oldHtml;
@@ -4038,9 +4551,19 @@
 
     async function confirmDeleteSku() {
       if (!editingSkuProduct) return;
+      if (state.currentUser && state.currentUser.role === 'Staff') {
+        showAlert('⚠️ เฉพาะเจ้าของร้าน (Admin) เท่านั้นที่สามารถลบสินค้าได้ กรุณาสลับผู้ใช้เป็น Admin', 'error');
+        return;
+      }
+
       const prodName = editingSkuProduct.name;
       const origProd = editingSkuProduct;
+      const operatorName = (state.currentUser && state.currentUser.name) || 'ผู้ดูแลสต็อก';
+
       if (!confirm(`คุณต้องการลบสินค้า "${prodName}" ออกจากระบบสต็อกใช่หรือไม่?\n\n(ประวัติการทำรายการเดิมจะยังคงอยู่ แต่สินค้าจะถูกนำออกจากรายการสต็อกและ Google Sheet)`)) return;
+
+      const txId = 'TX-' + new Date().toISOString().replace(/[-:T.]/g, '').slice(0, 14);
+      const todayDate = new Date().toISOString().split('T')[0];
 
       // Optimistic UI: นำออกจากหน้าจอและ LocalStorage ทันที
       state.products = state.products.filter(p => p.name !== prodName);
@@ -4048,6 +4571,21 @@
         state.cart = state.cart.filter(item => item.productName !== prodName);
         saveCart(state.cart);
       }
+
+      // บันทึก Log การลบสินค้า
+      const delTx = {
+        id: txId,
+        timestamp: new Date().toISOString(),
+        date: todayDate,
+        category: origProd.category || '',
+        product: prodName,
+        type: 'ลบสินค้า (SKU)',
+        quantity: 0,
+        recordedBy: operatorName,
+        notes: `[ลบ SKU] นำสินค้า "${prodName}" ออกจากระบบโดย ${operatorName}`
+      };
+      state.transactions.unshift(delTx);
+
       localStorage.setItem('stock_app_cache_v4', JSON.stringify(state));
       updateUI();
       closeEditSkuModal();
@@ -4060,7 +4598,7 @@
         await fetch(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action: 'deleteProduct', name: prodName, product: prodName, id: origProd.id })
+          body: JSON.stringify({ action: 'deleteProduct', name: prodName, product: prodName, id: origProd.id, recordedBy: operatorName })
         });
       } catch (err) {
         console.warn('Backend sync deleteProduct error:', err);
@@ -4076,6 +4614,7 @@
       const reason = document.getElementById('quickWasteReason').value.trim();
       const user = document.getElementById('quickWasteUser').value.trim();
       const notes = document.getElementById('quickWasteNotes').value.trim();
+      const operatorName = (state.currentUser && state.currentUser.name) || user || 'ผู้ดูแลสต็อก';
 
       if (!qty || qty <= 0) {
         showAlert('กรุณากรอกจำนวนของเสียให้ถูกต้อง', 'error');
@@ -4087,6 +4626,8 @@
       }
 
       const fullNotes = notes ? `[${reason}] ${notes}` : `[${reason}]`;
+      const txId = 'TX-' + new Date().toISOString().replace(/[-:T.]/g, '').slice(0, 14);
+      const todayDate = new Date().toISOString().split('T')[0];
 
       const btn = document.getElementById('btnSubmitWaste');
       const oldHtml = btn ? btn.innerHTML : '';
@@ -4095,13 +4636,29 @@
         btn.innerHTML = '<span class="animate-spin inline-block mr-1">⏳</span> กำลังบันทึกของเสีย...';
       }
 
-      // ตัดยอดออกจากสต็อกทันที (Optimistic update)
+      // 1. ตัดยอดออกจากสต็อกทันที (Optimistic update)
       state.products = state.products.map(p => {
         if (p.name === activeModalProduct.name) {
           return { ...p, currentBalance: Math.max(0, Number(p.currentBalance) - qty) };
         }
         return p;
       });
+
+      // 2. บันทึก Log ของเสียทันที
+      const wasteTx = {
+        id: txId,
+        timestamp: new Date().toISOString(),
+        date: todayDate,
+        category: activeModalProduct.category || '',
+        product: activeModalProduct.name,
+        type: 'ของเสีย (x)',
+        quantity: qty,
+        recordedBy: operatorName,
+        notes: fullNotes
+      };
+      state.transactions.unshift(wasteTx);
+
+      localStorage.setItem('stock_app_cache_v4', JSON.stringify(state));
       updateUI();
       closeCardActionModal();
 
@@ -4111,12 +4668,12 @@
       try {
         const payload = {
           action: 'addTransaction',
-          date: new Date().toISOString().split('T')[0],
+          date: todayDate,
           category: activeModalProduct.category,
           product: activeModalProduct.name,
           type: 'ของเสีย (x)',
           quantity: qty,
-          recordedBy: user || 'ผู้ดูแลสต็อก',
+          recordedBy: operatorName,
           notes: fullNotes
         };
 
@@ -4128,13 +4685,14 @@
 
         const json = await res.json();
         if (json.status === 'success') {
-          showAlert(`✓ บันทึกของเสีย ${qty} ${activeModalProduct.unit} "${activeModalProduct.name}" (${reason}) เรียบร้อย`, 'success');
+          showAlert(`✓ บันทึกของเสีย ${qty} ${activeModalProduct.unit} "${activeModalProduct.name}" (${reason}) เรียบร้อย (ลง Sheet แล้ว)`, 'success');
           fetchData();
         } else {
-          showAlert('เกิดข้อผิดพลาด: ' + json.message, 'error');
+          showAlert('⚠️ บันทึกในเครื่องแล้ว แต่ Google Sheet แจ้งเตือน: ' + (json.message || 'เกิดข้อผิดพลาด'), 'error');
         }
       } catch (err) {
-        showAlert(`✓ บันทึกของเสีย ${qty} ${activeModalProduct.unit} "${activeModalProduct.name}" เรียบร้อย (กำลังซิงค์)`, 'success');
+        console.error('Fetch error:', err);
+        showAlert(`⚠️ บันทึกของเสียในเครื่องแล้ว แต่ยังส่งไป Google Sheet ไม่สำเร็จ (โปรดตรวจสอบเน็ตหรือการ Deploy New Version บน Apps Script)`, 'error');
       } finally {
         if (btn) {
           btn.disabled = false;
@@ -4180,6 +4738,7 @@
       const newVal = Number(document.getElementById('quickAdjNewVal').value);
       const reason = document.getElementById('quickAdjReason').value.trim();
       const user = document.getElementById('quickAdjUser').value.trim();
+      const operatorName = (state.currentUser && state.currentUser.name) || user || 'ผู้ดูแลสต็อก';
       const curVal = Number(activeModalProduct.currentBalance);
       const diff = newVal - curVal;
 
@@ -4199,13 +4758,32 @@
       const actionType = diff >= 0 ? 'รับเข้า (+)' : 'เบิกออก (-)';
       const absQty = Math.abs(diff);
       const auditLogNote = `[ปรับปรุงยอด] เหตุผล: ${reason} (ปรับจาก ${curVal} เป็น ${newVal} ${activeModalProduct.unit})`;
+      const txId = 'TX-' + new Date().toISOString().replace(/[-:T.]/g, '').slice(0, 14);
+      const todayDate = new Date().toISOString().split('T')[0];
 
+      // 1. ปรับยอดคงเหลือในเครื่องทันที
       state.products = state.products.map(p => {
         if (p.name === activeModalProduct.name) {
           return { ...p, currentBalance: newVal };
         }
         return p;
       });
+
+      // 2. บันทึก Audit Log ทันที
+      const adjTx = {
+        id: txId,
+        timestamp: new Date().toISOString(),
+        date: todayDate,
+        category: activeModalProduct.category || '',
+        product: activeModalProduct.name,
+        type: 'ปรับยอดสต็อก',
+        quantity: absQty,
+        recordedBy: operatorName,
+        notes: auditLogNote
+      };
+      state.transactions.unshift(adjTx);
+
+      localStorage.setItem('stock_app_cache_v4', JSON.stringify(state));
       updateUI();
       closeCardActionModal();
 
@@ -4215,12 +4793,13 @@
       try {
         const payload = {
           action: 'adjustStock',
-          date: new Date().toISOString().split('T')[0],
+          date: todayDate,
           category: activeModalProduct.category,
           product: activeModalProduct.name,
           type: actionType,
           quantity: absQty,
-          recordedBy: user || 'ผู้ดูแลสต็อก',
+          newBalance: newVal,
+          recordedBy: operatorName,
           notes: auditLogNote
         };
 
@@ -4232,13 +4811,14 @@
 
         const json = await res.json();
         if (json.status === 'success') {
-          showAlert(`บันทึก Log ปรับยอด "${activeModalProduct.name}" สำเร็จ`, 'success');
+          showAlert(`✓ บันทึก Log ปรับยอด "${activeModalProduct.name}" สำเร็จ (ลง Sheet แล้ว)`, 'success');
           fetchData();
         } else {
-          showAlert('ไม่สำเร็จ: ' + json.message, 'error');
+          showAlert('⚠️ บันทึกในเครื่องแล้ว แต่ Google Sheet แจ้งเตือน: ' + (json.message || 'เกิดข้อผิดพลาด'), 'error');
         }
       } catch (err) {
-        showAlert('บันทึกปรับยอดสำเร็จ (ซิงค์กับ Sheet อัตโนมัติ)', 'success');
+        console.error('Fetch error:', err);
+        showAlert('⚠️ บันทึกปรับยอดในเครื่องแล้ว แต่ส่งไป Sheet ไม่สำเร็จ (โปรดตรวจสอบเน็ตหรือการ Deploy Apps Script)', 'error');
       } finally {
         btn.disabled = false;
         btn.textContent = 'บันทึก Log ปรับปรุงสต็อก';
@@ -5710,6 +6290,7 @@
       const packSize = (document.getElementById('newProductPackSize') && document.getElementById('newProductPackSize').value.trim()) || '';
       const imageUrl = document.getElementById('newProductImageUrl').value.trim();
       const supplier = (document.getElementById('newProductSupplier') && document.getElementById('newProductSupplier').value) || 'แม็คโคร (CP Axtra)';
+      const operatorName = (state.currentUser && state.currentUser.name) || 'ผู้ดูแลสต็อก';
 
       if (!name) {
         alert('กรุณากรอกชื่อสินค้า');
@@ -5754,6 +6335,23 @@
       }
 
       state.products.push(newProductObj);
+
+      // บันทึก Log การเพิ่มสินค้าใหม่
+      const txId = 'TX-' + new Date().toISOString().replace(/[-:T.]/g, '').slice(0, 14);
+      const todayDate = new Date().toISOString().split('T')[0];
+      const addTx = {
+        id: txId,
+        timestamp: new Date().toISOString(),
+        date: todayDate,
+        category: category,
+        product: name,
+        type: 'เพิ่มสินค้าใหม่',
+        quantity: openingBal,
+        recordedBy: operatorName,
+        notes: `[สร้าง SKU ใหม่ ${tempId}] ยอดยกมา ${openingBal} ${unit} โดย ${operatorName}`
+      };
+      state.transactions.unshift(addTx);
+
       localStorage.setItem('stock_app_cache_v4', JSON.stringify(state));
       updateUI();
       closeAddProductModal();
@@ -5771,7 +6369,8 @@
           minStock: minStock,
           currentBalance: openingBal,
           imageUrl: imageUrl,
-          supplier: supplier
+          supplier: supplier,
+          recordedBy: operatorName
         };
 
         const res = await fetch(API_URL, {
@@ -5790,13 +6389,14 @@
             localStorage.setItem('stock_app_cache_v4', JSON.stringify(state));
             updateUI();
           }
-          showAlert(`เพิ่มสินค้าใหม่ "${name}" ลง Google Sheet สำเร็จ`, 'success');
+          showAlert(`✓ เพิ่มสินค้าใหม่ "${name}" (${(json.product && json.product.id) || tempId}) ลง Google Sheet สำเร็จ`, 'success');
           fetchData();
         } else {
-          showAlert(`เพิ่มสินค้า "${name}" เรียบร้อยแล้ว`, 'success');
+          showAlert(`⚠️ บันทึกในเครื่องแล้ว แต่ Google Sheet แจ้งเตือน: ${json.message || 'เกิดข้อผิดพลาด'}`, 'error');
         }
       } catch (err) {
-        showAlert(`เพิ่มสินค้า "${name}" สำเร็จ (กำลังซิงค์เข้า Google Sheet)`, 'success');
+        console.error('Fetch addProduct error:', err);
+        showAlert(`⚠️ เพิ่มสินค้าในเครื่องแล้ว แต่ยังส่งไป Google Sheet ไม่สำเร็จ (โปรดตรวจสอบเน็ตหรือการ Deploy Apps Script)`, 'error');
       } finally {
         btn.disabled = false;
         btn.innerHTML = oldHtml;
@@ -5935,6 +6535,7 @@
       const newPackSize = (document.getElementById('editSkuPackSize') && document.getElementById('editSkuPackSize').value.trim()) || '';
       const newImageUrl = document.getElementById('editSkuImageUrl').value.trim();
       const newSupplier = (document.getElementById('editSkuSupplier') && document.getElementById('editSkuSupplier').value) || (editingSkuProduct.supplier || 'แม็คโคร (CP Axtra)');
+      const operatorName = (state.currentUser && state.currentUser.name) || 'ผู้ดูแลสต็อก';
 
       if (!newName) {
         alert('กรุณากรอกชื่อสินค้า');
@@ -5990,6 +6591,22 @@
         }
       }
 
+      // บันทึก Log การแก้ไข SKU
+      const txId = 'TX-' + new Date().toISOString().replace(/[-:T.]/g, '').slice(0, 14);
+      const todayDate = new Date().toISOString().split('T')[0];
+      const editTx = {
+        id: txId,
+        timestamp: new Date().toISOString(),
+        date: todayDate,
+        category: newCat,
+        product: newName,
+        type: 'แก้ไขข้อมูลสินค้า',
+        quantity: 0,
+        recordedBy: operatorName,
+        notes: `[แก้ไข SKU: ${origName}${origName !== newName ? ' -> ' + newName : ''}] ขั้นต่ำ: ${newMinStock}, หน่วย: ${newUnit} โดย ${operatorName}`
+      };
+      state.transactions.unshift(editTx);
+
       localStorage.setItem('stock_app_cache_v4', JSON.stringify(state));
       updateUI();
       closeEditSkuModal();
@@ -6009,7 +6626,8 @@
           unit: newUnit,
           packSize: newPackSize,
           imageUrl: newImageUrl,
-          supplier: newSupplier
+          supplier: newSupplier,
+          recordedBy: operatorName
         };
 
         const res = await fetch(API_URL, {
@@ -6028,7 +6646,7 @@
             localStorage.setItem('stock_app_cache_v4', JSON.stringify(state));
             updateUI();
           }
-          showAlert(`บันทึกข้อมูล SKU และรูปภาพ "${newName}" ลง Google Sheet สำเร็จ`, 'success');
+          showAlert(`✓ บันทึกข้อมูล SKU และรูปภาพ "${newName}" ลง Google Sheet สำเร็จ`, 'success');
           fetchData();
         } else {
           // Fallback เผื่อ Google Apps Script มี action updateImage
@@ -6036,13 +6654,14 @@
             await fetch(API_URL, {
               method: 'POST',
               headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-              body: JSON.stringify({ action: 'updateImage', product: origName, newProduct: newName, imageUrl: newImageUrl })
+              body: JSON.stringify({ action: 'updateImage', product: origName, newProduct: newName, imageUrl: newImageUrl, recordedBy: operatorName })
             });
           } catch (err2) {}
           showAlert(`บันทึกข้อมูล "${newName}" เรียบร้อยแล้ว`, 'success');
         }
       } catch (err) {
-        showAlert(`บันทึกข้อมูล "${newName}" เรียบร้อยแล้ว (กำลังซิงค์เข้า Google Sheet)`, 'success');
+        console.error('Fetch updateSku error:', err);
+        showAlert(`⚠️ บันทึกข้อมูล "${newName}" ในเครื่องแล้ว แต่ยังส่งไป Google Sheet ไม่สำเร็จ (โปรดตรวจสอบเน็ตหรือการ Deploy Apps Script)`, 'error');
       } finally {
         btn.disabled = false;
         btn.innerHTML = oldHtml;
@@ -7655,12 +8274,16 @@
           return p;
         });
 
+        const operatorName = (state.currentUser && state.currentUser.name) ? `${state.currentUser.name} (ตรวจรับ PO)` : 'ตรวจรับจาก PO';
         const newTx = {
-          date: new Date().toISOString(),
+          id: 'TX-' + new Date().toISOString().replace(/[-:T.]/g, '').slice(0, 14) + '-' + Math.floor(Math.random() * 100),
+          timestamp: new Date().toISOString(),
+          date: new Date().toISOString().split('T')[0],
+          category: it.category || '',
           product: it.name,
           type: 'รับเข้า (+)',
           quantity: it.quantity,
-          user: 'ตรวจรับจาก PO',
+          recordedBy: operatorName,
           notes: `[ตรวจรับจาก PO ${po.number}] ซัพพลายเออร์: ${po.supplier}`
         };
         state.transactions.unshift(newTx);
@@ -7688,7 +8311,7 @@
               product: it.name,
               type: 'รับเข้า (+)',
               quantity: it.quantity,
-              user: 'ตรวจรับจาก PO',
+              recordedBy: operatorName,
               notes: `[ตรวจรับจาก PO ${po.number}] ซัพพลายเออร์: ${po.supplier}`
             })
           });
@@ -7815,6 +8438,10 @@
       stockTakeActiveCategory = 'ALL';
       renderStockTakeCategoryChips();
       renderStockTakeList();
+      const auditorEl = document.getElementById('stockTakeAuditorName');
+      if (auditorEl && state.currentUser) {
+        auditorEl.value = state.currentUser.name;
+      }
       document.getElementById('modalStockTake').classList.remove('hidden');
     }
 
@@ -8025,7 +8652,7 @@
     }
 
     async function submitStockTakeBatch() {
-      const auditor = (document.getElementById('stockTakeAuditorName')?.value || 'ผู้จัดการ/บาริสต้า').trim();
+      const auditor = (document.getElementById('stockTakeAuditorName')?.value || (state.currentUser && state.currentUser.name) || 'ผู้จัดการ/บาริสต้า').trim();
       const changedItems = [];
 
       state.products.forEach(p => {
