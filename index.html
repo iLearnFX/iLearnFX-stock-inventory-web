@@ -2504,7 +2504,7 @@
   </div> <!-- /appMainScreen -->
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwmpDZwUZtGJhDJ7Kcwa1Wp_GfVk9poW9iD0L_rWwx_oTkA1UnJ6I_ucCtCvyWc-nULgg/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbz7QWJLTCh8qf0jxTOk9KP1WGMbBUqS89biPBhN_KZ1B5BSCseLowVmgzosxt8nfnWRmw/exec";
     let authSession = null;
 
     // ==========================================
@@ -3387,14 +3387,14 @@
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<span class="animate-spin inline-block mr-1">⏳</span> กำลังตรวจสอบ...';
       try {
-        const json = await sendToGAS({ action: 'login', username, pin });
+        const json = await sendToGAS({ action: 'login', username, pin, includeData: true });
         if (json.status === 'success' && json.user && json.token && json.expiresAt) {
           saveStoredCurrentUser(json.user, json.token, json.expiresAt);
           state.currentUser = sanitizeUser(json.user);
           document.getElementById('loginInputPassword').value = '';
           if (json.mustChangePin) {
             openChangePinModal(true);
-          } else if (await fetchData()) {
+          } else if (await fetchData(false, json.data && Array.isArray(json.data.products) ? json : null)) {
             showMainScreen();
             showAlert(`✓ เข้าสู่ระบบสำเร็จ: ยินดีต้อนรับ ${state.currentUser.name}`, 'success');
             if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
@@ -3783,16 +3783,75 @@
       });
     }
 
+    // A read started before a confirmed write must never repaint an older
+    // balance over the server's acknowledged result.
+    let confirmedStockWriteVersion = 0;
+    let dataReadRequestSequence = 0;
+    let dataReadAppliedSequence = 0;
+    let backgroundRefreshTimer = null;
+    let backgroundRefreshRunning = false;
+    let backgroundRefreshPending = false;
+    let backgroundRefreshPromise = null;
+
+    function scheduleBackgroundRefresh() {
+      backgroundRefreshPending = true;
+      if (backgroundRefreshTimer) clearTimeout(backgroundRefreshTimer);
+      backgroundRefreshTimer = setTimeout(() => {
+        backgroundRefreshTimer = null;
+        if (backgroundRefreshRunning) return;
+        backgroundRefreshRunning = true;
+        backgroundRefreshPromise = (async () => {
+          let refreshed = false;
+          while (backgroundRefreshPending && authSession) {
+            backgroundRefreshPending = false;
+            const version = confirmedStockWriteVersion;
+            refreshed = await fetchData(false, null, true);
+            if (version !== confirmedStockWriteVersion) backgroundRefreshPending = true;
+          }
+          return refreshed;
+        })().catch(err => {
+          console.error('Background stock refresh failed:', err);
+          return false;
+        }).finally(() => {
+          backgroundRefreshRunning = false;
+          backgroundRefreshPromise = null;
+        });
+      }, 500);
+    }
+
     // ดึงข้อมูลล่าสุดจาก Google Apps Script
-    async function fetchData(isManual = false) {
+    async function fetchData(isManual = false, initialResponse = null, background = false) {
       const refreshIcon = document.getElementById('refreshIcon');
       if (!authSession) return false;
-      if (refreshIcon) refreshIcon.classList.add('animate-spin');
+      if (isManual && backgroundRefreshTimer) {
+        clearTimeout(backgroundRefreshTimer);
+        backgroundRefreshTimer = null;
+        backgroundRefreshPending = false;
+      }
+      if (isManual && backgroundRefreshPromise) {
+        if (refreshIcon) refreshIcon.classList.add('animate-spin');
+        try {
+          const refreshed = await backgroundRefreshPromise;
+          if (refreshed) {
+            showAlert('อัปเดตข้อมูลล่าสุดเรียบร้อยแล้ว', 'success');
+            return true;
+          }
+        } finally {
+          if (refreshIcon) refreshIcon.classList.remove('animate-spin');
+        }
+        if (!authSession) return false;
+      }
+      if (refreshIcon && !background) refreshIcon.classList.add('animate-spin');
       try {
         const requestToken = authSession.token;
-        const json = await sendToGAS({ action: 'getData' });
+        const requestVersion = confirmedStockWriteVersion;
+        const requestSequence = ++dataReadRequestSequence;
+        const json = initialResponse || await sendToGAS({ action: 'getData' });
         if (!authSession || authSession.token !== requestToken) return false;
+        if (requestVersion !== confirmedStockWriteVersion) return false;
         if (json.status === 'success') {
+          if (requestSequence < dataReadAppliedSequence) return false;
+          dataReadAppliedSequence = requestSequence;
           const d = json.data || json;
           if (json.user) {
             state.currentUser = sanitizeUser(json.user);
@@ -3833,7 +3892,7 @@
       } catch (err) {
         if (isManual) showAlert('ไม่สามารถดึงข้อมูลได้ โปรดลองอีกครั้ง', 'error');
       } finally {
-        if (refreshIcon) refreshIcon.classList.remove('animate-spin');
+        if (refreshIcon && !background) refreshIcon.classList.remove('animate-spin');
       }
       return false;
     }
@@ -4791,6 +4850,30 @@
       return json.product;
     }
 
+    // A stock-write acknowledgement contains the Sheet's final product and
+    // transaction. Render that confirmed result without a second full-Sheet
+    // read; older deployments without these fields still use fetchData().
+    function applyConfirmedStockWrite(result) {
+      const product = result && result.product;
+      const transaction = result && result.transaction;
+      if (!product || !transaction || !transaction.id || !Number.isFinite(Number(product.currentBalance)) ||
+          !Array.isArray(state.products) || !Array.isArray(state.transactions)) return false;
+      const productIndex = state.products.findIndex(item =>
+        (product.id && item.id && String(item.id) === String(product.id)) || item.name === product.name);
+      if (productIndex < 0) return false;
+      try {
+        state.products[productIndex] = { ...state.products[productIndex], ...product };
+        const transactionIndex = state.transactions.findIndex(item => item.id === transaction.id);
+        if (transactionIndex >= 0) state.transactions[transactionIndex] = transaction;
+        else state.transactions.push(transaction);
+        updateUI();
+        return true;
+      } catch (err) {
+        console.error('Unable to render confirmed stock write:', err);
+        return false;
+      }
+    }
+
     function reviewOperation(title, details, options = {}) {
       return new Promise(resolve => {
         const backdrop = document.createElement('div');
@@ -4962,7 +5045,7 @@
         if (!await reviewOperation('ตรวจสอบก่อนบันทึกรายการ', stockSummary(targetProduct, type, qty, before, after, notes, operatorName))) return;
         btn.disabled = true;
         btn.innerHTML = '<span class="animate-spin inline-block mr-1">⏳</span> กำลังบันทึก...';
-        await sendConfirmedWrite(JSON.stringify([type, targetProduct.name, qty, before, notes]), {
+        const result = await sendConfirmedWrite(JSON.stringify([type, targetProduct.name, qty, before, notes]), {
           action: 'addTransaction',
           date: localDateString(),
           category: String(snapshot.category || targetProduct.category || '').trim() || 'ทั่วไป',
@@ -4971,7 +5054,10 @@
           recordedBy: operatorName,
           notes
         });
-        const refreshed = await fetchData();
+        confirmedStockWriteVersion++;
+        const applied = applyConfirmedStockWrite(result);
+        const refreshed = applied || await fetchData();
+        if (applied) scheduleBackgroundRefresh();
         closeCardActionModal();
         if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
         if (type === 'รับเข้า (+)') AppSoundFX.playStockIn();
@@ -5052,7 +5138,7 @@
           btn.disabled = true;
           btn.innerHTML = '<span class="animate-spin inline-block mr-1">⏳</span> กำลังบันทึกของเสีย...';
         }
-        await sendConfirmedWrite(JSON.stringify(['WASTE', targetProduct.name, qty, before, fullNotes]), {
+        const result = await sendConfirmedWrite(JSON.stringify(['WASTE', targetProduct.name, qty, before, fullNotes]), {
           action: 'addTransaction',
           date: localDateString(),
           category: String(snapshot.category || targetProduct.category || '').trim() || 'ทั่วไป',
@@ -5062,7 +5148,10 @@
           recordedBy: operatorName,
           notes: fullNotes
         });
-        const refreshed = await fetchData();
+        confirmedStockWriteVersion++;
+        const applied = applyConfirmedStockWrite(result);
+        const refreshed = applied || await fetchData();
+        if (applied) scheduleBackgroundRefresh();
         closeCardActionModal();
         if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
         AppSoundFX.playWaste();
@@ -5140,8 +5229,9 @@
         })) return;
         btn.disabled = true;
         btn.textContent = 'กำลังส่งข้อมูลลง Sheet...';
+        let result = null;
         if (isAdmin) {
-          await sendConfirmedWrite(JSON.stringify(['adjust', targetProduct.name, before, newVal, reason]), {
+          result = await sendConfirmedWrite(JSON.stringify(['adjust', targetProduct.name, before, newVal, reason]), {
             action: 'adjustStock', date: localDateString(),
             category: String(snapshot.category || targetProduct.category || '').trim() || 'ทั่วไป',
             product: targetProduct.name, type: 'ปรับยอดสต็อก',
@@ -5155,7 +5245,10 @@
             recordedBy: operatorName
           });
         }
-        const refreshed = await fetchData();
+        if (isAdmin) confirmedStockWriteVersion++;
+        const applied = isAdmin && applyConfirmedStockWrite(result);
+        const refreshed = applied || await fetchData();
+        if (applied) scheduleBackgroundRefresh();
         closeCardActionModal();
         if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
         AppSoundFX.playAdjust();
