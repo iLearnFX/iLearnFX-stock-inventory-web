@@ -222,7 +222,7 @@
         <form onsubmit="executeLogin(event)" class="space-y-3.5">
           <div>
             <label class="block text-xs font-semibold text-slate-600 mb-1">Username (ชื่อผู้ใช้งาน)</label>
-            <input type="text" id="loginInputUsername" placeholder="เช่น admin, barista1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-blue-500 font-medium" required />
+            <input type="text" id="loginInputUsername" placeholder="Username ในชีต Users เช่น aom" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-blue-500 font-medium" required />
           </div>
 
           <div>
@@ -2504,7 +2504,7 @@
   </div> <!-- /appMainScreen -->
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbw3mQBZAb4f8TD2VFcdaT71BTX7RtPHWKoxZgSTlAWu6bWMwbmw9PEY6SoDFU6Yu9VFAQ/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbwmpDZwUZtGJhDJ7Kcwa1Wp_GfVk9poW9iD0L_rWwx_oTkA1UnJ6I_ucCtCvyWc-nULgg/exec";
     let authSession = null;
 
     // ==========================================
@@ -3527,6 +3527,7 @@
       const countBadge = document.getElementById('usersCountBadge');
       if (!container) return;
       const users = state.currentUser && state.currentUser.role === 'Admin' ? (state.users || []) : [];
+      const activeAdminCount = users.filter(user => user.role === 'Admin' && String(user.status).toLowerCase() === 'active').length;
       if (countBadge) countBadge.textContent = `${users.length} คน`;
       const escapeHtml = value => String(value == null ? '' : value).replace(/[&<>"']/g, char => ({
         '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -3557,11 +3558,11 @@
               <button type="button" data-edit-user="${index}" class="px-2.5 py-1.5 bg-slate-50 hover:bg-blue-50 text-blue-700 border border-slate-200 rounded-xl text-xs font-bold active:scale-95 transition shadow-2xs" title="แก้ไข / ตั้ง PIN ใหม่">
                 ✏️ แก้ไข
               </button>
-              ${u.username !== 'admin' ? `
-                <button type="button" data-disable-user="${index}" class="px-2 py-1.5 bg-slate-50 hover:bg-rose-50 text-rose-600 border border-slate-200 rounded-xl text-xs font-bold active:scale-95 transition shadow-2xs" title="ปิดบัญชีพนักงาน">
+              ${!isCurrent && !(isAdmin && !disabled && activeAdminCount <= 1) ? `
+                <button type="button" data-disable-user="${index}" class="px-2 py-1.5 bg-slate-50 hover:bg-rose-50 text-rose-600 border border-slate-200 rounded-xl text-xs font-bold active:scale-95 transition shadow-2xs" title="ปิดบัญชีผู้ใช้">
                   🚫
                 </button>
-              ` : '<span class="text-[10px] font-bold text-amber-600 px-2 py-1 rounded-xl bg-amber-50 border border-amber-200/60">แอดมินหลัก</span>'}
+              ` : ''}
             </div>
           </div>
         `;
@@ -3612,8 +3613,8 @@
 
     async function deleteUserItem(username) {
       if (!state.currentUser || state.currentUser.role !== 'Admin') return;
-      if (username === 'admin') {
-        alert('ไม่สามารถปิดบัญชีผู้ดูแลระบบหลัก (admin) ได้');
+      if (username === state.currentUser.username) {
+        alert('ไม่สามารถปิดบัญชีที่กำลังใช้งานได้');
         return;
       }
       if (!confirm(`ต้องการปิดบัญชี "${username}" ทันทีหรือไม่? ผู้ใช้นี้จะไม่สามารถทำรายการด้วยเซสชันเดิมได้`)) return;
