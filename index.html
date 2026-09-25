@@ -2456,7 +2456,43 @@
   </div> <!-- /appMainScreen -->
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxToULZfnEkaHSYtyzY0_hoMBmSQqacSnlNQxp6FZ6moHqaH4K1fsUpSDa7WJBK5brK/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbz_yQe1o77e-j_VWNtibW1N4Dgs1H5W90f06MYpkIML_ruIiWLY3AHOXLgi1xlYJLyeMA/exec";
+
+    // ==========================================
+    // BACKEND API CLIENT (Safe Google Apps Script Communication)
+    // ==========================================
+    async function sendToGAS(payload) {
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          mode: 'cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+        const text = await res.text();
+        try {
+          return JSON.parse(text);
+        } catch (pe) {
+          console.warn('GAS returned non-JSON:', text);
+          if (text.includes('Authorization') || text.includes('สิทธิ์') || text.includes('accounts.google.com')) {
+            return {
+              status: 'error',
+              message: 'Google Apps Script ต้องการให้กดยืนยันสิทธิ์ (Authorization Required) หรือ Deploy ตั้งค่า Who has access เป็น Anyone'
+            };
+          }
+          return {
+            status: 'error',
+            message: 'Google Apps Script ตอบกลับข้อมูลไม่ถูกต้อง (โปรดตรวจสอบการ Deploy New Version)'
+          };
+        }
+      } catch (err) {
+        console.error('sendToGAS error:', err);
+        return {
+          status: 'error',
+          message: err.message || 'ไม่สามารถติดต่อ Google Apps Script ได้ (โปรดตรวจสอบเน็ตหรือการ Deploy)'
+        };
+      }
+    }
 
     // ==========================================
     // AUDIO & SOUND FX ENGINE (Web Audio API Synthesizer - 0ms Latency, Full Offline)
@@ -3237,12 +3273,7 @@
 
       // 2. ถ้าในเครื่องไม่พบ ลองตรวจสอบผ่าน Google Apps Script API
       try {
-        const res = await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action: 'login', username: username, pin: pin, password: pin })
-        });
-        const json = await res.json();
+        const json = await sendToGAS({ action: 'login', username: username, pin: pin, password: pin });
         if (json.status === 'success' && json.user) {
           state.currentUser = json.user;
           saveStoredCurrentUser(state.currentUser);
@@ -3396,11 +3427,7 @@
       showAlert(`✓ บันทึกข้อมูลพนักงาน "${name}" เรียบร้อยแล้ว`, 'success');
 
       try {
-        await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action: 'saveUser', ...newUser })
-        });
+        await sendToGAS({ action: 'saveUser', ...newUser });
       } catch (e) {
         console.warn('Backend sync saveUser error:', e);
       }
@@ -3419,11 +3446,7 @@
       showAlert('ลบพนักงานเรียบร้อยแล้ว', 'info');
 
       try {
-        await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action: 'deleteUser', username: username })
-        });
+        await sendToGAS({ action: 'deleteUser', username: username });
       } catch (e) {
         console.warn('Backend sync deleteUser error:', e);
       }
@@ -3613,14 +3636,25 @@
       const refreshIcon = document.getElementById('refreshIcon');
       refreshIcon.classList.add('animate-spin');
       try {
-        const res = await fetch(API_URL);
-        const json = await res.json();
+        const res = await fetch(API_URL, { mode: 'cors' });
+        const text = await res.text();
+        let json;
+        try {
+          json = JSON.parse(text);
+        } catch (pe) {
+          console.warn('fetchData returned non-JSON:', text);
+          if (isManual) {
+            showAlert('ไม่สามารถอ่านข้อมูลจาก Google Apps Script ได้ (อาจต้อง Deploy New Version หรือตรวจสอบสิทธิ์)', 'error');
+          }
+          return;
+        }
         if (json.status === 'success') {
-          const serverCats = (json.data.categories || []).map(c => typeof c === 'string' ? c : c.name);
+          const d = json.data || json;
+          const serverCats = (d.categories || []).map(c => typeof c === 'string' ? c : c.name);
           const customCats = getStoredCustomCategories();
           const allCatsSet = new Set([...serverCats, ...customCats]);
 
-          (json.data.products || []).forEach(p => {
+          (d.products || []).forEach(p => {
             if (p.category) allCatsSet.add(p.category);
           });
 
@@ -3629,17 +3663,17 @@
             isCustom: customCats.includes(name) && !serverCats.includes(name)
           }));
 
-          if (json.data.suppliers && json.data.suppliers.length > 0) {
-            saveSuppliers(json.data.suppliers);
+          if (d.suppliers && d.suppliers.length > 0) {
+            saveSuppliers(d.suppliers);
           }
 
-          if (json.data.users && json.data.users.length > 0) {
-            state.users = json.data.users;
-            saveStoredUsers(json.data.users);
+          if (d.users && d.users.length > 0) {
+            state.users = d.users;
+            saveStoredUsers(d.users);
             renderQuickUserGrid();
           }
 
-          state.products = (json.data.products || []).map(p => {
+          state.products = (d.products || []).map(p => {
             let dp = p.packSize || '';
             if (!dp) {
               if (p.name.includes('HouseBlend') || p.name.includes('กาแฟ')) dp = '500 กรัม';
@@ -3658,7 +3692,7 @@
               supplier: p.supplier || (p.name.includes('กาแฟ') ? 'โรงคั่วกาแฟ Ground Roaster' : (p.name.includes('แก้ว') || p.name.includes('ฝา') ? 'ศิริมงคลพาณิชย์' : 'แม็คโคร (CP Axtra)'))
             };
           });
-          state.transactions = json.data.transactions || [];
+          state.transactions = (d && d.transactions) || [];
           state.cart = getStoredCart();
 
           localStorage.setItem('stock_app_cache_v4', JSON.stringify(state));
@@ -4602,13 +4636,7 @@
           notes: notes
         };
 
-        const res = await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
-        });
-
-        const json = await res.json();
+        const json = await sendToGAS(payload);
         if (json.status === 'success') {
           showAlert(`✓ บันทึก ${type} ${qty} ${activeModalProduct.unit} "${activeModalProduct.name}" สำเร็จ (ซิงค์ลง Google Sheet แล้ว)`, 'success');
           fetchData();
@@ -4617,7 +4645,7 @@
         }
       } catch (err) {
         console.error('Fetch error:', err);
-        showAlert(`⚠️ บันทึกในเครื่องแล้ว แต่ส่งข้อมูลไป Google Sheet ไม่สำเร็จ (โปรดตรวจสอบเน็ตหรือการ Deploy New Version บน Apps Script)`, 'error');
+        showAlert(`⚠️ บันทึกในเครื่องแล้ว แต่ส่งข้อมูลไป Google Sheet ไม่สำเร็จ (${err.message || 'เน็ตเวิร์ก/สิทธิ์ขัดข้อง'}) (โปรดตรวจสอบเน็ตหรือการ Deploy New Version บน Apps Script)`, 'error');
       } finally {
         btn.disabled = false;
         btn.innerHTML = oldHtml;
@@ -4670,11 +4698,8 @@
       showAlert(`✓ ลบสินค้า "${prodName}" ออกจากระบบเรียบร้อยแล้ว`, 'info');
 
       try {
-        await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action: 'deleteProduct', name: prodName, product: prodName, id: origProd.id, recordedBy: operatorName })
-        });
+        await sendToGAS({ action: 'deleteProduct', name: prodName, product: prodName, id: origProd.id, recordedBy: operatorName });
+        fetchData();
       } catch (err) {
         console.warn('Backend sync deleteProduct error:', err);
       }
@@ -4752,13 +4777,7 @@
           notes: fullNotes
         };
 
-        const res = await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
-        });
-
-        const json = await res.json();
+        const json = await sendToGAS(payload);
         if (json.status === 'success') {
           showAlert(`✓ บันทึกของเสีย ${qty} ${activeModalProduct.unit} "${activeModalProduct.name}" (${reason}) เรียบร้อย (ลง Sheet แล้ว)`, 'success');
           fetchData();
@@ -4878,13 +4897,7 @@
           notes: auditLogNote
         };
 
-        const res = await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
-        });
-
-        const json = await res.json();
+        const json = await sendToGAS(payload);
         if (json.status === 'success') {
           showAlert(`✓ บันทึก Log ปรับยอด "${activeModalProduct.name}" สำเร็จ (ลง Sheet แล้ว)`, 'success');
           fetchData();
@@ -5201,12 +5214,7 @@
           product: productName,
           imageUrl: imageUrl
         };
-        const res = await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
-        });
-        const json = await res.json();
+        const json = await sendToGAS(payload);
         if (json.status === 'success') {
           const finalUrl = json.imageUrl || imageUrl;
           state.products = state.products.map(p => p.name === productName ? { ...p, imageUrl: finalUrl } : p);
@@ -5934,11 +5942,7 @@
       state.categories.push({ name: catName, isCustom: true });
 
       try {
-        fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action: 'addCategory', category: catName, color: currentSelectedHex })
-        }).catch(() => {});
+        sendToGAS({ action: 'addCategory', category: catName, color: currentSelectedHex });
       } catch (err) {}
 
       updateUI();
@@ -6455,13 +6459,7 @@
           recordedBy: operatorName
         };
 
-        const res = await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
-        });
-
-        const json = await res.json();
+        const json = await sendToGAS(payload);
         if (json.status === 'success') {
           if (json.product && json.product.imageUrl) {
             state.products = state.products.map(p => {
@@ -6712,13 +6710,7 @@
           recordedBy: operatorName
         };
 
-        const res = await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
-        });
-
-        const json = await res.json();
+        const json = await sendToGAS(payload);
         if (json.status === 'success') {
           if (json.imageUrl) {
             state.products = state.products.map(p => {
@@ -6733,11 +6725,7 @@
         } else {
           // Fallback เผื่อ Google Apps Script มี action updateImage
           try {
-            await fetch(API_URL, {
-              method: 'POST',
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-              body: JSON.stringify({ action: 'updateImage', product: origName, newProduct: newName, imageUrl: newImageUrl, recordedBy: operatorName })
-            });
+            await sendToGAS({ action: 'updateImage', product: origName, newProduct: newName, imageUrl: newImageUrl, recordedBy: operatorName });
           } catch (err2) {}
           showAlert(`บันทึกข้อมูล "${newName}" เรียบร้อยแล้ว`, 'success');
         }
@@ -7118,11 +7106,7 @@
       showAlert(`ลบซัพพลายเออร์ "${sup.name}" สำเร็จ`, 'success');
 
       try {
-        await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action: 'deleteSupplier', id: supId, name: sup.name })
-        });
+        await sendToGAS({ action: 'deleteSupplier', id: supId, name: sup.name });
       } catch (err) {}
     }
 
