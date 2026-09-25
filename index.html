@@ -3369,12 +3369,40 @@
       // No-op: login is a dedicated screen, not a modal
     }
 
+    function showLoginLoading() {
+      const overlay = document.createElement('div');
+      overlay.id = 'loginLoadingOverlay';
+      overlay.className = 'fixed inset-0 z-[140] bg-slate-950/65 backdrop-blur-sm flex items-center justify-center p-4';
+      overlay.setAttribute('role', 'status');
+      overlay.setAttribute('aria-live', 'polite');
+      const panel = document.createElement('div');
+      panel.className = 'w-full max-w-sm rounded-3xl bg-white p-6 text-center shadow-2xl';
+      const spinner = document.createElement('div');
+      spinner.className = 'mx-auto h-10 w-10 rounded-full border-4 border-blue-100 border-t-blue-600 animate-spin';
+      spinner.setAttribute('aria-hidden', 'true');
+      const title = document.createElement('p');
+      title.className = 'mt-4 text-base font-bold text-slate-900';
+      title.textContent = 'กำลังเข้าสู่ระบบและโหลดข้อมูลล่าสุด…';
+      const detail = document.createElement('p');
+      detail.className = 'mt-1 text-sm text-slate-500';
+      detail.textContent = 'กรุณารอสักครู่';
+      panel.append(spinner, title, detail);
+      overlay.appendChild(panel);
+      document.body.appendChild(overlay);
+      return overlay;
+    }
+
+    function hideLoginLoading(overlay) {
+      if (overlay) overlay.remove();
+    }
+
     async function executeLogin(e) {
       if (e) e.preventDefault();
       const username = document.getElementById('loginInputUsername').value.trim();
       const pin = document.getElementById('loginInputPassword').value.trim();
       const errBox = document.getElementById('loginErrorMsg');
       const submitBtn = document.getElementById('btnLoginSubmit');
+      if (submitBtn.disabled) return;
       errBox.className = 'hidden text-xs text-rose-600 font-semibold bg-rose-50 border border-rose-200 p-2.5 rounded-xl text-center';
 
       if (!username || !pin) {
@@ -3386,6 +3414,7 @@
       const oldBtnHtml = submitBtn.innerHTML;
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<span class="animate-spin inline-block mr-1">⏳</span> กำลังตรวจสอบ...';
+      const loadingOverlay = showLoginLoading();
       try {
         const json = await sendToGAS({ action: 'login', username, pin, includeData: true });
         if (json.status === 'success' && json.user && json.token && json.expiresAt) {
@@ -3411,6 +3440,7 @@
         errBox.textContent = 'ไม่สามารถตรวจสอบบัญชีกับ Google Sheet ได้ กรุณาตรวจสอบการเชื่อมต่อ';
         errBox.classList.remove('hidden');
       } finally {
+        hideLoginLoading(loadingOverlay);
         submitBtn.disabled = false;
         submitBtn.innerHTML = oldBtnHtml;
       }
@@ -4517,6 +4547,11 @@
 
     // เปิด Quick Action Modal เมื่อคลิกที่การ์ด
     function openCardActionModal(productName) {
+      const pending = showQuickActionLoading.active;
+      if (pending && pending.phase !== 'saving') {
+        pending.cancelled = true;
+        hideQuickActionLoading(pending);
+      }
       const prod = state.products.find(p => p.name === productName);
       if (!prod) {
         closeCardActionModal();
@@ -4603,6 +4638,11 @@
     }
 
     function closeCardActionModal() {
+      const pending = showQuickActionLoading.active;
+      if (pending && pending.phase !== 'saving') {
+        pending.cancelled = true;
+        hideQuickActionLoading(pending);
+      }
       document.getElementById('modalCardAction').classList.add('hidden');
       activeModalProduct = null;
     }
@@ -4840,6 +4880,76 @@
       return 'บันทึกใน Google Sheet แล้ว แต่โหลดข้อมูลล่าสุดไม่สำเร็จ กรุณากดรีเฟรชก่อนทำรายการต่อ';
     }
 
+    // Show an immediate, visible response while Apps Script checks the latest
+    // balance. The confirmation itself is shown only after that read succeeds.
+    function showQuickActionLoading(button, phase = 'checking', existing = null) {
+      if (!existing && button.disabled) return null;
+      const handle = existing || {
+        button, originalHtml: button.innerHTML, cancelled: false,
+        productId: activeModalProduct?.id, productName: activeModalProduct?.name,
+        action: activeModalAction
+      };
+      if (existing && (handle.cancelled || showQuickActionLoading.active !== handle)) return null;
+      if (!existing) showQuickActionLoading.active = handle;
+      if (handle.overlay) handle.overlay.remove();
+      handle.phase = phase;
+      button.disabled = true;
+      button.innerHTML = phase === 'checking'
+        ? '<span class="animate-spin inline-block mr-1">⏳</span> กำลังตรวจยอดล่าสุด...'
+        : '<span class="animate-spin inline-block mr-1">⏳</span> กำลังบันทึกลง Sheet...';
+
+      const overlay = document.createElement('div');
+      overlay.id = 'quickActionLoadingOverlay';
+      overlay.className = 'fixed inset-0 z-[140] bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4';
+      overlay.setAttribute('role', 'dialog');
+      overlay.setAttribute('aria-modal', 'true');
+      overlay.setAttribute('aria-label', phase === 'checking' ? 'กำลังตรวจยอดล่าสุด' : 'กำลังบันทึกข้อมูล');
+      overlay.setAttribute('tabindex', '-1');
+      const panel = document.createElement('div');
+      panel.className = 'w-full max-w-sm rounded-3xl bg-white p-6 text-center shadow-2xl border border-slate-200';
+      const spinner = document.createElement('div');
+      spinner.className = 'mx-auto h-10 w-10 rounded-full border-4 border-blue-100 border-t-blue-600 animate-spin';
+      spinner.setAttribute('aria-hidden', 'true');
+      const title = document.createElement('p');
+      title.className = 'mt-4 text-base font-bold text-slate-900';
+      title.setAttribute('role', 'status');
+      title.setAttribute('aria-live', 'polite');
+      title.textContent = phase === 'checking' ? 'กำลังตรวจยอดล่าสุดจาก Sheet…' : 'กำลังบันทึกลง Google Sheet…';
+      const detail = document.createElement('p');
+      detail.className = 'mt-1 text-sm text-slate-500';
+      detail.textContent = phase === 'checking'
+        ? 'สรุปรายการจะแสดงเมื่อได้ยอดจริงจากระบบ'
+        : 'รอการยืนยันก่อนเปลี่ยนยอดสต็อก';
+      panel.append(spinner, title, detail);
+      if (phase === 'checking') {
+        const cancel = document.createElement('button');
+        cancel.type = 'button';
+        cancel.className = 'mt-5 rounded-xl border border-slate-300 px-5 py-2 text-sm font-bold text-slate-700';
+        cancel.textContent = 'ยกเลิก';
+        cancel.onclick = () => {
+          handle.cancelled = true;
+          hideQuickActionLoading(handle);
+        };
+        panel.appendChild(cancel);
+      }
+      overlay.appendChild(panel);
+      document.body.appendChild(overlay);
+      handle.overlay = overlay;
+      overlay.focus();
+      return handle;
+    }
+
+    function hideQuickActionLoading(handle, finished = true) {
+      if (!handle || showQuickActionLoading.active !== handle) return;
+      if (handle.overlay) handle.overlay.remove();
+      handle.overlay = null;
+      if (finished) {
+        handle.button.disabled = false;
+        handle.button.innerHTML = handle.originalHtml;
+        showQuickActionLoading.active = null;
+      }
+    }
+
     async function getFreshProduct(productName) {
       const json = await sendToGAS({ action: 'getProductSnapshot', product: productName });
       if (json.status !== 'success' || !json.product) {
@@ -4979,7 +5089,7 @@
       ];
     }
 
-    async function requestRecountBeforeIssue(product, snapshot, type, qty, notes, operatorName) {
+    async function requestRecountBeforeIssue(product, snapshot, type, qty, notes, operatorName, loading = null) {
       const observed = Number(snapshot.currentBalance);
       const answer = await reviewOperation('ตรวจนับยอดจริงก่อนเบิก', stockSummary(product, type, qty, observed, 'รอปรับยอด', notes, operatorName), {
         warning: `ยอดใน Sheet มี ${observed} ${product.unit || ''} ซึ่งไม่พอสำหรับ ${qty} กรุณาตรวจนับสินค้าจริงซ้ำก่อนดำเนินการ หากส่งคำขอแล้ว รายการเบิกจะยังรอ Admin อนุมัติและยอดสต็อกจะยังไม่เปลี่ยน`,
@@ -4987,6 +5097,7 @@
         confirmText: 'ส่งคำขอปรับยอดและเบิก'
       });
       if (!answer) return false;
+      if (loading && !showQuickActionLoading(loading.button, 'saving', loading)) return false;
       const countedBalance = answer.count;
       const key = JSON.stringify(['linked', product.name, observed, countedBalance, type, qty, notes]);
       const result = await sendConfirmedWrite(key, {
@@ -5032,19 +5143,23 @@
         return;
       }
       const btn = document.getElementById('btnSubmitQuick');
-      const oldHtml = btn.innerHTML;
+      const loading = showQuickActionLoading(btn);
+      if (!loading) return;
       try {
         const snapshot = await getFreshProduct(targetProduct.name);
+        if (loading.cancelled || showQuickActionLoading.active !== loading ||
+            !activeModalProduct || activeModalProduct.name !== targetProduct.name ||
+            activeModalAction !== loading.action) return;
         const before = Number(snapshot.currentBalance);
+        hideQuickActionLoading(loading, false);
         if (type === 'เบิกออก (-)' && before < qty) {
-          const outcome = await requestRecountBeforeIssue(targetProduct, snapshot, type, qty, notes, operatorName);
+          const outcome = await requestRecountBeforeIssue(targetProduct, snapshot, type, qty, notes, operatorName, loading);
           if (outcome === 'pending' || outcome === 'applied') closeCardActionModal();
           return;
         }
         const after = before + (type === 'รับเข้า (+)' ? qty : -qty);
         if (!await reviewOperation('ตรวจสอบก่อนบันทึกรายการ', stockSummary(targetProduct, type, qty, before, after, notes, operatorName))) return;
-        btn.disabled = true;
-        btn.innerHTML = '<span class="animate-spin inline-block mr-1">⏳</span> กำลังบันทึก...';
+        if (!showQuickActionLoading(btn, 'saving', loading)) return;
         const result = await sendConfirmedWrite(JSON.stringify([type, targetProduct.name, qty, before, notes]), {
           action: 'addTransaction',
           date: localDateString(),
@@ -5064,10 +5179,11 @@
         else AppSoundFX.playStockOut();
         showAlert(confirmedWriteMessage(refreshed, `✓ บันทึก ${type} ${qty} ${targetProduct.unit || ''} "${targetProduct.name}" ลง Google Sheet แล้ว`), refreshed ? 'success' : 'error');
       } catch (err) {
-        showAlert(`⚠️ ${writeErrorMessage(err)} — แบบฟอร์มยังอยู่`, 'error');
+        if (!loading.cancelled && showQuickActionLoading.active === loading) {
+          showAlert(`⚠️ ${writeErrorMessage(err)} — แบบฟอร์มยังอยู่`, 'error');
+        }
       } finally {
-        btn.disabled = false;
-        btn.innerHTML = oldHtml;
+        hideQuickActionLoading(loading);
       }
     }
 
@@ -5124,20 +5240,22 @@
 
       const fullNotes = notes ? `[${reason}] ${notes}` : `[${reason}]`;
       const btn = document.getElementById('btnSubmitWaste');
-      const oldHtml = btn ? btn.innerHTML : '';
+      const loading = showQuickActionLoading(btn);
+      if (!loading) return;
       try {
         const snapshot = await getFreshProduct(targetProduct.name);
+        if (loading.cancelled || showQuickActionLoading.active !== loading ||
+            !activeModalProduct || activeModalProduct.name !== targetProduct.name ||
+            activeModalAction !== loading.action) return;
         const before = Number(snapshot.currentBalance);
+        hideQuickActionLoading(loading, false);
         if (before < qty) {
-          const outcome = await requestRecountBeforeIssue(targetProduct, snapshot, 'ของเสีย (x)', qty, fullNotes, operatorName);
+          const outcome = await requestRecountBeforeIssue(targetProduct, snapshot, 'ของเสีย (x)', qty, fullNotes, operatorName, loading);
           if (outcome === 'pending' || outcome === 'applied') closeCardActionModal();
           return;
         }
         if (!await reviewOperation('ตรวจสอบก่อนตัดของเสีย', stockSummary(targetProduct, 'ของเสีย (x)', qty, before, before - qty, fullNotes, operatorName))) return;
-        if (btn) {
-          btn.disabled = true;
-          btn.innerHTML = '<span class="animate-spin inline-block mr-1">⏳</span> กำลังบันทึกของเสีย...';
-        }
+        if (!showQuickActionLoading(btn, 'saving', loading)) return;
         const result = await sendConfirmedWrite(JSON.stringify(['WASTE', targetProduct.name, qty, before, fullNotes]), {
           action: 'addTransaction',
           date: localDateString(),
@@ -5157,12 +5275,11 @@
         AppSoundFX.playWaste();
         showAlert(confirmedWriteMessage(refreshed, `✓ บันทึกของเสีย ${qty} ${targetProduct.unit || ''} "${targetProduct.name}" ลง Google Sheet แล้ว`), refreshed ? 'success' : 'error');
       } catch (err) {
-        showAlert(`⚠️ ${writeErrorMessage(err)} — แบบฟอร์มยังอยู่`, 'error');
-      } finally {
-        if (btn) {
-          btn.disabled = false;
-          btn.innerHTML = oldHtml;
+        if (!loading.cancelled && showQuickActionLoading.active === loading) {
+          showAlert(`⚠️ ${writeErrorMessage(err)} — แบบฟอร์มยังอยู่`, 'error');
         }
+      } finally {
+        hideQuickActionLoading(loading);
       }
     }
 
@@ -5217,18 +5334,22 @@
       }
 
       const btn = document.getElementById('btnSubmitAdj');
-      const oldHtml = btn.innerHTML;
+      const loading = showQuickActionLoading(btn);
+      if (!loading) return;
       try {
         const snapshot = await getFreshProduct(targetProduct.name);
+        if (loading.cancelled || showQuickActionLoading.active !== loading ||
+            !activeModalProduct || activeModalProduct.name !== targetProduct.name ||
+            activeModalAction !== loading.action) return;
         const before = Number(snapshot.currentBalance);
+        hideQuickActionLoading(loading, false);
         const isAdmin = state.currentUser?.role === 'Admin';
         const type = isAdmin ? 'ปรับยอดสต็อก' : 'คำขอปรับยอด (รอ Admin)';
         if (!await reviewOperation('ตรวจสอบยอดที่นับได้', stockSummary(targetProduct, type, Math.abs(newVal - before), before, isAdmin ? newVal : `${newVal} (รออนุมัติ)`, reason, operatorName), {
           warning: isAdmin ? '' : 'การส่งคำขอจะยังไม่แก้ยอดสต็อก Admin ต้องอนุมัติก่อน',
           confirmText: isAdmin ? 'ยืนยันปรับยอด' : 'ส่งคำขอให้ Admin'
         })) return;
-        btn.disabled = true;
-        btn.textContent = 'กำลังส่งข้อมูลลง Sheet...';
+        if (!showQuickActionLoading(btn, 'saving', loading)) return;
         let result = null;
         if (isAdmin) {
           result = await sendConfirmedWrite(JSON.stringify(['adjust', targetProduct.name, before, newVal, reason]), {
@@ -5254,10 +5375,11 @@
         AppSoundFX.playAdjust();
         showAlert(confirmedWriteMessage(refreshed, isAdmin ? `✓ ปรับยอด "${targetProduct.name}" ลง Sheet แล้ว` : `ส่งคำขอปรับยอด "${targetProduct.name}" ให้ Admin แล้ว ยอดยังไม่เปลี่ยน`), refreshed ? (isAdmin ? 'success' : 'info') : 'error');
       } catch (err) {
-        showAlert(`⚠️ ${writeErrorMessage(err)} — แบบฟอร์มยังอยู่`, 'error');
+        if (!loading.cancelled && showQuickActionLoading.active === loading) {
+          showAlert(`⚠️ ${writeErrorMessage(err)} — แบบฟอร์มยังอยู่`, 'error');
+        }
       } finally {
-        btn.disabled = false;
-        btn.innerHTML = oldHtml;
+        hideQuickActionLoading(loading);
       }
     }
 
