@@ -3558,13 +3558,17 @@
             setWorkspaceDataStatus('loading');
             showMainScreen();
             hideLoginLoading(loadingOverlay);
-            showAlert(`✓ เข้าสู่ระบบสำเร็จ: ยินดีต้อนรับ ${state.currentUser.name}`, 'success');
-            if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
-            AppSoundFX.playSuccess();
-            // Authentication is complete. Keep the shell accessible while a
-            // separate authorized read prepares the stock workspace.
+            // Start the required read before optional welcome effects. An
+            // unavailable sound or vibration API must not strand the shell.
             fetchData(false, null, false, { signal: requestController.signal })
               .catch(err => console.error('Initial stock read failed:', err));
+            try {
+              showAlert(`✓ เข้าสู่ระบบสำเร็จ: ยินดีต้อนรับ ${state.currentUser.name}`, 'success');
+              if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
+              AppSoundFX.playStockIn();
+            } catch (_) {
+              console.warn('Login welcome effects unavailable; stock loading continues');
+            }
           }
         } else {
           errBox.textContent = json.message || 'Username หรือ PIN ไม่ถูกต้อง';
