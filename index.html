@@ -340,7 +340,7 @@
     </div>
 
     <!-- Navigation Tabs Container พร้อม Scroll Affordance (Gradient Fades + Chevrons + iOS Scroll Track) -->
-    <div class="relative max-w-7xl mx-auto border-t border-white/15">
+    <div id="workspaceNavigation" class="relative max-w-7xl mx-auto border-t border-white/15">
       
       <!-- เงาเฟดขอบซ้าย + ปุ่มเลื่อนซ้าย (แสดงเมื่อมีการเลื่อนไปทางขวา) -->
       <div id="navFadeLeft" class="hidden absolute left-0 top-0 bottom-0 z-20 flex items-center pl-1.5 pr-6 bg-gradient-to-r from-blue-600 via-blue-600/90 to-transparent pointer-events-none transition-opacity duration-200">
@@ -392,7 +392,14 @@
   </header>
 
   <!-- Main Container -->
-  <main class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
+  <section id="workspaceDataStatus" role="status" aria-live="polite" class="max-w-7xl mx-auto p-4 sm:p-6">
+    <div class="rounded-2xl border border-blue-200 bg-white p-5 shadow-sm">
+      <p id="workspaceDataMessage" class="font-semibold text-slate-800">กำลังโหลดข้อมูลล่าสุดจาก Google Sheet…</p>
+      <p class="mt-2 text-sm text-slate-500">เริ่มบันทึกสต็อกได้เมื่อโหลดข้อมูลสำเร็จ</p>
+      <button id="workspaceDataRetry" type="button" onclick="fetchData(true)" class="mt-4 rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white">ลองโหลดข้อมูลอีกครั้ง</button>
+    </div>
+  </section>
+  <main id="workspaceContent" hidden inert class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
     
     <!-- แจ้งเตือนสถานะ Alert Box -->
     <div id="alertBox" class="hidden p-3 rounded-xl text-xs flex items-center justify-between shadow-sm transition">
@@ -2529,6 +2536,9 @@
       const publicAction = action === 'login';
       const readAction = action === 'getData' || action === 'getProductSnapshot';
       const body = { ...payload };
+      if (!publicAction && !readAction && action !== 'logout' && action !== 'changePin' && state.dataReady === false) {
+        return { status: 'error', code: 'DATA_NOT_READY', message: 'กรุณาโหลดข้อมูลล่าสุดจาก Google Sheet ให้สำเร็จก่อนทำรายการ' };
+      }
       if (!publicAction) {
         const token = authSession && authSession.token;
         if (!token) return { status: 'error', code: 'AUTH_REQUIRED', message: 'กรุณาเข้าสู่ระบบก่อนทำรายการ' };
@@ -2614,6 +2624,11 @@
           } else if (json.code === 'PIN_CHANGE_REQUIRED') {
             openChangePinModal(true);
           }
+        }
+        // Invalidate every read that started before an acknowledged mutation,
+        // including PO receipt, approvals, stocktake, and master-data edits.
+        if (!publicAction && !readAction && action !== 'logout' && action !== 'changePin' && json.status === 'success') {
+          confirmedStockWriteVersion++;
         }
         return json;
       } catch (err) {
@@ -3307,6 +3322,7 @@
         localStorage.removeItem('stock_app_users_v1');
         localStorage.removeItem('stock_app_current_user_v1');
       } catch (e) {}
+      setWorkspaceDataStatus('idle');
       state.currentUser = null;
       state.users = [];
       state.products = [];
@@ -3318,6 +3334,8 @@
     authSession = getStoredSession();
 
     let state = {
+      dataReady: false,
+      dataStatus: 'idle',
       categories: [],
       units: getStoredUnits(),
       products: [],
@@ -3339,6 +3357,25 @@
       purchaseOrders: [], // โหลดรายการจริงจาก Google Sheet หลังตรวจเซสชัน
       stockTakeState: {} // ชั่วคราวสำหรับโหมดตรวจนับสต็อกจริง
     };
+
+    function setWorkspaceDataStatus(status, message = '') {
+      state.dataReady = status === 'ready';
+      state.dataStatus = status;
+      const content = document.getElementById('workspaceContent');
+      const navigation = document.getElementById('workspaceNavigation');
+      const banner = document.getElementById('workspaceDataStatus');
+      const text = document.getElementById('workspaceDataMessage');
+      const retry = document.getElementById('workspaceDataRetry');
+      const refresh = document.getElementById('refreshBtn');
+      if (content) { content.inert = !state.dataReady; content.hidden = !state.dataReady; }
+      if (navigation) navigation.inert = !state.dataReady;
+      if (banner) banner.hidden = state.dataReady;
+      if (text) text.textContent = status === 'error'
+        ? (message || 'โหลดข้อมูลล่าสุดจาก Google Sheet ไม่สำเร็จ กรุณาลองใหม่')
+        : 'กำลังโหลดข้อมูลล่าสุดจาก Google Sheet…';
+      if (retry) { retry.hidden = status !== 'error'; retry.disabled = status !== 'error'; }
+      if (refresh) refresh.disabled = status === 'loading';
+    }
 
     function updateCurrentUserUI() {
       const nameEl = document.getElementById('headerUserName');
@@ -3461,7 +3498,7 @@
       const title = document.createElement('p');
       title.id = 'loginLoadingTitle';
       title.className = 'mt-4 text-base font-bold text-slate-900';
-      title.textContent = 'กำลังเข้าสู่ระบบและโหลดข้อมูลล่าสุด…';
+      title.textContent = 'กำลังตรวจสอบบัญชีผู้ใช้…';
       const detail = document.createElement('p');
       detail.className = 'mt-1 text-sm text-slate-500';
       detail.textContent = 'กรุณารอสักครู่';
@@ -3508,14 +3545,8 @@
       const requestController = new AbortController();
       const loadingOverlay = showLoginLoading(() => requestController.abort());
       try {
-        let json = await sendToGAS({ action: 'login', username, pin, includeData: true },
+        const json = await sendToGAS({ action: 'login', username, pin, includeData: false },
           { signal: requestController.signal });
-        // If Google returns a non-JSON page only for the larger bundled
-        // login reply, try once with a small login reply and load data next.
-        if (json.code === 'INVALID_RESPONSE' && !requestController.signal.aborted) {
-          json = await sendToGAS({ action: 'login', username, pin, includeData: false },
-            { signal: requestController.signal });
-        }
         if (requestController.signal.aborted || json.code === 'REQUEST_CANCELLED') return;
         if (json.status === 'success' && json.user && json.token && json.expiresAt) {
           saveStoredCurrentUser(json.user, json.token, json.expiresAt);
@@ -3524,24 +3555,16 @@
           if (json.mustChangePin) {
             openChangePinModal(true);
           } else {
-            let dataError = null;
-            const loaded = await fetchData(false, json.data && Array.isArray(json.data.products) ? json : null,
-              false, { signal: requestController.signal, onError: error => { dataError = error; } });
-            if (requestController.signal.aborted) {
-              clearClientSession();
-              return;
-            }
-            if (loaded) {
-              showMainScreen();
-              showAlert(`✓ เข้าสู่ระบบสำเร็จ: ยินดีต้อนรับ ${state.currentUser.name}`, 'success');
-              if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
-              AppSoundFX.playSuccess();
-            } else {
-              clearClientSession();
-              errBox.textContent = dataError?.message ||
-                'เข้าสู่ระบบแล้ว แต่ Google Sheet โหลดข้อมูลนานเกินไปหรือไม่สำเร็จ กรุณาตรวจสอบแล้วลองใหม่';
-              errBox.classList.remove('hidden');
-            }
+            setWorkspaceDataStatus('loading');
+            showMainScreen();
+            hideLoginLoading(loadingOverlay);
+            showAlert(`✓ เข้าสู่ระบบสำเร็จ: ยินดีต้อนรับ ${state.currentUser.name}`, 'success');
+            if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
+            AppSoundFX.playSuccess();
+            // Authentication is complete. Keep the shell accessible while a
+            // separate authorized read prepares the stock workspace.
+            fetchData(false, null, false, { signal: requestController.signal })
+              .catch(err => console.error('Initial stock read failed:', err));
           }
         } else {
           errBox.textContent = json.message || 'Username หรือ PIN ไม่ถูกต้อง';
@@ -3907,8 +3930,8 @@
     const initialDateEl = document.getElementById('inputDate');
     if (initialDateEl) initialDateEl.value = new Date().toISOString().split('T')[0];
 
-    // A cached user or balance is never sufficient to enter the app. Validate
-    // the server session and fetch live Sheet data before revealing the workspace.
+    // A restored session is validated by a live read before opening the app.
+    // Manual login opens the shell after authentication and gates stock on data.
     try { localStorage.removeItem('stock_app_cache_v4'); } catch (e) {}
     state.cart = getStoredCart();
     showLoginScreen();
@@ -3994,6 +4017,7 @@
         if (!authSession) return false;
       }
       if (refreshIcon && !background) refreshIcon.classList.add('animate-spin');
+      if (!background || !state.dataReady) setWorkspaceDataStatus('loading');
       try {
         const requestToken = authSession.token;
         const requestVersion = confirmedStockWriteVersion;
@@ -4001,11 +4025,22 @@
         const json = initialResponse || await sendToGAS({ action: 'getData' }, requestOptions);
         if (requestOptions.signal && requestOptions.signal.aborted) return false;
         if (!authSession || authSession.token !== requestToken) return false;
-        if (requestVersion !== confirmedStockWriteVersion) return false;
+        if (requestVersion !== confirmedStockWriteVersion) {
+          scheduleBackgroundRefresh();
+          return false;
+        }
+        if (requestSequence < dataReadAppliedSequence) return false;
+        // A newer failure also wins over older snapshots: it must not be
+        // hidden by an earlier response arriving late.
+        dataReadAppliedSequence = requestSequence;
         if (json.status === 'success') {
-          if (requestSequence < dataReadAppliedSequence) return false;
-          dataReadAppliedSequence = requestSequence;
           const d = json.data || json;
+          if (!Array.isArray(d.products)) {
+            const error = { code: 'INVALID_RESPONSE', message: 'Google Sheet ตอบกลับข้อมูลสินค้าไม่ครบ กรุณาลองโหลดใหม่' };
+            setWorkspaceDataStatus('error', error.message);
+            if (typeof requestOptions.onError === 'function') requestOptions.onError(error);
+            return false;
+          }
           if (json.user) {
             state.currentUser = sanitizeUser(json.user);
             saveStoredCurrentUser(state.currentUser, authSession.token, authSession.expiresAt);
@@ -4034,16 +4069,21 @@
           state.purchaseOrders = Array.isArray(d.purchaseOrders) ? d.purchaseOrders : [];
           state.adjustmentRequests = Array.isArray(d.adjustmentRequests) ? d.adjustmentRequests : [];
           state.cart = getStoredCart();
+          setWorkspaceDataStatus('ready');
           updateUI();
           checkUrlQueryParams();
           if (isManual) showAlert('อัปเดตข้อมูลล่าสุดเรียบร้อยแล้ว', 'success');
           return true;
         }
+        setWorkspaceDataStatus('error', json.message);
         if (typeof requestOptions.onError === 'function') requestOptions.onError(json);
         if (isManual && json.code !== 'AUTH_REQUIRED' && json.code !== 'PIN_CHANGE_REQUIRED') {
           showAlert(json.message || 'ดึงข้อมูลจาก Google Sheet ไม่สำเร็จ', 'error');
         }
       } catch (err) {
+        if (authSession && !(requestOptions.signal && requestOptions.signal.aborted)) {
+          setWorkspaceDataStatus('error', 'โหลดข้อมูลล่าสุดจาก Google Sheet ไม่สำเร็จ กรุณาลองใหม่');
+        }
         if (isManual) showAlert('ไม่สามารถดึงข้อมูลได้ โปรดลองอีกครั้ง', 'error');
       } finally {
         if (refreshIcon && !background) refreshIcon.classList.remove('animate-spin');
@@ -5413,7 +5453,6 @@
           recordedBy: operatorName,
           notes: savedNotes
         });
-        confirmedStockWriteVersion++;
         const applied = applyConfirmedStockWrite(result);
         const refreshed = applied || await fetchData();
         if (applied) scheduleBackgroundRefresh();
@@ -5524,7 +5563,6 @@
           recordedBy: operatorName,
           notes: fullNotes
         });
-        confirmedStockWriteVersion++;
         const applied = applyConfirmedStockWrite(result);
         const refreshed = applied || await fetchData();
         if (applied) scheduleBackgroundRefresh();
@@ -5624,7 +5662,6 @@
             recordedBy: operatorName
           });
         }
-        if (isAdmin) confirmedStockWriteVersion++;
         const applied = isAdmin && applyConfirmedStockWrite(result);
         const refreshed = applied || await fetchData();
         if (applied) scheduleBackgroundRefresh();
